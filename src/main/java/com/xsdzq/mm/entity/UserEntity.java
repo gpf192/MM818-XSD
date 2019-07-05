@@ -1,5 +1,8 @@
 package com.xsdzq.mm.entity;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -8,43 +11,76 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "customer")
 @EntityListeners(AuditingEntityListener.class)
-public class UserEntity {
+public class UserEntity implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", unique = true, length = 20)
 	private Long id;
 
-	// 登录名称
-	@Column(name = "username", unique = true, nullable = false, length = 100)
-	private String username;
+	// 客户号
+	@Column(name = "client_id", unique = true, nullable = false, length = 100)
+	private String clientId;
 
-	// 别名
-	@Column(name = "alias", nullable = true, length = 100)
-	private String alias;
+	// 资金账号
+	@Column(name = "fund_account", unique = true, length = 100)
+	private String fundAccount;
+
+	@Column(name = "access_token", nullable = true, length = 100)
+	private String accessToken;
 
 	@Column(name = "password", nullable = true, length = 500)
 	private String password;
 
-	@Column(name = "phone", unique = true, nullable = true, length = 12)
-	private String phone;
+	@Column(name = "mobile", unique = true, nullable = true, length = 12)
+	private String mobile;
+
+	@Column(name = "app_version", nullable = true, length = 100)
+	private String appVersion;
+
+	@Column(name = "last_op_ip", nullable = true, length = 200)
+	private String lastOpIP;
+
+	@Column(name = "last_login_time", nullable = true, length = 200)
+	private String lastLoginTime;
+
+	// 创建时间
+	@Column(name = "createtime")
+	@CreatedDate
+	private Date createtime;
+
+	// 修改时间
+	@Column(name = "modifytime", nullable = true)
+	@LastModifiedDate
+	private Date modifytime;
 
 	public UserEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserEntity(Long id, String username, String alias, String password, String phone) {
+	public UserEntity(Long id, String clientId, String fundAccount, String accessToken, String password, String mobile,
+			String appVersion, String lastOpIP, String lastLoginTime, Date createtime, Date modifytime) {
 		super();
 		this.id = id;
-		this.username = username;
-		this.alias = alias;
+		this.clientId = clientId;
+		this.fundAccount = fundAccount;
+		this.accessToken = accessToken;
 		this.password = password;
-		this.phone = phone;
+		this.mobile = mobile;
+		this.appVersion = appVersion;
+		this.lastOpIP = lastOpIP;
+		this.lastLoginTime = lastLoginTime;
+		this.createtime = createtime;
+		this.modifytime = modifytime;
 	}
 
 	public Long getId() {
@@ -55,20 +91,28 @@ public class UserEntity {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getClientId() {
+		return clientId;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 
-	public String getAlias() {
-		return alias;
+	public String getFundAccount() {
+		return fundAccount;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setFundAccount(String fundAccount) {
+		this.fundAccount = fundAccount;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
 	public String getPassword() {
@@ -79,12 +123,60 @@ public class UserEntity {
 		this.password = password;
 	}
 
-	public String getPhone() {
-		return phone;
+	public String getMobile() {
+		return mobile;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getAppVersion() {
+		return appVersion;
+	}
+
+	public void setAppVersion(String appVersion) {
+		this.appVersion = appVersion;
+	}
+
+	public String getLastOpIP() {
+		return lastOpIP;
+	}
+
+	public void setLastOpIP(String lastOpIP) {
+		this.lastOpIP = lastOpIP;
+	}
+
+	public String getLastLoginTime() {
+		return lastLoginTime;
+	}
+
+	public void setLastLoginTime(String lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
+	}
+
+	public Date getCreatetime() {
+		return createtime;
+	}
+
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
+	}
+
+	public Date getModifytime() {
+		return modifytime;
+	}
+
+	public void setModifytime(Date modifytime) {
+		this.modifytime = modifytime;
+	}
+
+	@Override
+	public String toString() {
+		return "UserEntity [id=" + id + ", clientId=" + clientId + ", fundAccount=" + fundAccount + ", accessToken="
+				+ accessToken + ", password=" + password + ", mobile=" + mobile + ", appVersion=" + appVersion
+				+ ", lastOpIP=" + lastOpIP + ", lastLoginTime=" + lastLoginTime + ", createtime=" + createtime
+				+ ", modifytime=" + modifytime + "]";
 	}
 
 }

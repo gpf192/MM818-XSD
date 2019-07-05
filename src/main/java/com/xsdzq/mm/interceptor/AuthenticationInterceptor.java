@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,6 +22,9 @@ import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.service.UserService;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
+	
+	@Value("${jwt.secret.key}")
+	private String key;
 
 	@Autowired
 	UserService userService;
@@ -49,22 +53,22 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 				if (token == null) {
 					throw new RuntimeException("no token,please login");
 				}
-				String userId;
+				String clientId;
 				try {
-					userId = JWT.decode(token).getAudience().get(0);
+					clientId = JWT.decode(token).getAudience().get(0);
 
 				} catch (JWTDecodeException e) {
 					// TODO: handle exception
 					throw new RuntimeException("401");
 				}
-				User user = userService.getUserById(userId);
+				User user = userService.getUserById(clientId);
 				if (user == null) {
 					throw new RuntimeException("用户不存在，请重新登陆");
 				}
-				JWTVerifier jwtVerifier =JWT.require(Algorithm.HMAC256(user.getPassword())).build();
+				Algorithm algorithm = Algorithm.HMAC256(key);
+				JWTVerifier jwtVerifier =JWT.require(algorithm).build();
 				try {
 					jwtVerifier.verify(token);
-					
 				} catch (JWTVerificationException e) {
 					// TODO: handle exception
 					throw new RuntimeException("401");
