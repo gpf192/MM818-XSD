@@ -33,7 +33,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handlerObject)
 			throws Exception {
 		// TODO Auto-generated method stub
-		String token = request.getHeader("token");
+		String token = request.getHeader("Authorization");
 		// 如果不是映射到方法直接通过
 		if (!(handlerObject instanceof HandlerMethod)) {
 			return true;
@@ -61,7 +61,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 					// TODO: handle exception
 					throw new RuntimeException("401");
 				}
-				User user = userService.getUserById(clientId);
+				User user = userService.findByClientId(clientId);
 				if (user == null) {
 					throw new RuntimeException("用户不存在，请重新登陆");
 				}
@@ -71,6 +71,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 					jwtVerifier.verify(token);
 				} catch (JWTVerificationException e) {
 					// TODO: handle exception
+					System.out.println(e.getMessage());
 					throw new RuntimeException("401");
 				}
 				return true;

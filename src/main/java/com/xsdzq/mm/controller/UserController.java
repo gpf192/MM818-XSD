@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.google.gson.JsonObject;
 import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.model.Token;
 import com.xsdzq.mm.model.User;

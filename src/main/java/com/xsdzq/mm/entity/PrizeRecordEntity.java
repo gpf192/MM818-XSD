@@ -28,11 +28,17 @@ public class PrizeRecordEntity implements Serializable {
 	@Column(name = "id", unique = true, length = 20)
 	private Long id;
 
-	@Column(name = "action_type")
-	private boolean actionType;
+	@Column(name = "type", nullable = false)
+	private boolean type; // type 为0 表示减少 reason 以0开头 0X， 为1表示增加 reason 以1开头 1X
 
-	@Column(name = "origin_from")
-	private String originFrom;
+	@Column(name = "reason", nullable = false)
+	private String reason;
+
+	@Column(name = "number", nullable = false)
+	private Integer number = 0; // 增加或者减少的数量,默认为0
+	
+	@Column(name = "data_flag", nullable = false)
+	private String dateFlag; // 每日的判断标准
 
 	@Column(name = "record_time", nullable = false)
 	private Date recordTime;
@@ -49,28 +55,36 @@ public class PrizeRecordEntity implements Serializable {
 		this.id = id;
 	}
 
-	public boolean isActionType() {
-		return actionType;
+	public boolean isType() {
+		return type;
 	}
 
-	public void setActionType(boolean actionType) {
-		this.actionType = actionType;
+	public void setType(boolean type) {
+		this.type = type;
 	}
 
-	public String getOriginFrom() {
-		return originFrom;
+	public String getReason() {
+		return reason;
 	}
 
-	public void setOriginFrom(String originFrom) {
-		this.originFrom = originFrom;
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
-	public UserEntity getUserEntity() {
-		return userEntity;
+	public Integer getNumber() {
+		return number;
 	}
 
-	public void setUserEntity(UserEntity userEntity) {
-		this.userEntity = userEntity;
+	public void setNumber(Integer number) {
+		this.number = number;
+	}
+
+	public String getDateFlag() {
+		return dateFlag;
+	}
+
+	public void setDateFlag(String dateFlag) {
+		this.dateFlag = dateFlag;
 	}
 
 	public Date getRecordTime() {
@@ -79,6 +93,14 @@ public class PrizeRecordEntity implements Serializable {
 
 	public void setRecordTime(Date recordTime) {
 		this.recordTime = recordTime;
+	}
+
+	public UserEntity getUserEntity() {
+		return userEntity;
+	}
+
+	public void setUserEntity(UserEntity userEntity) {
+		this.userEntity = userEntity;
 	}
 
 }

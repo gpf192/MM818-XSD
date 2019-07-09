@@ -7,6 +7,11 @@ import java.util.Random;
 import com.xsdzq.mm.entity.PrizeEntity;
 
 public class PrizeUtil {
+	
+	
+	public static String PRIZE_LOGIN_TYPE = "1";
+	public static String PRIZE_SHARE_TYPE = "2";
+	
 
 	private Random r = null;
 

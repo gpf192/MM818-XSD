@@ -21,7 +21,7 @@ public class GsonUtil {
 	public static String build(int code, String message, Object result, Pagination pagination) {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("resCode", code);
-		map.put("respMsg", message);
+		map.put("resMsg", message);
 		if (result != null) {
 			map.put("result", result);
 		}
@@ -34,7 +34,7 @@ public class GsonUtil {
 	public static Map<String, Object> buildMap(int code, String message, Object result) {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("resCode", code);
-		map.put("respMsg", message);
+		map.put("resMsg", message);
 		if (result != null) {
 			map.put("result", result);
 		}
@@ -44,7 +44,7 @@ public class GsonUtil {
 	public static Map<String, Object> buildMap(int code, String message, Object result, Pagination pagination) {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("resCode", code);
-		map.put("respMsg", message);
+		map.put("resMsg", message);
 		if (result != null) {
 			map.put("result", result);
 		}

@@ -1,5 +1,7 @@
 package com.xsdzq.mm.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "sys_param_info")
-public class ParamEntity {
+public class ParamEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**

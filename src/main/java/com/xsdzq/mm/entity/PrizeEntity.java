@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -36,26 +35,28 @@ public class PrizeEntity implements Serializable {
 
 	@Column(name = "rate")
 	private String rate;
-	
+
 	@Column(name = "image")
 	private String image;
 
 	@Column(name = "amount") // 奖品总量
 	private String amount;
-	
+
 	@Column(name = "type") // 奖品类型
 	private boolean type;
-	
+
 	@Column(name = "isShow") // 默认不显示
 	private boolean isShow = false;
 
 	// 创建时间
 
 	@Column(name = "createtime")
+	@CreatedDate
 	private Date createtime;
 
 	// 修改时间
 	@Column(name = "modifytime")
+	@LastModifiedDate
 	private Date modifytime;
 
 	@Column(name = "winning_number") // 中奖人数
@@ -100,7 +101,6 @@ public class PrizeEntity implements Serializable {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	
 
 	public boolean isShow() {
 		return isShow;
@@ -133,7 +133,6 @@ public class PrizeEntity implements Serializable {
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	
 
 	public boolean isType() {
 		return type;
