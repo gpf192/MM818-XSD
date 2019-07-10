@@ -19,6 +19,7 @@ import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.util.DateUtil;
+import com.xsdzq.mm.util.PrizeUtil;
 import com.xsdzq.mm.util.UserUtil;
 
 @Service(value = "userServiceImpl")
@@ -95,7 +96,7 @@ public class UserServiceImpl implements UserService {
 				return false;
 			}
 		}
-		prizeService.addPrizeNumber(userEntity, true, "1", 1);
+		prizeService.addPrizeNumber(userEntity, true, PrizeUtil.PRIZE_LOGIN_TYPE, 1);
 		return true;
 	}
 

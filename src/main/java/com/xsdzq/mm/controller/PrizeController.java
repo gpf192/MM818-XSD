@@ -37,8 +37,13 @@ public class PrizeController {
 	}
 
 	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
-	public Map<String, Object> getPrize() {
-		PrizeEntity prize = prizeService.getMyPrize();
+	@UserLoginToken
+	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		PrizeEntity prize = prizeService.getMyPrize(userEntity);
+		if (prize == null) {
+			return GsonUtil.buildMap(1, "没有抽奖机会了", null);
+		}
 		return GsonUtil.buildMap(0, "ok", prize);
 	}
 
@@ -62,7 +67,6 @@ public class PrizeController {
 		} else {
 			return GsonUtil.buildMap(1, "分享活动获得的票数，已经达到上限!", null);
 		}
-
 	}
 
 }

@@ -9,8 +9,12 @@ import com.xsdzq.mm.entity.PrizeEntity;
 public class PrizeUtil {
 	
 	
-	public static String PRIZE_LOGIN_TYPE = "1";
-	public static String PRIZE_SHARE_TYPE = "2";
+	public static String PRIZE_LOGIN_TYPE = "11";
+	public static String PRIZE_SHARE_TYPE = "12";
+	public static String PRIZE_REDUCE_TYPE = "01";
+	
+	
+	
 	
 
 	private Random r = null;

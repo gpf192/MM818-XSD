@@ -9,7 +9,7 @@ public interface PrizeService {
 
 	List<PrizeEntity> getPrizeAll();
 
-	PrizeEntity getMyPrize();
+	PrizeEntity getMyPrize(UserEntity userEntity);
 
 	int getAvailableNumber(UserEntity userEntity);
 

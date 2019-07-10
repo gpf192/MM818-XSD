@@ -11,11 +11,13 @@ import com.xsdzq.mm.dao.ParamRepository;
 import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
 import com.xsdzq.mm.dao.PrizeRepository;
+import com.xsdzq.mm.dao.PrizeResultRepository;
 import com.xsdzq.mm.dao.impl.ParamRepositoryImpl;
 import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
+import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.util.DateUtil;
@@ -36,6 +38,9 @@ public class PrizeServiceImpl implements PrizeService {
 
 	@Autowired
 	private PrizeRecordRepository prizeRecordRepository;
+	
+	@Autowired
+	private PrizeResultRepository prizeResultRepository;
 
 	@Override
 	public List<PrizeEntity> getPrizeAll() {
@@ -44,8 +49,27 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	@Override
-	public PrizeEntity getMyPrize() {
+	@Transactional
+	public PrizeEntity getMyPrize(UserEntity userEntity) {
 		// TODO Auto-generated method stub
+		// check user available
+		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录
+		if (checkAvailable(userEntity)) {
+			PrizeEntity prizeEntity = getRandomPrize();
+			PrizeResultEntity prizeResultEntity = new PrizeResultEntity();
+			prizeResultEntity.setUserEntity(userEntity);
+			prizeResultEntity.setPrizeEntity(prizeEntity);
+			prizeResultEntity.setRecordTime(new Date());
+			addReduceRecordPrize(userEntity);
+			prizeNumberRepository.reduceNumber(userEntity);
+			prizeResultRepository.save(prizeResultEntity);
+			return prizeEntity;
+		} else {
+			return null;
+		}
+	}
+
+	public PrizeEntity getRandomPrize() {
 		// 计算中奖项，返回中奖项
 		ParamEntity paramEntity = paramRepository.getValueByCode(ParamRepositoryImpl.LCJCOMPUSER);
 		PrizeUtil prizeUtil = PrizeUtil.getInstance();
@@ -71,6 +95,15 @@ public class PrizeServiceImpl implements PrizeService {
 		}
 		// 判断返回 谢谢参与逻辑
 		return prizeUtil.getXieXieEntity(prizeList);
+	}
+
+	public boolean checkAvailable(UserEntity userEntity) {
+		int number = getAvailableNumber(userEntity);
+		if (number >= 1) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -109,7 +142,6 @@ public class PrizeServiceImpl implements PrizeService {
 		String nowString = DateUtil.getStandardDate(new Date());
 		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
 		prizeRecordEntity.setUserEntity(userEntity);
-		prizeRecordEntity.setUserEntity(userEntity);
 		prizeRecordEntity.setType(true);
 		prizeRecordEntity.setReason(PrizeUtil.PRIZE_SHARE_TYPE);
 		prizeRecordEntity.setNumber(1);
@@ -118,6 +150,18 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeRecordRepository.add(prizeRecordEntity);
 		prizeNumberRepository.addNumber(userEntity);
 		return true;
+	}
+
+	public void addReduceRecordPrize(UserEntity userEntity) {
+		String nowString = DateUtil.getStandardDate(new Date());
+		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
+		prizeRecordEntity.setUserEntity(userEntity);
+		prizeRecordEntity.setType(false);
+		prizeRecordEntity.setReason(PrizeUtil.PRIZE_REDUCE_TYPE);
+		prizeRecordEntity.setNumber(1);
+		prizeRecordEntity.setDateFlag(nowString);
+		prizeRecordEntity.setRecordTime(new Date());
+		prizeRecordRepository.add(prizeRecordEntity);
 	}
 
 	public boolean checkUserShareStatus(UserEntity userEntity) {
