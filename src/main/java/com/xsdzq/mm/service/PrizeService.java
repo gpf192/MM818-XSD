@@ -3,13 +3,14 @@ package com.xsdzq.mm.service;
 import java.util.List;
 
 import com.xsdzq.mm.entity.PrizeEntity;
+import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 
 public interface PrizeService {
 
 	List<PrizeEntity> getPrizeAll();
 	
-	PrizeEntity getLatestPrize();
+	PrizeResultEntity getLatestPrize();
 
 	PrizeEntity getMyPrize(UserEntity userEntity);
 

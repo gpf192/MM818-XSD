@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.PrizeEntity;
+import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.PrizeNumber;
 import com.xsdzq.mm.service.PrizeService;
@@ -35,11 +36,11 @@ public class PrizeController {
 		List<PrizeEntity> prizeEntities = prizeService.getPrizeAll();
 		return GsonUtil.buildMap(0, "ok", prizeEntities);
 	}
-	
+
 	@GetMapping(value = "/latest", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getLatestPrize() {
-		PrizeEntity prize = prizeService.getLatestPrize();
-		return GsonUtil.buildMap(0, "ok", prize);
+		PrizeResultEntity prizeResultEntity = prizeService.getLatestPrize();
+		return GsonUtil.buildMap(0, "ok", prizeResultEntity);
 	}
 
 	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")

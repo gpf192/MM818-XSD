@@ -34,10 +34,18 @@ public class PrizeRecordRepositoryImpl implements PrizeRecordRepository {
 	}
 
 	@Override
+	public PrizeRecordEntity getLatestRealPrizeResult() {
+		// TODO Auto-generated method stub
+		
+		TypedQuery<PrizeRecordEntity> sqlQuery =em.createQuery("SELECT r FROM PrizeResultEntity r WHERE r.userEntity=",PrizeRecordEntity.class);
+		return null;
+	}
+
+	@Override
 	public List<PrizeRecordEntity> getListByUserAndFlag(UserEntity userEntity, String flag) {
 		// TODO Auto-generated method stub
 		TypedQuery<PrizeRecordEntity> sqlQuery = em.createQuery(
-				"SELECT r FROM PrizeRecordEntity r WHERE r.userEntity=?1 and r.dateFlag=?2", PrizeRecordEntity.class);
+				"SELECT r FROM PrizeResultEntity r WHERE r.userEntity=?1 and r.dateFlag=?2", PrizeRecordEntity.class);
 		sqlQuery.setParameter(1, userEntity);
 		sqlQuery.setParameter(2, flag);
 		return sqlQuery.getResultList();

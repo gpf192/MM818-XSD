@@ -53,10 +53,11 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 	
 	@Override
-	public PrizeEntity getLatestPrize() {
+	public PrizeResultEntity getLatestPrize() {
 		// TODO Auto-generated method stub
 		PrizeResultEntity prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
-		return prizeResultEntity.getPrizeEntity();
+		//return prizeResultEntity.getPrizeEntity();
+		return prizeResultEntity;
 	}
 
 	@Override
