@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -63,11 +62,11 @@ public class EmpEntity implements Serializable {
 	@JoinColumn(name = "departmentCode", referencedColumnName = "code")
 	private DepartmentEntity departmentEntity;
 
-	@Column(name = "ticketId", insertable = false, updatable = false)
+	/*@Column(name = "ticketId", insertable = false, updatable = false)
 	private long ticketId;
 	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "ticketId", referencedColumnName = "id")
-	private TicketEntity ticketEntity;
+	private TicketEntity ticketEntity;*/
 
 	public int getEmpId() {
 		return empId;
@@ -75,22 +74,6 @@ public class EmpEntity implements Serializable {
 
 	public void setEmpId(int empId) {
 		this.empId = empId;
-	}
-
-	public long getTicketId() {
-		return ticketId;
-	}
-
-	public void setTicketId(long ticketId) {
-		this.ticketId = ticketId;
-	}
-
-	public TicketEntity getTicketEntity() {
-		return ticketEntity;
-	}
-
-	public void setTicketEntity(TicketEntity ticketEntity) {
-		this.ticketEntity = ticketEntity;
 	}
 
 	public long getId() {

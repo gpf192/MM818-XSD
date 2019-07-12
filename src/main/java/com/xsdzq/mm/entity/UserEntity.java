@@ -26,6 +26,7 @@ public class UserEntity implements Serializable {
 	@Column(name = "id", unique = true, length = 20)
 	private Long id;
 
+	//lcj_user
 	// 客户号
 	@Column(name = "client_id", unique = true, nullable = false, length = 100)
 	private String clientId;
