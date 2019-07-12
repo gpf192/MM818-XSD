@@ -32,6 +32,9 @@ public class UserVoteEmpResultEntity implements Serializable {
 	@Column(name = "number", nullable = false)
 	private Integer number; // 增加或者减少的数量,默认为0
 
+	@Column(name = "type", nullable = false)
+	private String type; // 0 投票 1
+
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "client_id", referencedColumnName = "client_id")
 	private UserEntity userEntity;
@@ -57,6 +60,14 @@ public class UserVoteEmpResultEntity implements Serializable {
 
 	public void setNumber(Integer number) {
 		this.number = number;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public UserEntity getUserEntity() {
@@ -85,8 +96,8 @@ public class UserVoteEmpResultEntity implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserVoteEmpResultEntity [id=" + id + ", number=" + number + ", userEntity=" + userEntity
-				+ ", empEntity=" + empEntity + ", recordTime=" + recordTime + "]";
+		return "UserVoteEmpResultEntity [id=" + id + ", number=" + number + ", type=" + type + ", userEntity="
+				+ userEntity + ", empEntity=" + empEntity + ", recordTime=" + recordTime + "]";
 	}
 
 }
