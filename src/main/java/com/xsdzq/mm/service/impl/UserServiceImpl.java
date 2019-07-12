@@ -48,6 +48,13 @@ public class UserServiceImpl implements UserService {
 
 		return null;
 	}
+	
+
+	@Override
+	public UserEntity getUserByClientId(String clientId) {
+		// TODO Auto-generated method stub
+		return userRepository.findByClientId(clientId);
+	}
 
 	@Override
 	public User getUserById(String id) {
@@ -57,18 +64,25 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public void setUser(User user) {
-		// TODO Auto-generated method stub
+	public void login(User user) {
 		UserEntity owner = userRepository.findByClientId(user.getClientId());
-		UserEntity requestUser = UserUtil.convertUserByUserEntity(user);
 		if (owner == null) {
+			UserEntity requestUser = UserUtil.convertUserByUserEntity(user);
 			userRepository.save(requestUser);
-			createPrizeNumberEntity(owner);
 		} else {
 			UserUtil.updateUserEntityByUser(owner, user);
 			userRepository.saveAndFlush(owner);
 		}
-		addEveryLoginPrizeNumber(owner);
+	}
+
+	@Override
+	@Transactional
+	public void setUserInfo(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		PrizeNumberEntity prizeNumberEntity = prizeNumberRepository.findByUserEntity(userEntity);
+		if (prizeNumberEntity == null) {
+			createPrizeNumberEntity(userEntity);
+		}
 	}
 
 	@Override
@@ -80,24 +94,28 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void createPrizeNumberEntity(UserEntity userEntity) {
+		System.out.println("------------------------");
+		System.out.println(userEntity.toString());
 		PrizeNumberEntity prizeNumberEntity = new PrizeNumberEntity();
 		prizeNumberEntity.setUserEntity(userEntity);
 		prizeNumberEntity.setNumber(0);
 		prizeNumberRepository.create(prizeNumberEntity);
 	}
 
-	public boolean addEveryLoginPrizeNumber(UserEntity userEntity) {
+	@Override
+	@Transactional
+	public void addEveryLoginPrizeNumber(UserEntity userEntity) {
 		String nowString = DateUtil.getStandardDate(new Date());
 		List<PrizeRecordEntity> prizeRecordEntities = prizeRecordRepository.getListByUserAndFlag(userEntity, nowString);
 		for (PrizeRecordEntity prizeRecordEntity : prizeRecordEntities) {
 			String reasonString = prizeRecordEntity.getReason();
-			if (reasonString.equals("1")) {
+			if (reasonString.equals(PrizeUtil.PRIZE_LOGIN_TYPE)) {
 				// 表示当日登陆成功已经给我一次抽奖机会
-				return false;
+				return;
 			}
 		}
 		prizeService.addPrizeNumber(userEntity, true, PrizeUtil.PRIZE_LOGIN_TYPE, 1);
-		return true;
+		//return true;
 	}
 
 }

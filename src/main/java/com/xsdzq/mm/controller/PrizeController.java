@@ -35,6 +35,12 @@ public class PrizeController {
 		List<PrizeEntity> prizeEntities = prizeService.getPrizeAll();
 		return GsonUtil.buildMap(0, "ok", prizeEntities);
 	}
+	
+	@GetMapping(value = "/latest", produces = "application/json; charset=utf-8")
+	public Map<String, Object> getLatestPrize() {
+		PrizeEntity prize = prizeService.getLatestPrize();
+		return GsonUtil.buildMap(0, "ok", prize);
+	}
 
 	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
@@ -67,6 +73,13 @@ public class PrizeController {
 		} else {
 			return GsonUtil.buildMap(1, "分享活动获得的票数，已经达到上限!", null);
 		}
+	}
+
+	@GetMapping(value = "/prizes", produces = "application/json; charset=utf-8")
+	public Map<String, Object> getOwnPrizes(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		List<PrizeEntity> prizeEntities = prizeService.getMyPrizeEntities(userEntity);
+		return GsonUtil.buildMap(0, "ok", prizeEntities);
 	}
 
 }

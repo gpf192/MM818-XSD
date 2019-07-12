@@ -40,7 +40,7 @@ public class PrizeEntity implements Serializable {
 	private String image;
 
 	@Column(name = "amount") // 奖品总量
-	private String amount;
+	private Integer amount;
 
 	@Column(name = "type") // 奖品类型
 	private boolean type;
@@ -126,11 +126,11 @@ public class PrizeEntity implements Serializable {
 		this.modifytime = modifytime;
 	}
 
-	public String getAmount() {
+	public int getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(int amount) {
 		this.amount = amount;
 	}
 

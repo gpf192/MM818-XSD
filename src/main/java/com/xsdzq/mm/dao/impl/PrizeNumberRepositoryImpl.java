@@ -31,7 +31,13 @@ public class PrizeNumberRepositoryImpl implements PrizeNumberRepository {
 		TypedQuery<PrizeNumberEntity> sqlQuery = em
 				.createQuery("SELECT n FROM PrizeNumberEntity n WHERE n.userEntity=?1", PrizeNumberEntity.class);
 		sqlQuery.setParameter(1, userEntity);
-		return sqlQuery.getSingleResult();
+		try {
+			return sqlQuery.getSingleResult();
+		} catch (Exception e) {
+			// TODO: handle exception
+			return null;
+		}
+
 	}
 
 	@Override
@@ -41,7 +47,6 @@ public class PrizeNumberRepositoryImpl implements PrizeNumberRepository {
 		PrizeNumberEntity prizeNumberEntity = findByUserEntity(userEntity);
 		prizeNumberEntity.setNumber(prizeNumberEntity.getNumber() + 1);
 		em.merge(prizeNumberEntity);
-
 	}
 
 	@Override

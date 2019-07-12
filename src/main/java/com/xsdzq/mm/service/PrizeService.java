@@ -8,8 +8,12 @@ import com.xsdzq.mm.entity.UserEntity;
 public interface PrizeService {
 
 	List<PrizeEntity> getPrizeAll();
+	
+	PrizeEntity getLatestPrize();
 
 	PrizeEntity getMyPrize(UserEntity userEntity);
+
+	List<PrizeEntity> getMyPrizeEntities(UserEntity userEntity);
 
 	int getAvailableNumber(UserEntity userEntity);
 

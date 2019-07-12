@@ -83,4 +83,13 @@ public class User {
 		this.lastLoginTime = lastLoginTime;
 	}
 
+	@Override
+	public String toString() {
+		return "User [clientId=" + clientId + ", fundAccount=" + fundAccount + ", accessToken=" + accessToken
+				+ ", mobile=" + mobile + ", appVersion=" + appVersion + ", lastOpIP=" + lastOpIP + ", lastLoginTime="
+				+ lastLoginTime + "]";
+	}
+	
+	
+
 }

@@ -30,7 +30,7 @@ public class PrizeNumberEntity implements Serializable {
 	@Column(name = "id", unique = true, length = 20)
 	private Long id;
 
-	@Column(name = "number", unique = true, length = 100)
+	@Column(name = "number", length = 100)
 	private Integer number = 0;
 
 	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)

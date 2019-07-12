@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.xsdzq.mm.annotation.UserLoginToken;
+import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.Token;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.util.GsonUtil;
+import com.xsdzq.mm.util.UserUtil;
 
 @RestController
 @RequestMapping("/user")
@@ -36,12 +39,15 @@ public class UserController {
 		return "test";
 	}
 
-	@PostMapping(value = "/setUser", produces = "application/json; charset=utf-8")
-	public Map<String, Object> getPrize(@RequestBody User user) {
+	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
+	public Map<String, Object> login(@RequestBody User user) {
 		// PrizeEntity prize = prizeService.getMyPrize();
-		userService.setUser(user);
-		User realUser = userService.findByClientId(user.getClientId());
-		String token = tokenService.getToken(realUser);
+		System.out.println(user.toString());
+		userService.login(user);
+		UserEntity userEntity = userService.getUserByClientId(user.getClientId());
+		userService.setUserInfo(userEntity);
+		userService.addEveryLoginPrizeNumber(userEntity);
+		String token = tokenService.getToken(UserUtil.convertUserByUserEntity(userEntity));
 		Token tokenObject = new Token();
 		tokenObject.setToken(token);
 		return GsonUtil.buildMap(0, "ok", tokenObject);
@@ -49,9 +55,12 @@ public class UserController {
 
 	@UserLoginToken
 	@GetMapping(value = "/getUserInfo", produces = "application/json; charset=utf-8")
-	public String getUserInfo() {
-
-		return "";
+	public Map<String, Object> getUserInfo(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		userService.setUserInfo(userEntity);
+		userService.addEveryLoginPrizeNumber(userEntity);
+		User realUser = userService.findByClientId(userEntity.getClientId());
+		return GsonUtil.buildMap(0, "ok", realUser);
 	}
 
 }

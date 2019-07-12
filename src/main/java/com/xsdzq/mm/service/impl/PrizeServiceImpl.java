@@ -1,10 +1,13 @@
 package com.xsdzq.mm.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xsdzq.mm.dao.ParamRepository;
@@ -38,14 +41,22 @@ public class PrizeServiceImpl implements PrizeService {
 
 	@Autowired
 	private PrizeRecordRepository prizeRecordRepository;
-	
+
 	@Autowired
 	private PrizeResultRepository prizeResultRepository;
+
 
 	@Override
 	public List<PrizeEntity> getPrizeAll() {
 		// TODO Auto-generated method stub
 		return prizeRepository.findAll();
+	}
+	
+	@Override
+	public PrizeEntity getLatestPrize() {
+		// TODO Auto-generated method stub
+		PrizeResultEntity prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
+		return prizeResultEntity.getPrizeEntity();
 	}
 
 	@Override
@@ -61,12 +72,27 @@ public class PrizeServiceImpl implements PrizeService {
 			prizeResultEntity.setPrizeEntity(prizeEntity);
 			prizeResultEntity.setRecordTime(new Date());
 			addReduceRecordPrize(userEntity);
+			reducePrizeNumber(prizeEntity);
 			prizeNumberRepository.reduceNumber(userEntity);
 			prizeResultRepository.save(prizeResultEntity);
 			return prizeEntity;
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public List<PrizeEntity> getMyPrizeEntities(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<PrizeResultEntity> list = prizeResultRepository.findByUserEntity(userEntity);
+		List<PrizeEntity> prizeEntities = new ArrayList<PrizeEntity>();
+		for (PrizeResultEntity prizeResultEntity : list) {
+			PrizeEntity prizeEntity = prizeResultEntity.getPrizeEntity();
+			if (prizeEntity.isType()) {
+				prizeEntities.add(prizeEntity);
+			}
+		}
+		return prizeEntities;
 	}
 
 	public PrizeEntity getRandomPrize() {
@@ -82,8 +108,8 @@ public class PrizeServiceImpl implements PrizeService {
 					// 得到总数
 					for (PrizeEntity prizeEntity : prizeList) {
 						System.out.println(prizeEntity.toString());
-						String amountString = prizeEntity.getAmount();
-						int amount = Integer.parseInt(amountString);
+						// String amountString = prizeEntity.getAmount();
+						int amount = prizeEntity.getAmount();
 						if (prizeUtil.testChoice(amount, total)) {
 							return prizeEntity;
 						}
@@ -103,6 +129,13 @@ public class PrizeServiceImpl implements PrizeService {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public void reducePrizeNumber(PrizeEntity prizeEntity) {
+		System.out.println(prizeEntity.toString());
+		if (prizeEntity.isType()) {
+			prizeRepository.reducePrizeNumber(prizeEntity);
 		}
 	}
 
