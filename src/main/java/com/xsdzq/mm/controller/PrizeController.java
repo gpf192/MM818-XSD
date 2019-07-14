@@ -15,7 +15,7 @@ import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
-import com.xsdzq.mm.model.PrizeNumber;
+import com.xsdzq.mm.model.Number;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.util.GsonUtil;
@@ -60,7 +60,7 @@ public class PrizeController {
 		System.out.println(token);
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		int number = prizeService.getAvailableNumber(userEntity);
-		PrizeNumber prizeNumber = new PrizeNumber(number);
+		Number prizeNumber = new Number(number);
 		return GsonUtil.buildMap(0, "ok", prizeNumber);
 	}
 

@@ -5,9 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xsdzq.mm.dao.ParamRepository;
@@ -45,18 +43,33 @@ public class PrizeServiceImpl implements PrizeService {
 	@Autowired
 	private PrizeResultRepository prizeResultRepository;
 
+	// 提供统一的PrizeNumberEntity，没有的话会新增，不会得到空值
+	@Override
+	@Transactional
+	public PrizeNumberEntity getPrizeNumberEntity(UserEntity userEntity) {
+		PrizeNumberEntity prizeNumberEntity = prizeNumberRepository.findByUserEntity(userEntity);
+		if (prizeNumberEntity == null) {
+			PrizeNumberEntity myPrizeNumberEntity = new PrizeNumberEntity();
+			myPrizeNumberEntity.setUserEntity(userEntity);
+			myPrizeNumberEntity.setNumber(0);
+			prizeNumberRepository.create(myPrizeNumberEntity);
+			prizeNumberEntity = prizeNumberRepository.findByUserEntity(userEntity);
+		}
+		return prizeNumberEntity;
+
+	}
 
 	@Override
 	public List<PrizeEntity> getPrizeAll() {
 		// TODO Auto-generated method stub
 		return prizeRepository.findAll();
 	}
-	
+
 	@Override
 	public PrizeResultEntity getLatestPrize() {
 		// TODO Auto-generated method stub
 		PrizeResultEntity prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
-		//return prizeResultEntity.getPrizeEntity();
+		// return prizeResultEntity.getPrizeEntity();
 		return prizeResultEntity;
 	}
 
@@ -143,7 +156,7 @@ public class PrizeServiceImpl implements PrizeService {
 	@Override
 	public int getAvailableNumber(UserEntity userEntity) {
 		// TODO Auto-generated method stub
-		PrizeNumberEntity prizeNumber = prizeNumberRepository.findByUserEntity(userEntity);
+		PrizeNumberEntity prizeNumber = getPrizeNumberEntity(userEntity);
 		return prizeNumber.getNumber();
 	}
 
@@ -153,17 +166,9 @@ public class PrizeServiceImpl implements PrizeService {
 		// TODO Auto-generated method stub
 		// type 0 表示减少 1 表示增加
 		// reason 1. 表示每日登陆。 2. 表示分享
-		String nowString = DateUtil.getStandardDate(new Date());
-		System.out.println(nowString);
-		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
-		prizeRecordEntity.setUserEntity(userEntity);
-		prizeRecordEntity.setType(type);
-		prizeRecordEntity.setReason(reason);
-		prizeRecordEntity.setNumber(number);
-		prizeRecordEntity.setDateFlag(nowString);
-		prizeRecordEntity.setRecordTime(new Date());
-		prizeRecordRepository.add(prizeRecordEntity);
-		prizeNumberRepository.addNumber(userEntity);
+		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
+		prizeNumberRepository.addNumber(prizeNumberEntity);
+		addPrizeRecord(userEntity, type, reason);
 	}
 
 	@Override
@@ -173,17 +178,22 @@ public class PrizeServiceImpl implements PrizeService {
 		if (!checkUserShareStatus(userEntity)) {
 			return false;
 		}
+		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
+		prizeNumberRepository.addNumber(prizeNumberEntity);
+		addPrizeRecord(userEntity, true, PrizeUtil.PRIZE_SHARE_TYPE);
+		return true;
+	}
+
+	private void addPrizeRecord(UserEntity userEntity, boolean type, String reason) {
 		String nowString = DateUtil.getStandardDate(new Date());
 		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
 		prizeRecordEntity.setUserEntity(userEntity);
-		prizeRecordEntity.setType(true);
-		prizeRecordEntity.setReason(PrizeUtil.PRIZE_SHARE_TYPE);
+		prizeRecordEntity.setType(type);
+		prizeRecordEntity.setReason(reason);
 		prizeRecordEntity.setNumber(1);
 		prizeRecordEntity.setDateFlag(nowString);
 		prizeRecordEntity.setRecordTime(new Date());
 		prizeRecordRepository.add(prizeRecordEntity);
-		prizeNumberRepository.addNumber(userEntity);
-		return true;
 	}
 
 	public void addReduceRecordPrize(UserEntity userEntity) {

@@ -62,12 +62,6 @@ public class EmpEntity implements Serializable {
 	@JoinColumn(name = "departmentCode", referencedColumnName = "code")
 	private DepartmentEntity departmentEntity;
 
-	/*@Column(name = "ticketId", insertable = false, updatable = false)
-	private long ticketId;
-	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "ticketId", referencedColumnName = "id")
-	private TicketEntity ticketEntity;*/
-
 	public int getEmpId() {
 		return empId;
 	}

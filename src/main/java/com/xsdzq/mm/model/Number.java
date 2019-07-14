@@ -1,13 +1,13 @@
 package com.xsdzq.mm.model;
 
-public class PrizeNumber {
+public class Number {
 	Integer number;
 
-	public PrizeNumber() {
+	public Number() {
 		super();
 	}
 
-	public PrizeNumber(Integer number) {
+	public Number(Integer number) {
 		super();
 		this.number = number;
 	}

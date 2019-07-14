@@ -16,7 +16,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "customer")
+@Table(name = "lcj_user")
 @EntityListeners(AuditingEntityListener.class)
 public class UserEntity implements Serializable {
 

@@ -10,6 +10,8 @@ public interface PrizeNumberRepository {
 	PrizeNumberEntity findByUserEntity(UserEntity userEntity);
 
 	void addNumber(UserEntity userEntity);
+	
+	void addNumber(PrizeNumberEntity prizeNumberEntity);
 
 	void reduceNumber(UserEntity userEntity);
 

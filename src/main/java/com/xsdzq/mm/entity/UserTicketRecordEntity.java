@@ -1,6 +1,7 @@
 package com.xsdzq.mm.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,7 +43,7 @@ public class UserTicketRecordEntity implements Serializable {
 	private String dateFlag; // 每日的判断标准
 
 	@Column(name = "gain_time")
-	private String gainTime;// 得票时间
+	private Date gainTime;// 得票时间
 
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "client_id", referencedColumnName = "client_id")
@@ -88,11 +89,11 @@ public class UserTicketRecordEntity implements Serializable {
 		this.dateFlag = dateFlag;
 	}
 
-	public String getGainTime() {
+	public Date getGainTime() {
 		return gainTime;
 	}
 
-	public void setGainTime(String gainTime) {
+	public void setGainTime(Date gainTime) {
 		this.gainTime = gainTime;
 	}
 
