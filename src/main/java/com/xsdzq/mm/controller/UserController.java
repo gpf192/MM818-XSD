@@ -41,7 +41,6 @@ public class UserController {
 	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
 	public Map<String, Object> login(@RequestBody User user) {
 		// PrizeEntity prize = prizeService.getMyPrize();
-		
 		ActivityNumber activityNumber =userService.login(user);
 		UserEntity userEntity = userService.getUserByClientId(user.getClientId());
 		String token = tokenService.getToken(UserUtil.convertUserByUserEntity(userEntity));
