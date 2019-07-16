@@ -36,7 +36,7 @@ public class UserTicketRecordEntity implements Serializable {
 	@Column(name = "votes_source", nullable = false) // 得票来源 ， 11.登陆 12.分享 13.理财产品 14.签约投顾 01 投票
 	private String votesSource;
 
-	@Column(name = "number", nullable = false)
+	@Column(name = "num", nullable = false)
 	private Integer number = 0; // 增加或者减少的数量,默认为0
 
 	@Column(name = "data_flag", nullable = false)

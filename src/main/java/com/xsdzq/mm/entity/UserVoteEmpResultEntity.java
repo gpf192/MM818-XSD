@@ -29,7 +29,7 @@ public class UserVoteEmpResultEntity implements Serializable {
 	@SequenceGenerator(name = "user_emp_ticket_sequence", sequenceName = "user_emp_sequence_ticket", allocationSize = 1)
 	@Column(name = "id")
 	private long id;
-	@Column(name = "number", nullable = false)
+	@Column(name = "num", nullable = false)
 	private Integer number; // 增加或者减少的数量,默认为0
 
 	@Column(name = "type", nullable = false)

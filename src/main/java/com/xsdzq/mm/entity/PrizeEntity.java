@@ -34,7 +34,7 @@ public class PrizeEntity implements Serializable {
 	private String price;
 
 	@Column(name = "rate")
-	private String rate;
+	private String rate; // 动态计算
 
 	@Column(name = "image")
 	private String image;
@@ -48,8 +48,10 @@ public class PrizeEntity implements Serializable {
 	@Column(name = "isShow") // 默认不显示
 	private boolean isShow = false;
 
-	// 创建时间
+	@Column(name = "winning_number", columnDefinition = "int default 0") // 中奖人数
+	private int winningNumber = 0;
 
+	// 创建时间
 	@Column(name = "createtime")
 	@CreatedDate
 	private Date createtime;
@@ -58,9 +60,6 @@ public class PrizeEntity implements Serializable {
 	@Column(name = "modifytime")
 	@LastModifiedDate
 	private Date modifytime;
-
-	@Column(name = "winning_number") // 中奖人数
-	private Integer winning_number;
 
 	public long getId() {
 		return id;
@@ -110,6 +109,18 @@ public class PrizeEntity implements Serializable {
 		this.isShow = isShow;
 	}
 
+	public int getWinningNumber() {
+		return winningNumber;
+	}
+
+	public void setWinningNumber(int winningNumber) {
+		this.winningNumber = winningNumber;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
+
 	public Date getCreatetime() {
 		return createtime;
 	}
@@ -142,19 +153,11 @@ public class PrizeEntity implements Serializable {
 		this.type = type;
 	}
 
-	public Integer getWinning_number() {
-		return winning_number;
-	}
-
-	public void setWinning_number(Integer winning_number) {
-		this.winning_number = winning_number;
-	}
-
 	@Override
 	public String toString() {
 		return "PrizeEntity [id=" + id + ", name=" + name + ", price=" + price + ", rate=" + rate + ", image=" + image
 				+ ", amount=" + amount + ", type=" + type + ", isShow=" + isShow + ", createtime=" + createtime
-				+ ", modifytime=" + modifytime + ", winning_number=" + winning_number + "]";
+				+ ", modifytime=" + modifytime + ", winning_number=" + winningNumber + "]";
 	}
 
 }

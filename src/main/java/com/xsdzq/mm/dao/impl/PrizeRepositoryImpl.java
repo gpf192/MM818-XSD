@@ -24,4 +24,12 @@ public class PrizeRepositoryImpl implements PrizeWrapper {
 
 	}
 
+	@Override
+	public void addPrizeWinningNumber(PrizeEntity prizeEntity) {
+		// TODO Auto-generated method stub
+		prizeEntity.setWinningNumber(prizeEntity.getWinningNumber() + 1);
+		em.merge(prizeEntity);
+
+	}
+
 }

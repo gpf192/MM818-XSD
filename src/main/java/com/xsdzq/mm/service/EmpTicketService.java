@@ -7,7 +7,7 @@ import com.xsdzq.mm.entity.EmpTicketEntity;
 
 public interface EmpTicketService {
 
-	List<EmpTicketEntity> getEmpTicketEntities(int pageNumber, int pageSize);
+	List<EmpTicketEntity> getEmpTicketEntities(int pageNumber, int pageSize, String divison);
 
 	EmpTicketEntity getEmpTicketEntity(EmpEntity empEntity);
 

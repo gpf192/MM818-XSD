@@ -21,8 +21,10 @@ import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.service.PrizeService;
+import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.PrizeUtil;
+import com.xsdzq.mm.util.TicketUtil;
 
 @Service(value = "prizeServiceImpl")
 @Transactional(readOnly = true)
@@ -42,6 +44,9 @@ public class PrizeServiceImpl implements PrizeService {
 
 	@Autowired
 	private PrizeResultRepository prizeResultRepository;
+
+	@Autowired
+	private UserTicketService userTicketService;
 
 	// 提供统一的PrizeNumberEntity，没有的话会新增，不会得到空值
 	@Override
@@ -85,9 +90,13 @@ public class PrizeServiceImpl implements PrizeService {
 			prizeResultEntity.setUserEntity(userEntity);
 			prizeResultEntity.setPrizeEntity(prizeEntity);
 			prizeResultEntity.setRecordTime(new Date());
+			// 1.添加减少记录
 			addReduceRecordPrize(userEntity);
-			reducePrizeNumber(prizeEntity);
+			// 2.增加中奖人数
+			prizeRepository.addPrizeWinningNumber(prizeEntity);
+			// 3.用户抽奖次数减少
 			prizeNumberRepository.reduceNumber(userEntity);
+			// 4.保存用户抽奖结果
 			prizeResultRepository.save(prizeResultEntity);
 			return prizeEntity;
 		} else {
@@ -121,11 +130,14 @@ public class PrizeServiceImpl implements PrizeService {
 				if (total > 0) {
 					// 得到总数
 					for (PrizeEntity prizeEntity : prizeList) {
-						System.out.println(prizeEntity.toString());
-						// String amountString = prizeEntity.getAmount();
-						int amount = prizeEntity.getAmount();
-						if (prizeUtil.testChoice(amount, total)) {
-							return prizeEntity;
+						// 可用的奖品次数 = 总数 - 中奖次数
+						if (prizeEntity.isType()) {
+							int amount = prizeEntity.getAmount();
+							int winningNumber = prizeEntity.getWinningNumber();
+							int availableNumber = amount - winningNumber;
+							if (prizeUtil.testChoice(availableNumber, total)) {
+								return prizeEntity;
+							}
 						}
 					}
 				}
@@ -147,7 +159,6 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	public void reducePrizeNumber(PrizeEntity prizeEntity) {
-		System.out.println(prizeEntity.toString());
 		if (prizeEntity.isType()) {
 			prizeRepository.reducePrizeNumber(prizeEntity);
 		}
@@ -179,8 +190,11 @@ public class PrizeServiceImpl implements PrizeService {
 			return false;
 		}
 		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
+		// 分享获得抽奖次数
 		prizeNumberRepository.addNumber(prizeNumberEntity);
 		addPrizeRecord(userEntity, true, PrizeUtil.PRIZE_SHARE_TYPE);
+		// 分享获得投票数量
+		userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET);
 		return true;
 	}
 

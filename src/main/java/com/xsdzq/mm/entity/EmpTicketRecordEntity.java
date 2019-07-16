@@ -36,7 +36,7 @@ public class EmpTicketRecordEntity implements Serializable {
 	@Column(name = "votes_source", nullable = false) // 得票来源 ， 11.员工投票 12.员工购买理财产品
 	private String votesSource;
 
-	@Column(name = "number", nullable = false)
+	@Column(name = "num", nullable = false)
 	private Integer number = 0; // 增加或者减少的数量,默认为0
 
 	@Column(name = "data_flag", nullable = false)

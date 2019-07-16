@@ -34,7 +34,7 @@ public class PrizeRecordEntity implements Serializable {
 	@Column(name = "reason", nullable = false)
 	private String reason;
 
-	@Column(name = "number", nullable = false)
+	@Column(name = "num", nullable = false)
 	private Integer number = 0; // 增加或者减少的数量,默认为0
 	
 	@Column(name = "data_flag", nullable = false)

@@ -28,10 +28,12 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 	EmpTicketRecordRepository empTicketRecordRepository;
 
 	@Override
-	public List<EmpTicketEntity> getEmpTicketEntities(int pageNumber, int pageSize) {
+	public List<EmpTicketEntity> getEmpTicketEntities(int pageNumber, int pageSize, String divison) {
 		// TODO Auto-generated method stub
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-		Page<EmpTicketEntity> empTIcketPage = empTicketRepository.findByOrderByNumberDesc(pageRequest);
+		System.out.println("------------" + divison);
+		Page<EmpTicketEntity> empTIcketPage = empTicketRepository.findByEmpEntityDivisionOrderByNumberDesc(divison,
+				pageRequest);
 		List<EmpTicketEntity> empTicketList = empTIcketPage.getContent();
 		return empTicketList;
 	}

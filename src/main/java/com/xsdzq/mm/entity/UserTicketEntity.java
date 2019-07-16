@@ -31,7 +31,7 @@ public class UserTicketEntity implements Serializable {
 	@Column(name = "id")
 	private long id;
 
-	@Column(name = "number")
+	@Column(name = "num")
 	private Integer number = 0;// 票数 默认是0
 
 	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)

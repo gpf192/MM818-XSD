@@ -27,9 +27,10 @@ public class EmpController {
 	EmpTicketService empTicketService;
 
 	@GetMapping(value = "/list", produces = "application/json; charset=utf-8")
-	public Map<String, Object> getEmpTicketList(@RequestParam int pageNumber, @RequestParam int pageSize) {
+	public Map<String, Object> getEmpTicketList(@RequestParam int pageNumber, @RequestParam int pageSize,
+			@RequestParam String divison) {
 
-		List<EmpTicketEntity> empTicketList = empTicketService.getEmpTicketEntities(pageNumber, pageSize);
+		List<EmpTicketEntity> empTicketList = empTicketService.getEmpTicketEntities(pageNumber, pageSize, divison);
 
 		return GsonUtil.buildMap(0, "ok", empTicketList);
 	}
