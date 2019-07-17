@@ -12,9 +12,9 @@
 	<groupId>com.xsdzq</groupId>
 	<artifactId>MM818</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>MM818</name>
-	<description>Demo project for Spring Boot</description>
+	<description>mm818 project for xsdzq</description>
 
 	<properties>
 		<java.version>1.8</java.version>
