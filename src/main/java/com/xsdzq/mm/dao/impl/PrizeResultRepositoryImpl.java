@@ -20,7 +20,10 @@ public class PrizeResultRepositoryImpl implements PrizeResultWrapper {
 	@Override
 	public PrizeResultEntity getLatestRealPrizeResult() {
 		// TODO Auto-generated method stub
-		String sql = "select r.* from `lcj_prize_result` r , `lcj_prize_info` i where r.`prize_id` = i.id and i.`type`=1 order by r.`record_time` desc LIMIT 1";
+		//mysql
+		//String sql = "select r.* from `lcj_prize_result` r , `lcj_prize_info` i where r.`prize_id` = i.id and i.`type`=1 order by r.`record_time` desc LIMIT 1";
+	    //oracle
+		String sql ="select * from (select r.* from lcj_prize_result r, lcj_prize_info i where r.prize_id = i.id and i.type = 1 order by r.record_time desc) where rownum = 1";
 		PrizeResultEntity prizeResultEntity = null;
 		try {
 			Query query = em.createNativeQuery(sql, PrizeResultEntity.class);
