@@ -55,11 +55,8 @@ public class EmpEntity implements Serializable {
 	@Column(name = "division")
 	private String division;// 隶属赛区
 
-	@Column(name = "departmentCode", insertable = false, updatable = false)
-	private String departmentCode;
-
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "departmentCode", referencedColumnName = "code")
+	@JoinColumn(name = "department_code", referencedColumnName = "code")
 	private DepartmentEntity departmentEntity;
 
 	public String getEmpId() {
@@ -140,14 +137,6 @@ public class EmpEntity implements Serializable {
 
 	public void setDivision(String division) {
 		this.division = division;
-	}
-
-	public String getDepartmentCode() {
-		return departmentCode;
-	}
-
-	public void setDepartmentCode(String departmentCode) {
-		this.departmentCode = departmentCode;
 	}
 
 	public DepartmentEntity getDepartmentEntity() {
