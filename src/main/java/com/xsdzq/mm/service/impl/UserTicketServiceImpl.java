@@ -97,8 +97,8 @@ public class UserTicketServiceImpl implements UserTicketService {
 	@Transactional
 	public void userVoteEmp(UserEntity userEntity, String empId, int number) {
 		// TODO Auto-generated method stub
-		int empInt = Integer.parseInt(empId);
-		EmpEntity empEntity = empRepository.findByEmpId(empInt);
+		//int empInt = Integer.parseInt(empId);
+		EmpEntity empEntity = empRepository.findByEmpId(empId);
 		if (empEntity == null) {
 			throw new RuntimeException("员工不存在");
 		}

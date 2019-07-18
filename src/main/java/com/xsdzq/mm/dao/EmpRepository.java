@@ -8,7 +8,7 @@ import com.xsdzq.mm.entity.EmpEntity;
 
 public interface EmpRepository extends JpaRepository<EmpEntity, Long> {
 
-	EmpEntity findByEmpId(Integer empId);
+	EmpEntity findByEmpId(String empId);
 
 	List<EmpEntity> findByEmpNameLike(String name);
 

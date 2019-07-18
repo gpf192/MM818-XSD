@@ -29,7 +29,7 @@ public class EmpEntity implements Serializable {
 	private long id;
 
 	@Column(name = "emp_id", unique = true, nullable = false)
-	private int empId;
+	private String empId;
 
 	@Column(name = "emp_name")
 	private String empName;// 人员姓名
@@ -62,11 +62,11 @@ public class EmpEntity implements Serializable {
 	@JoinColumn(name = "departmentCode", referencedColumnName = "code")
 	private DepartmentEntity departmentEntity;
 
-	public int getEmpId() {
+	public String getEmpId() {
 		return empId;
 	}
 
-	public void setEmpId(int empId) {
+	public void setEmpId(String empId) {
 		this.empId = empId;
 	}
 
