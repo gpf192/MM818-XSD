@@ -11,6 +11,6 @@ public interface UserTicketRecordRepository extends JpaRepository<UserTicketReco
 
 	List<UserTicketRecordEntity> findByUserEntityAndDateFlag(UserEntity userEntity, String dateFlag);
 
-	List<UserTicketRecordEntity> findByUserEntity(UserEntity userEntity);
+	List<UserTicketRecordEntity> findByUserEntityOrderByGainTimeDesc(UserEntity userEntity);
 
 }

@@ -23,7 +23,7 @@ public class UserTicketTotalViewEntity implements Serializable {
 	private Integer total;
 
 	@Column(name = "client_id")
-	private Integer client_id;
+	private Integer clientId;
 
 	public Integer getTotal() {
 		return total;
@@ -33,17 +33,18 @@ public class UserTicketTotalViewEntity implements Serializable {
 		this.total = total;
 	}
 
-	public Integer getClient_id() {
-		return client_id;
+	
+	public Integer getClientId() {
+		return clientId;
 	}
 
-	public void setClient_id(Integer client_id) {
-		this.client_id = client_id;
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
 	}
 
 	@Override
 	public String toString() {
-		return "UserTicketTotalViewEntity [total=" + total + ", client_id=" + client_id + "]";
+		return "UserTicketTotalViewEntity [total=" + total + ", client_id=" + clientId + "]";
 	}
 
 }
