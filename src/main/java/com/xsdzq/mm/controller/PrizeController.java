@@ -19,6 +19,7 @@ import com.xsdzq.mm.model.Number;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.util.GsonUtil;
+import com.xsdzq.mm.util.PrizeUtil;
 
 @RestController
 @RequestMapping("/prize")
@@ -39,7 +40,8 @@ public class PrizeController {
 
 	@GetMapping(value = "/latest", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getLatestPrize() {
-		PrizeResultEntity prizeResultEntity = prizeService.getLatestPrize();
+		PrizeResultEntity prizeResultEntity = PrizeUtil.getInstance()
+				.getSecretPrizeResultEntity(prizeService.getLatestPrize());
 		return GsonUtil.buildMap(0, "ok", prizeResultEntity);
 	}
 
