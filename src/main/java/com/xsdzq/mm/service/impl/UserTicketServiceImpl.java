@@ -57,7 +57,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 	@Override
 	public List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity) {
 		// TODO Auto-generated method stub
-		return userTicketRecordRepository.findByUserEntity(userEntity);
+		return userTicketRecordRepository.findByUserEntityOrderByGainTimeDesc(userEntity);
 	}
 
 	// 提供统一的UserTicketEntity，没有的话会新增，不会得到空值
@@ -112,7 +112,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 		userVoteEmpResultEntity.setEmpEntity(empEntity);
 		userVoteEmpResultEntity.setNumber(number);
 		userVoteEmpResultEntity.setRecordTime(new Date());
-		userVoteEmpResultEntity.setType(TicketUtil.USERVOTEEMPRESULTVOTE);
+		userVoteEmpResultEntity.setType(TicketUtil.USERVOTE);
 		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
 
 	}
