@@ -21,6 +21,7 @@ import com.xsdzq.mm.model.VoteModel;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.GsonUtil;
+import com.xsdzq.mm.util.PrizeUtil;
 
 @RestController
 @RequestMapping("/ticket")
@@ -74,6 +75,9 @@ public class TicketController {
 	@GetMapping(value = "/userSort", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getUserTicketSort(@RequestParam int pageNumber, @RequestParam int pageSize) {
 		List<UserTicketTotalViewEntity> list = userTicketService.getUserTicketSort(pageNumber, pageSize);
+		for (UserTicketTotalViewEntity entity : list) {
+			entity.setClientId(PrizeUtil.getInstance().getSecretString(entity.getClientId()));
+		}
 		return GsonUtil.buildMap(0, "ok", list);
 	}
 
