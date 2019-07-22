@@ -3,6 +3,7 @@ package com.xsdzq.mm.model;
 public class User {
 
 	private String clientId;
+	private String clientName;
 	private String fundAccount;
 	private String accessToken;
 	private String mobile;
@@ -15,16 +16,25 @@ public class User {
 
 	}
 
-	public User(String clientId, String fundAccount, String accessToken, String mobile, String appVersion,
-			String lastOpIP, String lastLoginTime) {
+	public User(String clientId, String clientName, String fundAccount, String accessToken, String mobile,
+			String appVersion, String lastOpIP, String lastLoginTime) {
 		super();
 		this.clientId = clientId;
+		this.clientName = clientName;
 		this.fundAccount = fundAccount;
 		this.accessToken = accessToken;
 		this.mobile = mobile;
 		this.appVersion = appVersion;
 		this.lastOpIP = lastOpIP;
 		this.lastLoginTime = lastLoginTime;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	public String getClientId() {
@@ -85,11 +95,9 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [clientId=" + clientId + ", fundAccount=" + fundAccount + ", accessToken=" + accessToken
-				+ ", mobile=" + mobile + ", appVersion=" + appVersion + ", lastOpIP=" + lastOpIP + ", lastLoginTime="
-				+ lastLoginTime + "]";
+		return "User [clientId=" + clientId + ", clientName=" + clientName + ", fundAccount=" + fundAccount
+				+ ", accessToken=" + accessToken + ", mobile=" + mobile + ", appVersion=" + appVersion + ", lastOpIP="
+				+ lastOpIP + ", lastLoginTime=" + lastLoginTime + "]";
 	}
-	
-	
 
 }
