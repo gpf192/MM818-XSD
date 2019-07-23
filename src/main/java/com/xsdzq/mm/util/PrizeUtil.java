@@ -59,6 +59,12 @@ public class PrizeUtil {
 		return null;
 	}
 
+	public int getRandomTicket() {
+		int numberArray[] = { 100, 200, 300, 500 };
+		int random = r.nextInt(5);
+		return numberArray[random - 1];
+	}
+
 	public PrizeResultEntity getSecretPrizeResultEntity(PrizeResultEntity prizeResultEntity) {
 		UserEntity userEntity = prizeResultEntity.getUserEntity();
 		userEntity.setClientId(getSecretString(userEntity.getClientId()));
@@ -69,7 +75,7 @@ public class PrizeUtil {
 
 	public String getSecretString(String no) {
 		if (no.length() > 6) {
-			return getStarString(no, 3, 6);
+			return getStarString(no, 2, 6);
 		}
 		return no;
 	}
