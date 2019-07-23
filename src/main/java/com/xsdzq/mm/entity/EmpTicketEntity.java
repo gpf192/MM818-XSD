@@ -24,7 +24,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "lcj_emp_number")
 @EntityListeners(AuditingEntityListener.class)
 public class EmpTicketEntity implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "emp_ticket_sequence")
@@ -48,6 +48,17 @@ public class EmpTicketEntity implements Serializable {
 	@Column(name = "modifytime", nullable = true)
 	@LastModifiedDate
 	private Date modifytime;
+
+	@Column(name = "weight", columnDefinition = "int default 0")
+	private int weight = 0;// 设置信息权重，初始为0
+
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
 
 	public long getId() {
 		return id;

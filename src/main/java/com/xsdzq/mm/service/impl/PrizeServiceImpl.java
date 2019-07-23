@@ -77,6 +77,20 @@ public class PrizeServiceImpl implements PrizeService {
 		// return prizeResultEntity.getPrizeEntity();
 		return prizeResultEntity;
 	}
+	
+	@Override
+	public int getShareEveryDayNumber(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		String nowString = DateUtil.getStandardDate(new Date());
+		List<PrizeRecordEntity> list = prizeRecordRepository.getListByUserAndFlag(userEntity, nowString);
+		int total = 0;
+		for (PrizeRecordEntity prizeRecordEntity : list) {
+			if (PrizeUtil.PRIZE_SHARE_TYPE.endsWith(prizeRecordEntity.getReason())) {
+				total += 1;
+			}
+		}
+		return total;
+	}
 
 	@Override
 	@Transactional
@@ -90,17 +104,29 @@ public class PrizeServiceImpl implements PrizeService {
 			prizeResultEntity.setUserEntity(userEntity);
 			prizeResultEntity.setPrizeEntity(prizeEntity);
 			prizeResultEntity.setRecordTime(new Date());
-			// 1.添加减少记录
+			// 1.处理额外投票券
+			addTicketNumber(userEntity, prizeEntity);
+			// 2.添加减少记录
 			addReduceRecordPrize(userEntity);
-			// 2.增加中奖人数
+			// 3.增加中奖人数
 			prizeRepository.addPrizeWinningNumber(prizeEntity);
-			// 3.用户抽奖次数减少
+			// 4.用户抽奖次数减少
 			prizeNumberRepository.reduceNumber(userEntity);
-			// 4.保存用户抽奖结果
+			// 5.保存用户抽奖结果
 			prizeResultRepository.save(prizeResultEntity);
 			return prizeEntity;
 		} else {
 			return null;
+		}
+	}
+
+	private void addTicketNumber(UserEntity userEntity, PrizeEntity prizeEntity) {
+		if (prizeEntity.getImage().equals("award6")) {
+			// 额外投票券
+			PrizeUtil prizeUtil = PrizeUtil.getInstance();
+			int ticketNumber = prizeUtil.getRandomTicket();
+			System.out.println("ticketNumber: " + ticketNumber);
+			userTicketService.addUserTicketNumber(userEntity, ticketNumber, TicketUtil.PRIZENTICKET);
 		}
 	}
 

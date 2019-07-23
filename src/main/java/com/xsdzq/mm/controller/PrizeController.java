@@ -78,6 +78,17 @@ public class PrizeController {
 		}
 	}
 
+	@GetMapping(value = "/shareNumber", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> getShareEveryDayNumber(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		int shareNumber = prizeService.getShareEveryDayNumber(userEntity);
+		Number mNumber = new Number();
+		mNumber.setNumber(shareNumber);
+		return GsonUtil.buildMap(0, "ok", mNumber);
+
+	}
+
 	@GetMapping(value = "/prizes", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getOwnPrizes(@RequestHeader("Authorization") String token) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
