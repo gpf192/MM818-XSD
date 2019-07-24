@@ -11,6 +11,8 @@ public interface UserTicketService {
 
 	int getUserTicket(UserEntity userEntity);
 
+	int countVoteNumber();
+
 	List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity);
 
 	void userVoteEmp(UserEntity userEntity, String empId, int number);

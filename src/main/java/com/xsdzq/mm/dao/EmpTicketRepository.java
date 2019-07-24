@@ -10,6 +10,8 @@ import com.xsdzq.mm.entity.EmpEntity;
 import com.xsdzq.mm.entity.EmpTicketEntity;
 
 public interface EmpTicketRepository extends JpaRepository<EmpTicketEntity, Long>, EmpTicketWrapper {
+	
+	long countByEmpEntityDivision(String division);
 
 	EmpTicketEntity findByEmpEntity(EmpEntity empEntity);
 

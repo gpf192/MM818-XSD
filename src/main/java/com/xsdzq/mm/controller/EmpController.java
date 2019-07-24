@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xsdzq.mm.entity.EmpTicketEntity;
+import com.xsdzq.mm.model.Pagination;
 import com.xsdzq.mm.service.EmpService;
 import com.xsdzq.mm.service.EmpTicketService;
 import com.xsdzq.mm.service.TokenService;
@@ -36,8 +37,11 @@ public class EmpController {
 			@RequestParam String divison) {
 
 		List<EmpTicketEntity> empTicketList = empTicketService.getEmpTicketEntities(pageNumber, pageSize, divison);
+		Pagination pagination = new Pagination(pageNumber, pageSize);
+		int total = empTicketService.countEmpNumberByDivison(divison);
+		pagination.setTotalItems(total);
 
-		return GsonUtil.buildMap(0, "ok", empTicketList);
+		return GsonUtil.buildMap(0, "ok", empTicketList, pagination);
 	}
 
 	@GetMapping(value = "/query", produces = "application/json; charset=utf-8")
