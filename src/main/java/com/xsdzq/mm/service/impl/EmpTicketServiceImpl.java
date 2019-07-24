@@ -28,10 +28,21 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 	EmpTicketRecordRepository empTicketRecordRepository;
 
 	@Override
+	public int countEmpNumber() {
+		// TODO Auto-generated method stub
+		return (int) empTicketRepository.count();
+	}
+
+	@Override
+	public int countEmpNumberByDivison(String division) {
+		// TODO Auto-generated method stub
+		return (int)empTicketRepository.countByEmpEntityDivision(division);
+	}
+
+	@Override
 	public List<EmpTicketEntity> getEmpTicketEntities(int pageNumber, int pageSize, String divison) {
 		// TODO Auto-generated method stub
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-		System.out.println("------------" + divison);
 		Page<EmpTicketEntity> empTIcketPage = empTicketRepository.findByEmpEntityDivisionOrderByNumberDesc(divison,
 				pageRequest);
 		List<EmpTicketEntity> empTicketList = empTIcketPage.getContent();

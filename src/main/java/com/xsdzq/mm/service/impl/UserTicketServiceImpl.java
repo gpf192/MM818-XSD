@@ -53,7 +53,13 @@ public class UserTicketServiceImpl implements UserTicketService {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		return userTicketEntity.getNumber();
 	}
-	
+
+	@Override
+	public int countVoteNumber() {
+		// TODO Auto-generated method stub
+		return (int) userTicketTotalViewRepository.count();
+	}
+
 	@Override
 	public List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity) {
 		// TODO Auto-generated method stub
@@ -97,7 +103,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 	@Transactional
 	public void userVoteEmp(UserEntity userEntity, String empId, int number) {
 		// TODO Auto-generated method stub
-		//int empInt = Integer.parseInt(empId);
+		// int empInt = Integer.parseInt(empId);
 		EmpEntity empEntity = empRepository.findByEmpId(empId);
 		if (empEntity == null) {
 			throw new RuntimeException("员工不存在");

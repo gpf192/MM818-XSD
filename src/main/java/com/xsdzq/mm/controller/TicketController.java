@@ -17,6 +17,7 @@ import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.entity.UserTicketTotalViewEntity;
 import com.xsdzq.mm.model.Number;
+import com.xsdzq.mm.model.Pagination;
 import com.xsdzq.mm.model.VoteModel;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserTicketService;
@@ -78,7 +79,11 @@ public class TicketController {
 		for (UserTicketTotalViewEntity entity : list) {
 			entity.setClientId(PrizeUtil.getInstance().getSecretString(entity.getClientId()));
 		}
-		return GsonUtil.buildMap(0, "ok", list);
+
+		Pagination pagination = new Pagination(pageNumber, pageSize);
+		int total = userTicketService.countVoteNumber();
+		pagination.setTotalItems(total);
+		return GsonUtil.buildMap(0, "ok", list, pagination);
 	}
 
 }

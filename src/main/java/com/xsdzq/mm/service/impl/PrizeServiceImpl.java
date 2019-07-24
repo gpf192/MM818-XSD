@@ -77,7 +77,7 @@ public class PrizeServiceImpl implements PrizeService {
 		// return prizeResultEntity.getPrizeEntity();
 		return prizeResultEntity;
 	}
-	
+
 	@Override
 	public int getShareEveryDayNumber(UserEntity userEntity) {
 		// TODO Auto-generated method stub
@@ -133,7 +133,7 @@ public class PrizeServiceImpl implements PrizeService {
 	@Override
 	public List<PrizeEntity> getMyPrizeEntities(UserEntity userEntity) {
 		// TODO Auto-generated method stub
-		List<PrizeResultEntity> list = prizeResultRepository.findByUserEntity(userEntity);
+		List<PrizeResultEntity> list = prizeResultRepository.findByUserEntityOrderByRecordTimeDesc(userEntity);
 		List<PrizeEntity> prizeEntities = new ArrayList<PrizeEntity>();
 		for (PrizeResultEntity prizeResultEntity : list) {
 			PrizeEntity prizeEntity = prizeResultEntity.getPrizeEntity();
