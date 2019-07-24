@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "lcj_employee_info")
+@Table(name = "lcj_product_sell_view")
 @EntityListeners(AuditingEntityListener.class)
 public class ProductSellViewEntity implements Serializable {
 	// 客户号
@@ -40,6 +40,62 @@ public class ProductSellViewEntity implements Serializable {
 		return "ProductSellViewEntity [clientId=" + clientId + ", clientName=" + clientName + ", productCode="
 				+ productCode + ", productName=" + productName + ", financeAccount=" + financeAccount + ", dealTime="
 				+ dealTime + ", dealAmount=" + dealAmount + "]";
+	}
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getFinanceAccount() {
+		return financeAccount;
+	}
+
+	public void setFinanceAccount(String financeAccount) {
+		this.financeAccount = financeAccount;
+	}
+
+	public String getDealTime() {
+		return dealTime;
+	}
+
+	public void setDealTime(String dealTime) {
+		this.dealTime = dealTime;
+	}
+
+	public String getDealAmount() {
+		return dealAmount;
+	}
+
+	public void setDealAmount(String dealAmount) {
+		this.dealAmount = dealAmount;
 	}
 	
 }

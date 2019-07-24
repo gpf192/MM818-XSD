@@ -10,8 +10,11 @@ import org.springframework.stereotype.Component;
 
 import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.ProductSellViewEntity;
+import com.xsdzq.mm.entity.UserEmpRelationEntity;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.ProductSellViewService;
+import com.xsdzq.mm.service.UserEmpRelationService;
+import com.xsdzq.mm.service.UserService;
 
 
 @Component
@@ -24,6 +27,14 @@ public class ScheduledService {
 	@Autowired
 	@Qualifier("productSellViewServiceImpl")
 	ProductSellViewService productSellViewService;
+	
+	@Autowired
+	@Qualifier("userEmpRelationServiceImpl")
+	UserEmpRelationService userEmpRelationService;
+	
+	@Autowired
+	@Qualifier("userServiceImpl")
+	UserService userService;
 	//定时扫描交易任务
     @Scheduled(cron = "0/5 * * * * *")
     public void scheduled(){
@@ -35,6 +46,26 @@ public class ScheduledService {
     	if(productSellViewList != null) {
         	for(ProductSellViewEntity p:productSellViewList) {
         	//	System.out.println("奖品：----------------------"+p.getName());
+        		String clientId = p.getClientId();
+        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
+        		String empId = "0";
+        		if(ue != null) {
+        			String brokerId = ue.getBrokerId();
+        			String touguId = ue.getTouguId();
+        			if(brokerId != null && touguId != null ) {
+        				empId = brokerId;
+        			}else if(brokerId != null && touguId == null) {
+        				empId = brokerId;
+        			}else if(brokerId == null && touguId != null) {
+        				empId = touguId;
+        			}
+        		}
+        		//判断是否有经纪人
+        		if(!"0".equals(empId)) {
+        			//判断用户记录表是否存在clientid，
+        		}else {
+        			
+        		}
         	}
     	}
 
