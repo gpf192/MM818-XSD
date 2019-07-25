@@ -131,17 +131,17 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	@Override
-	public List<PrizeEntity> getMyPrizeEntities(UserEntity userEntity) {
+	public List<PrizeResultEntity> getMyPrizeEntities(UserEntity userEntity) {
 		// TODO Auto-generated method stub
 		List<PrizeResultEntity> list = prizeResultRepository.findByUserEntityOrderByRecordTimeDesc(userEntity);
-		List<PrizeEntity> prizeEntities = new ArrayList<PrizeEntity>();
+		List<PrizeResultEntity> myRealPrizeResultEntity = new ArrayList<PrizeResultEntity>();
 		for (PrizeResultEntity prizeResultEntity : list) {
 			PrizeEntity prizeEntity = prizeResultEntity.getPrizeEntity();
 			if (prizeEntity.isType()) {
-				prizeEntities.add(prizeEntity);
+				myRealPrizeResultEntity.add(prizeResultEntity);
 			}
 		}
-		return prizeEntities;
+		return myRealPrizeResultEntity;
 	}
 
 	public PrizeEntity getRandomPrize() {
