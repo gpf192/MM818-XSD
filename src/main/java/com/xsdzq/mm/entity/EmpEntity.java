@@ -58,6 +58,18 @@ public class EmpEntity implements Serializable {
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "department_code", referencedColumnName = "code")
 	private DepartmentEntity departmentEntity;
+	
+	@Column(name = "enable", columnDefinition = "int default 1") // 中奖人数
+	private int enable = 1;//默认账户开启，1-开启   2-关闭
+	
+
+	public int getEnable() {
+		return enable;
+	}
+
+	public void setEnable(int enable) {
+		this.enable = enable;
+	}
 
 	public String getEmpId() {
 		return empId;

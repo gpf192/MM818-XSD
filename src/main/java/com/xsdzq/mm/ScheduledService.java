@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.ProductSellViewEntity;
 import com.xsdzq.mm.entity.UserEmpRelationEntity;
+import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.ProductSellViewService;
 import com.xsdzq.mm.service.UserEmpRelationService;
@@ -64,6 +65,10 @@ public class ScheduledService {
         		//判断是否有经纪人
         		if(!"0".equals(empId)) {
         			//有经纪人  判断用户记录表是否存在clientid，
+        			UserEntity user = userService.getUserByClientId(clientId);
+        			if(user == null) {
+        				
+        			}
         			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 
         			//如果存在  插入用户得票记录表-增票 -自动减票 
         		}else {
