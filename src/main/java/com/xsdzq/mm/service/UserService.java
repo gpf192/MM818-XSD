@@ -17,6 +17,9 @@ public interface UserService {
 	User getUserById(String id);
 
 	User findByClientId(String clientId);
+	//
+	void addTicketByJobWithEmpId(String clientId, String clientName, String empId, int num);
+	void addTicketByJob(String clientId, String clientName, int num);
 	
-
+	void addTicketByJobForReduceEmp(String clientId, String empId, int num, String reason);
 }

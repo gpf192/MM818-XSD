@@ -9,5 +9,5 @@ import com.xsdzq.mm.entity.ProductEntity;
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
 	Page<ProductEntity> findBy(Pageable pageable);
-
+	ProductEntity findByCode(String code);
 }

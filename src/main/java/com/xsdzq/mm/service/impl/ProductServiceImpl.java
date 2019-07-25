@@ -34,4 +34,10 @@ public class ProductServiceImpl implements ProductService {
 		return productPage.getContent();
 	}
 
+	@Override
+	public ProductEntity getProductByCode(String code) {
+		// TODO Auto-generated method stub
+		return productRepository.findByCode(code);
+	}
+
 }

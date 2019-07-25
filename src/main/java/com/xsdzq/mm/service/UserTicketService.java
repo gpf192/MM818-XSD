@@ -23,4 +23,14 @@ public interface UserTicketService {
 
 	List<UserTicketTotalViewEntity> getUserTicketSort(int pageNumber, int pageSize);
 
+	//job
+
+	void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason);
+
+	void reduceUserTickeNumberByJob(UserEntity userEntity, int number, String reason);
+	void userVoteEmpByJob(UserEntity userEntity, String empId, int number, String reason);
+	
+	 List<UserTicketRecordEntity>  getByVotesSourceAndDateFlag(String votesSource, String dateFlag);
+	 
+	 void userVoteEmpByJobForReduceEmp(UserEntity userEntity, String empId, int number, String reason);
 }

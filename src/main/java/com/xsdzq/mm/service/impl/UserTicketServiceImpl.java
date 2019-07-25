@@ -1,5 +1,6 @@
 package com.xsdzq.mm.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -92,6 +93,27 @@ public class UserTicketServiceImpl implements UserTicketService {
 		userTicketRepository.reduce(userTicketEntity, number);
 		addUserTicketRecord(userEntity, false, number, reason);
 	}
+	
+	// JOB 增加用户票数，同时添加记录
+	@Override
+	@Transactional
+	public void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason) {
+		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
+		userTicketRepository.add(userTicketEntity, number);
+		addUserTicketRecordByJob(userEntity, true, number, reason);
+		
+	}
+
+	// JOB 减少用户票数，同时添加记录
+	@Override
+	@Transactional
+	public void reduceUserTickeNumberByJob(UserEntity userEntity, int number, String reason) {
+		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
+		userTicketRepository.reduce(userTicketEntity, number);
+		addUserTicketRecordByJob(userEntity, false, number, reason);
+	}
+
+	
 
 	@Override
 	@Transactional
@@ -116,6 +138,73 @@ public class UserTicketServiceImpl implements UserTicketService {
 		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
 
 	}
+	//JOB
+	//登录\分享\抽奖 用户定时任务  不再重复添加用户得票记录 前端已经添加
+	@Override
+	@Transactional
+	public void userVoteEmpByJobForReduceEmp(UserEntity userEntity, String empId, int number, String reason) {
+		// TODO Auto-generated method stub
+		//int empInt = Integer.parseInt(empId);
+		EmpEntity empEntity = empRepository.findByEmpId(empId);
+		if (empEntity == null) {
+			throw new RuntimeException("员工不存在");
+		}
+		// 用户减操作
+		//得票时间标志是前一天  dataflag
+		reduceUserTickeNumberByJob(userEntity, number, reason);
+		// 员工加操作
+		empTicketService.addEmpTicketNumberByJOB(empEntity, number, reason);
+		// 写入结果记录
+		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
+		userVoteEmpResultEntity.setUserEntity(userEntity);
+		userVoteEmpResultEntity.setEmpEntity(empEntity);
+		userVoteEmpResultEntity.setNumber(number);
+		userVoteEmpResultEntity.setRecordTime(new Date());
+		userVoteEmpResultEntity.setType(reason);
+		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
+
+	}
+	
+	
+	//购买产品用户投票
+	@Override
+	@Transactional
+	public void userVoteEmpByJob(UserEntity userEntity, String empId, int number, String reason) {
+		// TODO Auto-generated method stub
+		//int empInt = Integer.parseInt(empId);
+		EmpEntity empEntity = empRepository.findByEmpId(empId);
+		if (empEntity == null) {
+			throw new RuntimeException("员工不存在");
+		}
+		// 用户减操作
+		//得票时间标志是前一天  dataflag
+		reduceUserTickeNumberByJob(userEntity, number, reason);
+		// 员工加操作
+		empTicketService.addEmpTicketNumberByJOB(empEntity, number, reason);
+		// 写入结果记录
+		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
+		userVoteEmpResultEntity.setUserEntity(userEntity);
+		userVoteEmpResultEntity.setEmpEntity(empEntity);
+		userVoteEmpResultEntity.setNumber(number);
+		userVoteEmpResultEntity.setRecordTime(new Date());
+		userVoteEmpResultEntity.setType(reason);
+		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
+
+	}
+	
+	//定时任务添加票数变化记录
+	public void addUserTicketRecordByJob(UserEntity userEntity, boolean type, int number, String reason) {
+	      
+		String nowString = DateUtil.getPreDay();
+		UserTicketRecordEntity userTicketRecordEntity = new UserTicketRecordEntity();
+		userTicketRecordEntity.setUserEntity(userEntity);
+		userTicketRecordEntity.setType(type);
+		userTicketRecordEntity.setNumber(number);
+		userTicketRecordEntity.setVotesSource(reason);
+		userTicketRecordEntity.setDateFlag(nowString);
+		userTicketRecordEntity.setGainTime(new Date());
+		userTicketRecordRepository.save(userTicketRecordEntity);
+	}
 
 	// 添加用户票数变化的记录
 	public void addUserTicketRecord(UserEntity userEntity, boolean type, int number, String reason) {
@@ -139,4 +228,9 @@ public class UserTicketServiceImpl implements UserTicketService {
 		return userTicketList;
 	}
 
+	//JOB
+	@Override
+	public List<UserTicketRecordEntity>  getByVotesSourceAndDateFlag(String votesSource, String dateFlag){
+		return userTicketRecordRepository.findByVotesSourceAndDateFlag(votesSource, dateFlag);
+	}
 }

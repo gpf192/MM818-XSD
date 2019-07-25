@@ -14,5 +14,6 @@ public interface EmpTicketService {
 	void addEmpTicketNumber(EmpEntity empEntity, int number, String reason);
 
 	void reduceEmpTickeNumber(EmpEntity empEntity, int number, String reason);
+	public void addEmpTicketNumberByJOB(EmpEntity empEntity, int number, String reason);
 
 }

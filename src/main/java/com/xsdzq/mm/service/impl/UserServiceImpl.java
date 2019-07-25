@@ -172,5 +172,66 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 	}
+	//JOB
+	@Override
+	@Transactional
+	public void addTicketByJobWithEmpId(String clientId, String clientName, String empId, int num) {
+		// TODO Auto-generated method stub
+		//判断用户是否存在
+		UserEntity user = userRepository.findByClientId(clientId);
+		if (user == null) {
+			UserEntity newUser = new UserEntity();
+			newUser.setClientId(clientId);
+			newUser.setClientName(clientName);
+			//添加新用户
+			userRepository.save(newUser);
+			//添加用户票数表  先查存在不 若不存在则新建
+			userTicketService.getUserTicketEntity(newUser);
+			//插入用户得票记录表,同时用户票数表增加票
+			userTicketService.addUserTicketNumberByJob(newUser, num, "3");
+			//插入用户投票员工表,同时用户减票,员工增票
+			userTicketService.userVoteEmpByJob(newUser, empId, num, "3");
+			
+		}else {
+			//插入用户得票记录表
+			userTicketService.addUserTicketNumberByJob(user, num, "3");
+			//插入用户投票员工表,同时用户减票,员工增票
+			userTicketService.userVoteEmpByJob(user, empId, num, "3");
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void addTicketByJob(String clientId, String clientName, int num) {
+		// TODO Auto-generated method stub
+		//判断用户是否存在
+		UserEntity user = userRepository.findByClientId(clientId);
+		if (user == null) {
+			UserEntity newUser = new UserEntity();
+			newUser.setClientId(clientId);
+			newUser.setClientName(clientName);
+			//添加新用户
+			userRepository.save(newUser);
+			//添加用户票数表  先查存在不 若不存在则新建
+			userTicketService.getUserTicketEntity(newUser);
+			//插入用户得票记录表 同时用户票数表增加票
+			userTicketService.addUserTicketNumberByJob(newUser, num, "3");
+					
+		}else {
+			//插入用户得票记录表
+			userTicketService.addUserTicketNumberByJob(user, num, "3");
+			
+		}
+	}
 
+	@Override
+	public void addTicketByJobForReduceEmp(String clientId, String empId, int num, String reason) {
+		// TODO Auto-generated method stub
+		UserEntity user = userRepository.findByClientId(clientId);
+		//添加用户票数表  先查存在不 若不存在则新建
+		userTicketService.getUserTicketEntity(user);
+		//前端登录 用户记录表已经插入得票数据 这里不需要重复插入
+		//插入用户投票员工表,同时用户减票,员工加票
+		userTicketService.userVoteEmpByJob(user, empId, num, reason);
+	}
 }
