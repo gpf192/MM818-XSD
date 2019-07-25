@@ -75,7 +75,7 @@ public class PrizeUtil {
 
 	public String getSecretString(String no) {
 		if (no.length() > 6) {
-			return getStarString(no, 2, 6);
+			return getStarString(no, 1, 5);
 		}
 		return no;
 	}

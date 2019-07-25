@@ -92,8 +92,8 @@ public class PrizeController {
 	@GetMapping(value = "/prizes", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getOwnPrizes(@RequestHeader("Authorization") String token) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
-		List<PrizeEntity> prizeEntities = prizeService.getMyPrizeEntities(userEntity);
-		return GsonUtil.buildMap(0, "ok", prizeEntities);
+		List<PrizeResultEntity> myRealPrizeResultEntity = prizeService.getMyPrizeEntities(userEntity);
+		return GsonUtil.buildMap(0, "ok", myRealPrizeResultEntity);
 	}
 
 }

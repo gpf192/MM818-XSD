@@ -15,7 +15,7 @@ public interface PrizeService {
 
 	PrizeEntity getMyPrize(UserEntity userEntity);
 
-	List<PrizeEntity> getMyPrizeEntities(UserEntity userEntity);
+	List<PrizeResultEntity> getMyPrizeEntities(UserEntity userEntity);
 
 	PrizeNumberEntity getPrizeNumberEntity(UserEntity userEntity);
 
