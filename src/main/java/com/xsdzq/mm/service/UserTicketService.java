@@ -13,7 +13,9 @@ public interface UserTicketService {
 
 	int countVoteNumber();
 
-	List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity);
+	int countUserVoteNumber(UserEntity userEntity);
+
+	List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize);
 
 	void userVoteEmp(UserEntity userEntity, String empId, int number);
 

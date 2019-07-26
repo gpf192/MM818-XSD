@@ -138,6 +138,8 @@ public class PrizeServiceImpl implements PrizeService {
 		for (PrizeResultEntity prizeResultEntity : list) {
 			PrizeEntity prizeEntity = prizeResultEntity.getPrizeEntity();
 			if (prizeEntity.isType()) {
+				//System.out.println(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()).toString());
+				//prizeResultEntity.setRecordTime(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()));
 				myRealPrizeResultEntity.add(prizeResultEntity);
 			}
 		}
