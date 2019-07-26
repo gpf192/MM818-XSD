@@ -59,10 +59,12 @@ public class PrizeUtil {
 		return null;
 	}
 
+	// [0,n)
 	public int getRandomTicket() {
 		int numberArray[] = { 100, 200, 300, 500 };
-		int random = r.nextInt(5);
-		return numberArray[random - 1];
+		int random = r.nextInt(4);
+		System.out.println("random: " + random);
+		return numberArray[random];
 	}
 
 	public PrizeResultEntity getSecretPrizeResultEntity(PrizeResultEntity prizeResultEntity) {

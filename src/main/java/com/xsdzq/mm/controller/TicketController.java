@@ -46,10 +46,14 @@ public class TicketController {
 
 	@GetMapping(value = "/userRecord", produces = "application/json; charset=utf-8")
 	@UserLoginToken
-	public Map<String, Object> getUserRecord(@RequestHeader("Authorization") String token) {
+	public Map<String, Object> getUserRecord(@RequestHeader("Authorization") String token, @RequestParam int pageNumber,
+			@RequestParam int pageSize) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
-		List<UserTicketRecordEntity> list = userTicketService.getUserRecord(userEntity);
-		return GsonUtil.buildMap(0, "ok", list);
+		List<UserTicketRecordEntity> list = userTicketService.getUserRecord(userEntity, pageNumber, pageSize);
+		Pagination pagination = new Pagination(pageNumber, pageSize);
+		int total = userTicketService.countUserVoteNumber(userEntity);
+		pagination.setTotalItems(total);
+		return GsonUtil.buildMap(0, "ok", list,pagination);
 	}
 
 	@PostMapping(value = "/vote", produces = "application/json; charset=utf-8")

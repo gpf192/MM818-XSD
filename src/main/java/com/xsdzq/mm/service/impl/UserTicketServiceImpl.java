@@ -61,9 +61,19 @@ public class UserTicketServiceImpl implements UserTicketService {
 	}
 
 	@Override
-	public List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity) {
+	public int countUserVoteNumber(UserEntity userEntity) {
 		// TODO Auto-generated method stub
-		return userTicketRecordRepository.findByUserEntityOrderByGainTimeDesc(userEntity);
+		return (int) userTicketRecordRepository.countByUserEntity(userEntity);
+	}
+
+	@Override
+	public List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize) {
+		// TODO Auto-generated method stub
+		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+		Page<UserTicketRecordEntity> uPage = userTicketRecordRepository.findByUserEntityOrderByGainTimeDesc(userEntity,
+				pageRequest);
+		List<UserTicketRecordEntity> userTicketRecordEntities = uPage.getContent();
+		return userTicketRecordEntities;
 	}
 
 	// 提供统一的UserTicketEntity，没有的话会新增，不会得到空值
