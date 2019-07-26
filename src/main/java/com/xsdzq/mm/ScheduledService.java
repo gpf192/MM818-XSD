@@ -75,7 +75,22 @@ public class ScheduledService {
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("111111111111111111111111111111111111111111111111");
     	//定时扫描交易任务
-    	//查看用户交易视图crm，循环交易记录
+    	productSellTask();
+    	//定时扫描登录记录
+    	frontTask(100, TicketUtil.ACTIVITYLOGINTICKET);
+    	//定时扫描分享记录
+    	frontTask(100, TicketUtil.ACTIVITYSHARETICKET);
+    	//定时扫描抽奖记录
+    	frontTask(100, TicketUtil.PRIZEGETTICKET);
+    	
+    	//定时扫描用户活动期间签约投顾 自动归票至经纪人
+    	//定式扫描用户活动期间开通基金账户 自动归票至经纪人
+    	
+		}
+    
+		 //定时扫描产品交易方法
+    public void productSellTask() {
+//查看用户交易视图crm，循环交易记录
     	
     	List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTime(20180301);
     	if(productSellViewList != null) {
@@ -120,75 +135,36 @@ public class ScheduledService {
         		}
         	}
     	}
-
-		}
-		 
+    }
     
-//定时扫描用户登录记录 自动归票至经纪人// 用户登录 用户表已经有记录 这里只更新用户票数表-减票   插入用户得票记录表-自动减票
-/* 定时扫描用户登录得票记录 */
-	public void loginTask() {
-		//获得t-1      
-		String nowString = DateUtil.getPreDay();
-		List<UserTicketRecordEntity> loginRecordList = userTicketService.getByVotesSourceAndDateFlag(TicketUtil.ACTIVITYLOGINTICKET, nowString);
-		if(loginRecordList != null) {
-			for(UserTicketRecordEntity r:loginRecordList) {
-				String clientId = r.getUserEntity().getClientId();
-				String empId = getEmpId(clientId);
-				if(!"0".equals(empId)) {
-					//有经纪人
-					userService.addTicketByJobForReduceEmp(clientId,  empId,  100,  TicketUtil.ACTIVITYLOGINTICKET);
+
+  //定时扫描用登录记录  户分享记  抽奖获得额外投票权 自动归票至经纪人
+	    public void frontTask(int ticketNum , String reason) {
+			//获得t-1      
+			String nowString = DateUtil.getPreDay();
+			List<UserTicketRecordEntity> loginRecordList = userTicketService.getByVotesSourceAndDateFlag(reason, nowString);
+			if(loginRecordList != null) {
+				for(UserTicketRecordEntity r:loginRecordList) {
+					String clientId = r.getUserEntity().getClientId();
+					String empId = getEmpId(clientId);
+					if(!"0".equals(empId)) {
+						//有经纪人
+						userService.addTicketByJobForReduceEmp(clientId,  empId,  ticketNum,  reason);
+					}
+					
 				}
-				
 			}
-		}
-	}
+	    }
+
 		
-    	//定时扫描用户分享记录 自动归票至经纪人
-	public void shareTask() {
-		//获得t-1      
-		String nowString = DateUtil.getPreDay();
-		List<UserTicketRecordEntity> loginRecordList = userTicketService.getByVotesSourceAndDateFlag(TicketUtil.ACTIVITYSHARETICKET, nowString);
-		if(loginRecordList != null) {
-			for(UserTicketRecordEntity r:loginRecordList) {
-				String clientId = r.getUserEntity().getClientId();
-				String empId = getEmpId(clientId);
-				if(!"0".equals(empId)) {
-					//有经纪人
-					userService.addTicketByJobForReduceEmp(clientId,  empId,  100,  TicketUtil.ACTIVITYSHARETICKET);
-				}
-				
-			}
-		}
-	}
-    	//定时扫描用户抽奖获得额外投票权 自动归票至经纪人
-	public void prizeTask() {
-		//获得t-1      
-		String nowString = DateUtil.getPreDay();
-		List<UserTicketRecordEntity> loginRecordList = userTicketService.getByVotesSourceAndDateFlag(TicketUtil.PRIZEGETTICKET, nowString);
-		if(loginRecordList != null) {
-			for(UserTicketRecordEntity r:loginRecordList) {
-				String clientId = r.getUserEntity().getClientId();
-				String empId = getEmpId(clientId);
-				if(!"0".equals(empId)) {
-					//有经纪人
-					userService.addTicketByJobForReduceEmp(clientId,  empId,  100,  TicketUtil.PRIZEGETTICKET);
-				}
-				
-			}
-		}
-	}
-    	//定时扫描用户活动期间签约投顾 自动归票至经纪人
-    	//定式扫描用户活动期间开通基金账户 自动归票至经纪人
-		
-		
-    @Scheduled(fixedRate = 5000)
-    public void scheduled1() {
-      //  log.info("=====>>>>>使用fixedRate{}", System.currentTimeMillis());
-    	System.out.println("2222222222222222222222222222222222222222222222222222");
-    }
-    @Scheduled(fixedDelay = 5000)
-    public void scheduled2() {
-     //   log.info("=====>>>>>fixedDelay{}",System.currentTimeMillis());
-    	System.out.println("33333333333333333333333333333333333333333333333333333");
-    }
+	/*
+	 * @Scheduled(fixedRate = 5000) public void scheduled1() { //
+	 * log.info("=====>>>>>使用fixedRate{}", System.currentTimeMillis());
+	 * System.out.println("2222222222222222222222222222222222222222222222222222"); }
+	 * 
+	 * @Scheduled(fixedDelay = 5000) public void scheduled2() { //
+	 * log.info("=====>>>>>fixedDelay{}",System.currentTimeMillis());
+	 * System.out.println("33333333333333333333333333333333333333333333333333333");
+	 * }
+	 */
 }
