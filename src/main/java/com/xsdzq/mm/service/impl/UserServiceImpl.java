@@ -8,12 +8,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xsdzq.mm.dao.OpenAccountRepository;
+import com.xsdzq.mm.dao.ParamRepository;
 import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
+import com.xsdzq.mm.dao.SignInvestViewRepository;
 import com.xsdzq.mm.dao.UserRepository;
 import com.xsdzq.mm.dao.UserTicketRecordRepository;
+import com.xsdzq.mm.entity.OpenAccountEntity;
+import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
+import com.xsdzq.mm.entity.SignInvestViewEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.model.ActivityNumber;
@@ -50,6 +56,15 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserTicketService userTicketService;
+	
+	@Autowired
+	OpenAccountRepository openAccountRepository;
+	
+	@Autowired
+	ParamRepository paramRepository;
+	
+	@Autowired
+	SignInvestViewRepository signInvestViewRepository;
 
 	@Override
 	public User getUserById(Long id) {
@@ -233,5 +248,36 @@ public class UserServiceImpl implements UserService {
 		//前端登录 用户记录表已经插入得票数据 这里不需要重复插入
 		//插入用户投票员工表,同时用户减票,员工加票
 		userTicketService.userVoteEmpByJob(user, empId, num, reason);
+	}
+
+	@Override
+	public List<OpenAccountEntity> findByOpenDate(int preDay) {
+		// TODO Auto-generated method stub
+		return openAccountRepository.findByOpenDate(preDay);
+	}
+
+	@Override
+	public int countByOpenDateLessThanEqualAndOpenDateGreaterThanEqualAndClientId(int endDate, int beginDate,  String clientId) {
+		// TODO Auto-generated method stub
+		return openAccountRepository.countByOpenDateLessThanEqualAndOpenDateGreaterThanEqualAndClientId(endDate, beginDate, clientId);
+	}
+
+	@Override
+	public ParamEntity getValueByCode(String code) {
+		// TODO Auto-generated method stub
+		return paramRepository.getValueByCode(code);
+	}
+
+	@Override
+	public List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientId(String votesSource, String clientId) {
+		// TODO Auto-generated method stub
+		return userTicketRecordRepository.findByVotesSourceAndUserEntity_clientId(votesSource, clientId);
+	}
+
+	@Override
+	public List<SignInvestViewEntity> findByserviceTypeAndStatusAndEffectiveDate(int serviceType, String status,
+			String effectiveDate) {
+		// TODO Auto-generated method stub
+		return signInvestViewRepository.findByserviceTypeAndStatusAndEffectiveDate(serviceType, status, effectiveDate);
 	}
 }

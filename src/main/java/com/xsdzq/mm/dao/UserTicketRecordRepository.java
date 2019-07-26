@@ -15,5 +15,8 @@ public interface UserTicketRecordRepository extends JpaRepository<UserTicketReco
 	
 	//定时任务 查询 登录 分享 抽奖 的用户记录
 	List<UserTicketRecordEntity> findByVotesSourceAndDateFlag(String votesSource, String dateFlag);
+	//查询之前是否的得过票
+	List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientId(String votesSource, String clientId);
+
 
 }
