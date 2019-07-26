@@ -78,9 +78,9 @@ public class ScheduledService {
     	productSellTask();
     	//定时扫描登录记录
     	frontTask(100, TicketUtil.ACTIVITYLOGINTICKET);
-    	//定时扫描分享记录
+    	//定时扫描分享记录  每日上限五次 是否插入记录表五次
     	frontTask(100, TicketUtil.ACTIVITYSHARETICKET);
-    	//定时扫描抽奖记录
+    	//定时扫描抽奖记录  随机获得票数   待定
     	frontTask(100, TicketUtil.PRIZEGETTICKET);
     	
     	//定时扫描用户活动期间签约投顾 自动归票至经纪人
