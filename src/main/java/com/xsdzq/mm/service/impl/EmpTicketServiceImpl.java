@@ -36,15 +36,16 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 	@Override
 	public int countEmpNumberByDivison(String division) {
 		// TODO Auto-generated method stub
-		return (int)empTicketRepository.countByEmpEntityDivision(division);
+		return (int) empTicketRepository.countByEmpEntityDivisionAndEmpEntityEnable(division, 1);
 	}
 
 	@Override
 	public List<EmpTicketEntity> getEmpTicketEntities(int pageNumber, int pageSize, String divison) {
 		// TODO Auto-generated method stub
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-		Page<EmpTicketEntity> empTIcketPage = empTicketRepository.findByEmpEntityDivisionOrderByNumberDesc(divison,
-				pageRequest);
+		Page<EmpTicketEntity> empTIcketPage = empTicketRepository
+				.findByEmpEntityDivisionAndEmpEntityEnableOrderByNumberDesc(divison, 1, pageRequest);
+
 		List<EmpTicketEntity> empTicketList = empTIcketPage.getContent();
 		return empTicketList;
 	}

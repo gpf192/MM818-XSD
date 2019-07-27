@@ -10,6 +10,6 @@ public interface EmpRepository extends JpaRepository<EmpEntity, Long> {
 
 	EmpEntity findByEmpId(String empId);
 
-	List<EmpEntity> findByEmpNameLike(String name);
+	List<EmpEntity> findByEmpNameLikeAndEnable(String name, int enable);
 
 }

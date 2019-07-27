@@ -29,4 +29,11 @@ public class ProductController {
 		return GsonUtil.buildMap(0, "ok", productEntities);
 	}
 
+	@GetMapping(value = "/all", produces = "application/json; charset=utf-8")
+	public Map<String, Object> getAllEmpTicketList() {
+
+		List<ProductEntity> productEntities = productService.getAllProductList();
+		return GsonUtil.buildMap(0, "ok", productEntities);
+	}
+
 }
