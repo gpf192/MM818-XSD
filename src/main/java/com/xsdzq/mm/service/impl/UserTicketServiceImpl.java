@@ -67,6 +67,15 @@ public class UserTicketServiceImpl implements UserTicketService {
 	}
 
 	@Override
+	public UserVoteEmpResultEntity getUserVoteEmpResultEntity(UserEntity userEntity, String gainTime) {
+		// TODO Auto-generated method stub
+		Date recordDate = DateUtil.stringToDateLong(gainTime);
+		UserVoteEmpResultEntity voteEmpResultEntity = userVoteEmpResultRepository
+				.findByUserEntityAndRecordTime(userEntity, recordDate);
+		return voteEmpResultEntity;
+	}
+
+	@Override
 	public List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize) {
 		// TODO Auto-generated method stub
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
@@ -94,19 +103,19 @@ public class UserTicketServiceImpl implements UserTicketService {
 	// 增加用户票数，同时添加记录
 	@Override
 	@Transactional
-	public void addUserTicketNumber(UserEntity userEntity, int number, String reason) {
+	public void addUserTicketNumber(UserEntity userEntity, int number, String reason, Date date) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.add(userTicketEntity, number);
-		addUserTicketRecord(userEntity, true, number, reason);
+		addUserTicketRecord(userEntity, true, number, reason, date);
 	}
 
 	// 减少用户票数，同时添加记录
 	@Override
 	@Transactional
-	public void reduceUserTickeNumber(UserEntity userEntity, int number, String reason) {
+	public void reduceUserTickeNumber(UserEntity userEntity, int number, String reason, Date date) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.reduce(userTicketEntity, number);
-		addUserTicketRecord(userEntity, false, number, reason);
+		addUserTicketRecord(userEntity, false, number, reason, date);
 	}
 
 	@Override
@@ -118,23 +127,25 @@ public class UserTicketServiceImpl implements UserTicketService {
 		if (empEntity == null) {
 			throw new RuntimeException("员工不存在");
 		}
+		// 保持投票的时间一致性，作为一系列的唯一订单号 1.用户操作的时间，2.员工增加的时间，3.写入结果的时间
+		Date nowDate = DateUtil.getNowDate();
 		// 用户减操作
-		reduceUserTickeNumber(userEntity, number, TicketUtil.USERVOTE);
+		reduceUserTickeNumber(userEntity, number, TicketUtil.USERVOTE, nowDate);
 		// 员工加操作
-		empTicketService.addEmpTicketNumber(empEntity, number, TicketUtil.USERVOTE);
+		empTicketService.addEmpTicketNumber(empEntity, number, TicketUtil.USERVOTE, nowDate);
 		// 写入结果记录
 		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
 		userVoteEmpResultEntity.setUserEntity(userEntity);
 		userVoteEmpResultEntity.setEmpEntity(empEntity);
 		userVoteEmpResultEntity.setNumber(number);
-		userVoteEmpResultEntity.setRecordTime(new Date());
+		userVoteEmpResultEntity.setRecordTime(nowDate);
 		userVoteEmpResultEntity.setType(TicketUtil.USERVOTE);
 		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
 
 	}
 
 	// 添加用户票数变化的记录
-	public void addUserTicketRecord(UserEntity userEntity, boolean type, int number, String reason) {
+	public void addUserTicketRecord(UserEntity userEntity, boolean type, int number, String reason, Date date) {
 		String nowString = DateUtil.getStandardDate(new Date());
 		UserTicketRecordEntity userTicketRecordEntity = new UserTicketRecordEntity();
 		userTicketRecordEntity.setUserEntity(userEntity);
@@ -142,7 +153,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 		userTicketRecordEntity.setNumber(number);
 		userTicketRecordEntity.setVotesSource(reason);
 		userTicketRecordEntity.setDateFlag(nowString);
-		userTicketRecordEntity.setGainTime(new Date());
+		userTicketRecordEntity.setGainTime(date);
 		userTicketRecordRepository.save(userTicketRecordEntity);
 	}
 

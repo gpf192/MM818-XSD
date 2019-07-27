@@ -1,5 +1,6 @@
 package com.xsdzq.mm.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.xsdzq.mm.entity.EmpEntity;
@@ -15,8 +16,8 @@ public interface EmpTicketService {
 
 	EmpTicketEntity getEmpTicketEntity(EmpEntity empEntity);
 
-	void addEmpTicketNumber(EmpEntity empEntity, int number, String reason);
+	void addEmpTicketNumber(EmpEntity empEntity, int number, String reason, Date date);
 
-	void reduceEmpTickeNumber(EmpEntity empEntity, int number, String reason);
+	void reduceEmpTickeNumber(EmpEntity empEntity, int number, String reason, Date date);
 
 }
