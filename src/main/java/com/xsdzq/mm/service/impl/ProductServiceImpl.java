@@ -18,7 +18,7 @@ import com.xsdzq.mm.service.ProductService;
 @Transactional(readOnly = true)
 
 public class ProductServiceImpl implements ProductService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
 	@Autowired
@@ -32,6 +32,13 @@ public class ProductServiceImpl implements ProductService {
 		logger.info("pageNumber: " + pageNumber + " ; " + "pageSize: " + pageSize);
 		Page<ProductEntity> productPage = productRepository.findBy(pageRequest);
 		return productPage.getContent();
+	}
+
+	@Override
+	public List<ProductEntity> getAllProductList() {
+		// TODO Auto-generated method stub
+		List<ProductEntity> allList = productRepository.findAll();
+		return allList;
 	}
 
 }

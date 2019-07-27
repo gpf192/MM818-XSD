@@ -21,7 +21,8 @@ public class EmpServiceImpl implements EmpService {
 	public List<EmpTicketEntity> findByEmpNameLike(String name) {
 		// TODO Auto-generated method stub
 		String queryName = "%" + name + "%";
-		List<EmpTicketEntity> empTicketEntities = empTicketRepository.findByEmpEntityEmpNameLike(queryName);
+		List<EmpTicketEntity> empTicketEntities = empTicketRepository
+				.findByEmpEntityEmpNameLikeAndEmpEntityEnable(queryName, 1);
 		return empTicketEntities;
 	}
 

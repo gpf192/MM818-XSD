@@ -49,6 +49,12 @@ public class ProductEntity implements Serializable {
 	@Column(name = "flag")
 	private int flag;// 0-场内 1-场外
 
+	@Column(name = "risk_level")
+	private String riskLevel; // 分险等级
+
+	@Column(name = "preferential_info", length = 1000)
+	private String preferentialInfo;// 优惠信息
+
 	public long getId() {
 		return id;
 	}
@@ -119,6 +125,22 @@ public class ProductEntity implements Serializable {
 
 	public void setFlag(int flag) {
 		this.flag = flag;
+	}
+
+	public String getRiskLevel() {
+		return riskLevel;
+	}
+
+	public void setRiskLevel(String riskLevel) {
+		this.riskLevel = riskLevel;
+	}
+
+	public String getPreferentialInfo() {
+		return preferentialInfo;
+	}
+
+	public void setPreferentialInfo(String preferentialInfo) {
+		this.preferentialInfo = preferentialInfo;
 	}
 
 }
