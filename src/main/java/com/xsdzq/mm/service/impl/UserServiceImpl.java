@@ -114,7 +114,8 @@ public class UserServiceImpl implements UserService {
 			// 已经添加过登陆票数了，不需要添加
 		} else {
 			// 添加每天的登陆票数 100票
-			userTicketService.addUserTicketNumber(userEntity, 100, TicketUtil.ACTIVITYLOGINTICKET);
+			Date nowDate = new Date();
+			userTicketService.addUserTicketNumber(userEntity, 100, TicketUtil.ACTIVITYLOGINTICKET, nowDate);
 		}
 		int number = userTicketService.getUserTicket(userEntity);
 		return number;

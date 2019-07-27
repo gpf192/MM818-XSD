@@ -67,22 +67,22 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 
 	@Override
 	@Transactional
-	public void addEmpTicketNumber(EmpEntity empEntity, int number, String reason) {
+	public void addEmpTicketNumber(EmpEntity empEntity, int number, String reason, Date date) {
 		// TODO Auto-generated method stub
 		EmpTicketEntity empTicketEntity = getEmpTicketEntity(empEntity);
 		empTicketRepository.add(empTicketEntity, number);
-		addEmpTicketRecord(empEntity, true, number, reason);
+		addEmpTicketRecord(empEntity, true, number, reason, date);
 	}
 
 	@Override
 	@Transactional
-	public void reduceEmpTickeNumber(EmpEntity empEntity, int number, String reason) {
+	public void reduceEmpTickeNumber(EmpEntity empEntity, int number, String reason, Date date) {
 		// TODO Auto-generated method stub
 
 	}
 
 	// 添加员工票数变化的记录
-	private void addEmpTicketRecord(EmpEntity empEntity, boolean type, int number, String votesSource) {
+	private void addEmpTicketRecord(EmpEntity empEntity, boolean type, int number, String votesSource, Date date) {
 		String nowString = DateUtil.getStandardDate(new Date());
 		EmpTicketRecordEntity empTicketRecordEntity = new EmpTicketRecordEntity();
 		empTicketRecordEntity.setEmpEntity(empEntity);
@@ -90,7 +90,7 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 		empTicketRecordEntity.setType(type);
 		empTicketRecordEntity.setVotesSource(votesSource);
 		empTicketRecordEntity.setDateFlag(nowString);
-		empTicketRecordEntity.setRecordTime(new Date());
+		empTicketRecordEntity.setRecordTime(date);
 		empTicketRecordRepository.save(empTicketRecordEntity);
 	}
 

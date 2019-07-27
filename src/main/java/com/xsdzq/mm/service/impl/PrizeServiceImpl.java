@@ -99,13 +99,14 @@ public class PrizeServiceImpl implements PrizeService {
 		// check user available
 		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录
 		if (checkAvailable(userEntity)) {
+			Date nowDate = new Date();
 			PrizeEntity prizeEntity = getRandomPrize();
 			PrizeResultEntity prizeResultEntity = new PrizeResultEntity();
 			prizeResultEntity.setUserEntity(userEntity);
 			prizeResultEntity.setPrizeEntity(prizeEntity);
-			prizeResultEntity.setRecordTime(new Date());
+			prizeResultEntity.setRecordTime(nowDate);
 			// 1.处理额外投票券
-			addTicketNumber(userEntity, prizeEntity);
+			addTicketNumber(userEntity, prizeEntity, nowDate);
 			// 2.添加减少记录
 			addReduceRecordPrize(userEntity);
 			// 3.增加中奖人数
@@ -120,13 +121,13 @@ public class PrizeServiceImpl implements PrizeService {
 		}
 	}
 
-	private void addTicketNumber(UserEntity userEntity, PrizeEntity prizeEntity) {
+	private void addTicketNumber(UserEntity userEntity, PrizeEntity prizeEntity, Date date) {
 		if (prizeEntity.getImage().equals("award6")) {
 			// 额外投票券
 			PrizeUtil prizeUtil = PrizeUtil.getInstance();
 			int ticketNumber = prizeUtil.getRandomTicket();
 			System.out.println("ticketNumber: " + ticketNumber);
-			userTicketService.addUserTicketNumber(userEntity, ticketNumber, TicketUtil.PRIZENTICKET);
+			userTicketService.addUserTicketNumber(userEntity, ticketNumber, TicketUtil.PRIZENTICKET, date);
 		}
 	}
 
@@ -138,8 +139,8 @@ public class PrizeServiceImpl implements PrizeService {
 		for (PrizeResultEntity prizeResultEntity : list) {
 			PrizeEntity prizeEntity = prizeResultEntity.getPrizeEntity();
 			if (prizeEntity.isType()) {
-				//System.out.println(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()).toString());
-				//prizeResultEntity.setRecordTime(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()));
+				// System.out.println(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()).toString());
+				// prizeResultEntity.setRecordTime(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()));
 				myRealPrizeResultEntity.add(prizeResultEntity);
 			}
 		}
@@ -218,11 +219,12 @@ public class PrizeServiceImpl implements PrizeService {
 			return false;
 		}
 		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
+		Date nowDate = new Date();
 		// 分享获得抽奖次数
 		prizeNumberRepository.addNumber(prizeNumberEntity);
 		addPrizeRecord(userEntity, true, PrizeUtil.PRIZE_SHARE_TYPE);
 		// 分享获得投票数量
-		userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET);
+		userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET, nowDate);
 		return true;
 	}
 

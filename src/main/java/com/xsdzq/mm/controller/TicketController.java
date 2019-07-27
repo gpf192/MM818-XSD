@@ -16,6 +16,7 @@ import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.entity.UserTicketTotalViewEntity;
+import com.xsdzq.mm.entity.UserVoteEmpResultEntity;
 import com.xsdzq.mm.model.Number;
 import com.xsdzq.mm.model.Pagination;
 import com.xsdzq.mm.model.VoteModel;
@@ -53,7 +54,7 @@ public class TicketController {
 		Pagination pagination = new Pagination(pageNumber, pageSize);
 		int total = userTicketService.countUserVoteNumber(userEntity);
 		pagination.setTotalItems(total);
-		return GsonUtil.buildMap(0, "ok", list,pagination);
+		return GsonUtil.buildMap(0, "ok", list, pagination);
 	}
 
 	@PostMapping(value = "/vote", produces = "application/json; charset=utf-8")
@@ -67,13 +68,10 @@ public class TicketController {
 			String numberString = voteModel.getTicketNumber();
 			int number = Integer.parseInt(numberString);
 			userTicketService.userVoteEmp(userEntity, empId, number);
-
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.out.println("---ddddddd---");
 			System.out.println(e.getMessage());
 		}
-
 		return GsonUtil.buildMap(0, "ok", null);
 	}
 
@@ -88,6 +86,16 @@ public class TicketController {
 		int total = userTicketService.countVoteNumber();
 		pagination.setTotalItems(total);
 		return GsonUtil.buildMap(0, "ok", list, pagination);
+	}
+
+	@GetMapping(value = "/myVoteEmp", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> getUserTicketVoteEmp(@RequestHeader("Authorization") String token,
+			@RequestParam String gainTime) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		UserVoteEmpResultEntity voteEmpResultEntity = userTicketService.getUserVoteEmpResultEntity(userEntity,
+				gainTime);
+		return GsonUtil.buildMap(0, "ok", voteEmpResultEntity);
 	}
 
 }
