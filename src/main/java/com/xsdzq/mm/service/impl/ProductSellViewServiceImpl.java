@@ -17,9 +17,9 @@ public class ProductSellViewServiceImpl implements ProductSellViewService{
 	private ProductSellViewRepository productSellViewRepository;
 
 	@Override
-	public List<ProductSellViewEntity> getByDealTime(int dealTime) {
+	public List<ProductSellViewEntity> getByDealTimeAndProductCode(int dealTime,  String code) {
 		// TODO Auto-generated method stub
-		return productSellViewRepository.findByDealTime(dealTime);
+		return productSellViewRepository.findByDealTimeAndProductCode(dealTime, code);
 	}
 	
 

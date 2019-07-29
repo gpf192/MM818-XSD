@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.xsdzq.mm.entity.OpenAccountEntity;
 import com.xsdzq.mm.entity.PrizeEntity;
+import com.xsdzq.mm.entity.ProductEntity;
 import com.xsdzq.mm.entity.ProductSellViewEntity;
 import com.xsdzq.mm.entity.SignInvestViewEntity;
 import com.xsdzq.mm.entity.UserEmpRelationEntity;
@@ -76,37 +77,42 @@ public class ScheduledService {
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
-    	 	
-    	//定时扫描交易任务
-    	try {
-			productSellTask();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("productSellTask 发生异常"+"111111111111111111111111111111111111111111111111");
+    	// 判断job开关
+    	String flag = userService.getValueByCode("jobFlag").getCode();
+    	System.out.println("=====>>>>> job 开关为 "+ flag);
+    	if("1".equals(flag)) {
+    		//定时扫描交易任务
+        	try {
+    			productSellTask();
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			System.out.println("productSellTask 发生异常"+"111111111111111111111111111111111111111111111111");
 
-			e.printStackTrace();
-		}
-    	 	
-    	//定时扫描用户活动期间签约投顾 自动归票至经纪人
-    	try {
-			tgfundOpenAccountTask();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("tgfundOpenAccountTask 发生异常"+"111111111111111111111111111111111111111111111111");
+    			e.printStackTrace();
+    		}
+        	 	
+        	//定时扫描用户活动期间签约投顾 自动归票至经纪人
+        	try {
+    			tgfundOpenAccountTask();
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			System.out.println("tgfundOpenAccountTask 发生异常"+"111111111111111111111111111111111111111111111111");
 
-			e.printStackTrace();
-		}
-    	//定式扫描用户活动期间开通基金账户 自动归票至经纪人
-    	try {
-			fundOpenAccountTask();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("fundOpenAccountTask 发生异常"+"111111111111111111111111111111111111111111111111");
+    			e.printStackTrace();
+    		}
+        	//定式扫描用户活动期间开通基金账户 自动归票至经纪人
+        	try {
+    			fundOpenAccountTask();
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			System.out.println("fundOpenAccountTask 发生异常"+"111111111111111111111111111111111111111111111111");
 
-			e.printStackTrace();
-		}
+    			e.printStackTrace();
+    		}
+    	}
     	
-		}
+    	
+	}
     
 		
 
@@ -138,49 +144,59 @@ public class ScheduledService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	    	List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTime(preDay);
-	    	if(productSellViewList != null) {
-	        	for(ProductSellViewEntity p:productSellViewList) {
-	        	//	System.out.println("奖品：----------------------"+p.getName());
-	        		String clientId = p.getClientId();
-	        		String clientName = p.getClientName();
-	        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
-	        		String empId = "0";
-	        		if(ue != null) {
-	        			String brokerId = ue.getBrokerId();
-	        			String touguId = ue.getTouguId();
-	        			if(brokerId != null && touguId != null ) {
-	        				empId = brokerId;
-	        			}else if(brokerId != null && touguId == null) {
-	        				empId = brokerId;
-	        			}else if(brokerId == null && touguId != null) {
-	        				empId = touguId;
-	        			}
-	        		}
-	        		//计算得票数
-	        		double xishu = Double.parseDouble((productService.getProductByCode(p.getProductCode())).getCoefficient());
-	        		double dealAmount = Double.parseDouble( p.getDealAmount());
-	        		
-	        		BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
-	        		BigDecimal xishuDecimal = BigDecimal.valueOf(xishu);
-	        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
-	        		int ticketNum =(int) Math.round(num);
-	        		
-	        		//判断是否有经纪人
-	        		if("0".equals(empId)) {
-	        			//无经纪人 判断用户记录表是否存在clientid，
-	        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
-	        			//如果存在  更新用户票数表-增票  插入用户得票记录-增票 
-	        			userService.addTicketByJob(clientId, clientName, ticketNum); 
-	        			
-	        		}else {       			
-	        			//有经纪人  判断用户记录表是否存在clientid
-	        			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
-	        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
-	        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum); 
-	        		}
-	        	}
-	    	}
+			//查询所有的产品 循环每一个产品与销售记录进行匹配
+			Date  d = DateUtil.getPreDayAs();
+			List<ProductEntity> productList = productService.getAll(d, d);
+			if(productList != null) {
+				for(ProductEntity Product:productList) {
+					String productCode = Product.getCode();
+					List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
+			    	if(productSellViewList != null) {
+			        	for(ProductSellViewEntity p:productSellViewList) {
+			        	//	System.out.println("奖品：----------------------"+p.getName());
+			        		String clientId = p.getClientId();
+			        		String clientName = p.getClientName();
+			        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
+			        		String empId = "0";
+			        		if(ue != null) {
+			        			String brokerId = ue.getBrokerId();
+			        			String touguId = ue.getTouguId();
+			        			if(brokerId != null && touguId != null ) {
+			        				empId = brokerId;
+			        			}else if(brokerId != null && touguId == null) {
+			        				empId = brokerId;
+			        			}else if(brokerId == null && touguId != null) {
+			        				empId = touguId;
+			        			}
+			        		}
+			        		//计算得票数
+			        		double xishu = Double.parseDouble((productService.getProductByCode(p.getProductCode())).getCoefficient());
+			        		double dealAmount = Double.parseDouble( p.getDealAmount());
+			        		
+			        		BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
+			        		BigDecimal xishuDecimal = BigDecimal.valueOf(xishu);
+			        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
+			        		int ticketNum =(int) Math.round(num);
+			        		
+			        		//判断是否有经纪人
+			        		if("0".equals(empId)) {
+			        			//无经纪人 判断用户记录表是否存在clientid，
+			        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
+			        			//如果存在  更新用户票数表-增票  插入用户得票记录-增票 
+			        			userService.addTicketByJob(clientId, clientName, ticketNum); 
+			        			
+			        		}else {       			
+			        			//有经纪人  判断用户记录表是否存在clientid
+			        			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
+			        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
+			        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum); 
+			        		}
+			        	}
+			    	}
+				}
+			}
+			
+	    	
 	    }
 	    //扫描开通基金账户 一次性得票
 	    public void fundOpenAccountTask() {
