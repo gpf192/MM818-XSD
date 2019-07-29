@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.UserEntity;
-import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.entity.UserTicketTotalViewEntity;
 import com.xsdzq.mm.entity.UserVoteEmpResultEntity;
 import com.xsdzq.mm.model.Number;
 import com.xsdzq.mm.model.Pagination;
+import com.xsdzq.mm.model.UserTicketRecordAndResult;
 import com.xsdzq.mm.model.VoteModel;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserTicketService;
@@ -50,7 +50,7 @@ public class TicketController {
 	public Map<String, Object> getUserRecord(@RequestHeader("Authorization") String token, @RequestParam int pageNumber,
 			@RequestParam int pageSize) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
-		List<UserTicketRecordEntity> list = userTicketService.getUserRecord(userEntity, pageNumber, pageSize);
+		List<UserTicketRecordAndResult> list = userTicketService.getUserRecord(userEntity, pageNumber, pageSize);
 		Pagination pagination = new Pagination(pageNumber, pageSize);
 		int total = userTicketService.countUserVoteNumber(userEntity);
 		pagination.setTotalItems(total);

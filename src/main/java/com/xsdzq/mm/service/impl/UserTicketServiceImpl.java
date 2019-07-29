@@ -1,5 +1,6 @@
 package com.xsdzq.mm.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.xsdzq.mm.entity.UserTicketEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.entity.UserTicketTotalViewEntity;
 import com.xsdzq.mm.entity.UserVoteEmpResultEntity;
+import com.xsdzq.mm.model.UserTicketRecordAndResult;
 import com.xsdzq.mm.service.EmpTicketService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
@@ -76,13 +78,25 @@ public class UserTicketServiceImpl implements UserTicketService {
 	}
 
 	@Override
-	public List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize) {
+	public List<UserTicketRecordAndResult> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize) {
 		// TODO Auto-generated method stub
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
 		Page<UserTicketRecordEntity> uPage = userTicketRecordRepository.findByUserEntityOrderByGainTimeDesc(userEntity,
 				pageRequest);
 		List<UserTicketRecordEntity> userTicketRecordEntities = uPage.getContent();
-		return userTicketRecordEntities;
+		List<UserTicketRecordAndResult> uRecordAndResultEntities = new ArrayList<UserTicketRecordAndResult>();
+		for (UserTicketRecordEntity userTicketRecordEntity : userTicketRecordEntities) {
+			Date gainTimeDate = userTicketRecordEntity.getGainTime();
+			UserVoteEmpResultEntity userVoteEmpResultEntity = userVoteEmpResultRepository
+					.findByUserEntityAndRecordTime(userEntity, gainTimeDate);
+			UserTicketRecordAndResult userTicketRecordAndResult = new UserTicketRecordAndResult();
+			userTicketRecordAndResult.setUserTicketRecordEntity(userTicketRecordEntity);
+			if(userVoteEmpResultEntity != null) {
+				userTicketRecordAndResult.setUserVoteEmpResultEntity(userVoteEmpResultEntity);
+			}
+			uRecordAndResultEntities.add(userTicketRecordAndResult);
+		}
+		return uRecordAndResultEntities;
 	}
 
 	// 提供统一的UserTicketEntity，没有的话会新增，不会得到空值

@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketEntity;
-import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.entity.UserTicketTotalViewEntity;
 import com.xsdzq.mm.entity.UserVoteEmpResultEntity;
+import com.xsdzq.mm.model.UserTicketRecordAndResult;
 
 public interface UserTicketService {
 
@@ -19,7 +19,7 @@ public interface UserTicketService {
 
 	UserVoteEmpResultEntity getUserVoteEmpResultEntity(UserEntity userEntity, String gainTime);
 
-	List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize);
+	List<UserTicketRecordAndResult> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize);
 
 	void userVoteEmp(UserEntity userEntity, String empId, int number);
 
