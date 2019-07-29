@@ -128,7 +128,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 			throw new RuntimeException("员工不存在");
 		}
 		// 保持投票的时间一致性，作为一系列的唯一订单号 1.用户操作的时间，2.员工增加的时间，3.写入结果的时间
-		Date nowDate = DateUtil.getNowDate();
+		Date nowDate = new Date();
 		// 用户减操作
 		reduceUserTickeNumber(userEntity, number, TicketUtil.USERVOTE, nowDate);
 		// 员工加操作
