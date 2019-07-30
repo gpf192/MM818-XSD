@@ -15,7 +15,7 @@ import com.xsdzq.mm.service.ProductService;
 import com.xsdzq.mm.util.GsonUtil;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/mm818/product")
 public class ProductController {
 
 	@Autowired

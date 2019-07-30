@@ -22,7 +22,7 @@ import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 
 @RestController
-@RequestMapping("/prize")
+@RequestMapping("/mm818/prize")
 public class PrizeController {
 
 	@Autowired
