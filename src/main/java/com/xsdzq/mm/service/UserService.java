@@ -24,10 +24,9 @@ public interface UserService {
 
 	User findByClientId(String clientId);
 	//
-	void addTicketByJobWithEmpId(String clientId, String clientName, String empId, int num);
-	void addTicketByJob(String clientId, String clientName, int num);
+	void addTicketByJobWithEmpId(String clientId, String clientName, String empId, int num, String reason);
+	void addTicketByJob(String clientId, String clientName, int num, String reason);
 	
-	void addTicketByJobForReduceEmp(String clientId, String empId, int num, String reason);
 	
 	List<OpenAccountEntity> findByOpenDate(int preDay);
 	int countByOpenDateLessThanEqualAndOpenDateGreaterThanEqualAndClientId(int endDate, int beginDate, String clientId);

@@ -113,26 +113,7 @@ public class ScheduledService {
     	
     	
 	}
-    
-		
-
-  //定时扫描用登录记录  户分享记  抽奖获得额外投票权 自动归票至经纪人
-	    public void frontTask(int ticketNum , String reason) {
-			//获得t-1      
-			String nowString = DateUtil.getPreDay();
-			List<UserTicketRecordEntity> loginRecordList = userTicketService.getByVotesSourceAndDateFlag(reason, nowString);
-			if(loginRecordList != null) {
-				for(UserTicketRecordEntity r:loginRecordList) {
-					String clientId = r.getUserEntity().getClientId();
-					String empId = getEmpId(clientId);
-					if(!"0".equals(empId)) {
-						//有经纪人
-						userService.addTicketByJobForReduceEmp(clientId,  empId,  ticketNum,  reason);
-					}
-					
-				}
-			}
-	    }
+    	
 
 	    //定时扫描产品交易方法
 	    public void productSellTask() {
@@ -183,13 +164,13 @@ public class ScheduledService {
 			        			//无经纪人 判断用户记录表是否存在clientid，
 			        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
 			        			//如果存在  更新用户票数表-增票  插入用户得票记录-增票 
-			        			userService.addTicketByJob(clientId, clientName, ticketNum); 
+			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET); 
 			        			
 			        		}else {       			
 			        			//有经纪人  判断用户记录表是否存在clientid
 			        			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
 			        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
-			        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum); 
+			        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.BUYFUNDTICKET); 
 			        		}
 			        	}
 			    	}
@@ -213,7 +194,7 @@ public class ScheduledService {
 				for(OpenAccountEntity p:list) {
 					String clientId = p.getClientId();		
 					//判断得票记录表中是否有该用户记录 若没有则继续插入
-					List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientId(TicketUtil.BUYFUNDTICKET, clientId);
+					List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientId(TicketUtil.NEEFUNDTICKET, clientId);
 					if(UserTicketRecordList == null) {
 		        		String empId = "0";
 		        		//获取经纪人
@@ -237,13 +218,13 @@ public class ScheduledService {
 		        			//无经纪人 判断用户记录表是否存在clientid，
 		        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
 		        			//如果存在  更新用户票数表-增票  插入用户得票记录-增票 
-		        			userService.addTicketByJob(clientId, clientName, ticketNum); 
+		        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.NEEFUNDTICKET); 
 		        			
 		        		}else {       			
 		        			//有经纪人  判断用户记录表是否存在clientid
 		        			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
 		        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
-		        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum); 
+		        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.NEEFUNDTICKET); 
 		        		}
 					}
 
@@ -263,25 +244,21 @@ public class ScheduledService {
 	    			
 	    			String empId = si.getInvestId();
 					//判断得票记录表中是否有该用户记录 若没有则继续插入
-					List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientId(TicketUtil.NEEFUNDTICKET, clientId);
+					List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientId(TicketUtil.BROKETICKET, clientId);
 					
 	        		//获取票数
-	        		int ticketNum = Integer.parseInt(userService.getValueByCode("fund_ticket_num").getCode());	        		
+	        		int ticketNum = Integer.parseInt(userService.getValueByCode("tg_ticket_num").getCode());	        		
 	        		//获取用户姓名
 	        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
 	        		String clientName = ue.getClientName();
 	        		
 					if(UserTicketRecordList == null) {
-						//无经纪人 判断用户记录表是否存在clientid，
-	        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
-	        			//如果存在  更新用户票数表-增票  插入用户得票记录-增票 
-	        			userService.addTicketByJob(clientId, clientName, ticketNum); 
-	        			
-	        		}else {   			
-	        			//有经纪人  判断用户记录表是否存在clientid
+						//如果不存在记录 表示之前没有因签约投顾而得票
+						//有经纪人  判断用户记录表是否存在clientid
 	        			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
 	        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
-	        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum); 
+	        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.BROKETICKET); 	        			 				
+	        			
 	        		}
 					
 	    		}

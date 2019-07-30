@@ -30,7 +30,7 @@ public class ProductSellViewEntity implements Serializable {
 	private String financeAccount;//金融账号
 	
 	@Column(name = "deal_time")
-	private String dealTime;//成交日期
+	private int dealTime;//成交日期
 	
 	@Column(name = "deal_amount")
 	private String dealAmount;//成交金额
@@ -82,11 +82,13 @@ public class ProductSellViewEntity implements Serializable {
 		this.financeAccount = financeAccount;
 	}
 
-	public String getDealTime() {
+
+
+	public int getDealTime() {
 		return dealTime;
 	}
 
-	public void setDealTime(String dealTime) {
+	public void setDealTime(int dealTime) {
 		this.dealTime = dealTime;
 	}
 

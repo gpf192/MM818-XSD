@@ -15,7 +15,7 @@ public class SignInvestViewEntity implements Serializable {
 	@Column(name = "client_id")
 	private String clientId;
 	
-	@Column(name = "Invest_id")
+	@Column(name = "invest_id")
 	private String InvestId;
 	
 	@Column(name = "service_type")

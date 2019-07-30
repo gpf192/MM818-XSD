@@ -97,20 +97,20 @@ public class UserTicketServiceImpl implements UserTicketService {
 	// JOB 增加用户票数，同时添加记录
 	@Override
 	@Transactional
-	public void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason) {
+	public void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason, Date date) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.add(userTicketEntity, number);
-		addUserTicketRecordByJob(userEntity, true, number, reason);
+		addUserTicketRecordByJob(userEntity, true, number, reason, date);
 		
 	}
 
 	// JOB 减少用户票数，同时添加记录
 	@Override
 	@Transactional
-	public void reduceUserTickeNumberByJob(UserEntity userEntity, int number, String reason) {
+	public void reduceUserTickeNumberByJob(UserEntity userEntity, int number, String reason, Date date) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.reduce(userTicketEntity, number);
-		addUserTicketRecordByJob(userEntity, false, number, reason);
+		addUserTicketRecordByJob(userEntity, false, number, reason, date);
 	}
 
 	
@@ -139,37 +139,11 @@ public class UserTicketServiceImpl implements UserTicketService {
 
 	}
 	//JOB
-	//登录\分享\抽奖 用户定时任务  不再重复添加用户得票记录 前端已经添加
-	@Override
-	@Transactional
-	public void userVoteEmpByJobForReduceEmp(UserEntity userEntity, String empId, int number, String reason) {
-		// TODO Auto-generated method stub
-		//int empInt = Integer.parseInt(empId);
-		EmpEntity empEntity = empRepository.findByEmpId(empId);
-		if (empEntity == null) {
-			throw new RuntimeException("员工不存在");
-		}
-		// 用户减操作
-		//得票时间标志是前一天  dataflag
-		reduceUserTickeNumberByJob(userEntity, number, reason);
-		// 员工加操作
-		empTicketService.addEmpTicketNumberByJOB(empEntity, number, reason);
-		// 写入结果记录
-		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
-		userVoteEmpResultEntity.setUserEntity(userEntity);
-		userVoteEmpResultEntity.setEmpEntity(empEntity);
-		userVoteEmpResultEntity.setNumber(number);
-		userVoteEmpResultEntity.setRecordTime(new Date());
-		userVoteEmpResultEntity.setType(reason);
-		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
-
-	}
-	
-	
+		
 	//购买产品用户投票
 	@Override
 	@Transactional
-	public void userVoteEmpByJob(UserEntity userEntity, String empId, int number, String reason) {
+	public void userVoteEmpByJob(UserEntity userEntity, String empId, int number, String reason, Date date) {
 		// TODO Auto-generated method stub
 		//int empInt = Integer.parseInt(empId);
 		EmpEntity empEntity = empRepository.findByEmpId(empId);
@@ -177,23 +151,23 @@ public class UserTicketServiceImpl implements UserTicketService {
 			throw new RuntimeException("员工不存在");
 		}
 		// 用户减操作
-		//得票时间标志是前一天  dataflag
-		reduceUserTickeNumberByJob(userEntity, number, reason);
+		//时间标志是前一天  dataflag
+		reduceUserTickeNumberByJob(userEntity, number, reason, date);
 		// 员工加操作
-		empTicketService.addEmpTicketNumberByJOB(empEntity, number, reason);
+		empTicketService.addEmpTicketNumberByJOB(empEntity, number, reason, date);
 		// 写入结果记录
 		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
 		userVoteEmpResultEntity.setUserEntity(userEntity);
 		userVoteEmpResultEntity.setEmpEntity(empEntity);
 		userVoteEmpResultEntity.setNumber(number);
-		userVoteEmpResultEntity.setRecordTime(new Date());
+		userVoteEmpResultEntity.setRecordTime(date);
 		userVoteEmpResultEntity.setType(reason);
 		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
 
 	}
 	
 	//定时任务添加票数变化记录
-	public void addUserTicketRecordByJob(UserEntity userEntity, boolean type, int number, String reason) {
+	public void addUserTicketRecordByJob(UserEntity userEntity, boolean type, int number, String reason, Date date) {
 	      
 		String nowString = DateUtil.getPreDay();
 		UserTicketRecordEntity userTicketRecordEntity = new UserTicketRecordEntity();
@@ -202,7 +176,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 		userTicketRecordEntity.setNumber(number);
 		userTicketRecordEntity.setVotesSource(reason);
 		userTicketRecordEntity.setDateFlag(nowString);
-		userTicketRecordEntity.setGainTime(new Date());
+		userTicketRecordEntity.setGainTime(date);
 		userTicketRecordRepository.save(userTicketRecordEntity);
 	}
 
