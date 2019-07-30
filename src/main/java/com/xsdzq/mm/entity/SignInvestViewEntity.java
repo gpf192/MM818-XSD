@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "lcj_sign_invest_view")
 @EntityListeners(AuditingEntityListener.class)
 public class SignInvestViewEntity implements Serializable {
+	@Id
 	@Column(name = "client_id")
 	private String clientId;
 	

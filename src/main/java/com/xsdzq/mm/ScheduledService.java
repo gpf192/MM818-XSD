@@ -73,12 +73,13 @@ public class ScheduledService {
 		return empId;
 	}
 	
-    @Scheduled(cron = "0/5 * * * * *")
+    //@Scheduled(cron = "0/5 * * * * *")
+    @Scheduled(cron = "0 50 15 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
     	// 判断job开关
-    	String flag = userService.getValueByCode("jobFlag").getCode();
+    	String flag = userService.getValueByCode("jobFlag").getValue();
     	System.out.println("=====>>>>> job 开关为 "+ flag);
     	if("1".equals(flag)) {
     		//定时扫描交易任务
@@ -92,23 +93,21 @@ public class ScheduledService {
     		}
         	 	
         	//定时扫描用户活动期间签约投顾 自动归票至经纪人
-        	try {
-    			tgfundOpenAccountTask();
-    		} catch (Exception e) {
-    			// TODO Auto-generated catch block
-    			System.out.println("tgfundOpenAccountTask 发生异常"+"111111111111111111111111111111111111111111111111");
-
-    			e.printStackTrace();
-    		}
+			/*
+			 * try { tgfundOpenAccountTask(); } catch (Exception e) { // TODO Auto-generated
+			 * catch block System.out.println("tgfundOpenAccountTask 发生异常"
+			 * +"111111111111111111111111111111111111111111111111");
+			 * 
+			 * e.printStackTrace(); }
+			 */
         	//定式扫描用户活动期间开通基金账户 自动归票至经纪人
-        	try {
-    			fundOpenAccountTask();
-    		} catch (Exception e) {
-    			// TODO Auto-generated catch block
-    			System.out.println("fundOpenAccountTask 发生异常"+"111111111111111111111111111111111111111111111111");
-
-    			e.printStackTrace();
-    		}
+			/*
+			 * try { fundOpenAccountTask(); } catch (Exception e) { // TODO Auto-generated
+			 * catch block System.out.println("fundOpenAccountTask 发生异常"
+			 * +"111111111111111111111111111111111111111111111111");
+			 * 
+			 * e.printStackTrace(); }
+			 */
     	}
     	
     	
@@ -120,7 +119,7 @@ public class ScheduledService {
 	//查看用户交易视图crm，循环交易记录
 	    	int preDay = 0;
 			try {
-				preDay = Integer.parseInt(DateUtil.getPreDay());
+				preDay = Integer.parseInt(DateUtil.getPreDayForCrm());
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -128,11 +127,13 @@ public class ScheduledService {
 			//查询所有的产品 循环每一个产品与销售记录进行匹配
 			Date  d = DateUtil.getPreDayAs();
 			List<ProductEntity> productList = productService.getAll(d, d);
-			if(productList != null) {
+			System.out.println("产品 个数："+ productList.size());
+			if(productList.size() != 0) {
 				for(ProductEntity Product:productList) {
 					String productCode = Product.getCode();
+					System.out.println("******************* chanpin shi  "+productCode);
 					List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
-			    	if(productSellViewList != null) {
+			    	if(productSellViewList.size() != 0) {
 			        	for(ProductSellViewEntity p:productSellViewList) {
 			        	//	System.out.println("奖品：----------------------"+p.getName());
 			        		String clientId = p.getClientId();
@@ -173,8 +174,12 @@ public class ScheduledService {
 			        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.BUYFUNDTICKET); 
 			        		}
 			        	}
+			    	}else {
+			    		System.out.println("******************* 没有销售产品记录 ");
 			    	}
 				}
+			}else{
+				System.out.println("******************* 没有  产品记录 ");
 			}
 			
 	    	
@@ -183,13 +188,13 @@ public class ScheduledService {
 	    public void fundOpenAccountTask() {
 	    	int preDay = 0;
 			try {
-				preDay = Integer.parseInt(DateUtil.getPreDay());
+				preDay = Integer.parseInt(DateUtil.getPreDayForCrm());
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			List<OpenAccountEntity> list=  userService.findByOpenDate(preDay);
-			if(list != null) {
+			if(list.size() != 0) {
 				//如果有记录
 				for(OpenAccountEntity p:list) {
 					String clientId = p.getClientId();		
@@ -229,15 +234,18 @@ public class ScheduledService {
 					}
 
 				}
+			}else {
+				System.out.println("******************* 没有 kaitong 开通基金账户 记录 ");
 			}
 			
 	    }
 	    //扫描签约投顾 一次性得票
 	    public void tgfundOpenAccountTask() {
 	    	//查看上一日签约投顾记录表
-	    	String preDay = DateUtil.getPreDay();
+	    	String preDay = DateUtil.getPreDayForCrm();
 	    	List<SignInvestViewEntity> SignInvestViewList= userService.findByserviceTypeAndStatusAndEffectiveDate(0, "1", preDay);
-	    	if(SignInvestViewList != null) {
+	    	System.out.println("***********************+ " +(SignInvestViewList == null)+ "--"+SignInvestViewList.size());
+	    	if(SignInvestViewList.size() != 0) {
 	    		//如果有记录
 	    		for(SignInvestViewEntity si:SignInvestViewList) {
 	    			String clientId = si.getClientId();	
@@ -262,6 +270,8 @@ public class ScheduledService {
 	        		}
 					
 	    		}
+	    	}else{
+				System.out.println("******************* 没有 qianyue 签约投顾 记录 ");
 	    	}
 	    }
 

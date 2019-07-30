@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,8 +14,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "lcj_user_emp_relation_view")
 @EntityListeners(AuditingEntityListener.class)
 public class UserEmpRelationEntity implements Serializable {
-	// lcj_user
 	// 客户号
+	@Id
 	@Column(name = "client_id")
 	private String clientId;
 
