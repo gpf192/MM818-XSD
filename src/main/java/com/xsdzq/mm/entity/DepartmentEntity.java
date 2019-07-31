@@ -11,13 +11,11 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "lcj_department")
+@Table(name = "lcj_department_view")
 public class DepartmentEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id", unique = true)
-	private long id;
+	
 
 	@Column(name = "code", unique = true, length = 50)
 	private String code;
@@ -25,13 +23,6 @@ public class DepartmentEntity implements Serializable {
 	@Column(name = "name", length = 500)
 	private String name;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getCode() {
 		return code;

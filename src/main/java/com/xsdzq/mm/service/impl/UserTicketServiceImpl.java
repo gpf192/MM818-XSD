@@ -146,7 +146,9 @@ public class UserTicketServiceImpl implements UserTicketService {
 	public void userVoteEmpByJob(UserEntity userEntity, String empId, int number, String reason, Date date) {
 		// TODO Auto-generated method stub
 		//int empInt = Integer.parseInt(empId);
+		System.out.println("开始插入 用户投票员工表   "+ userEntity.getClientId() + "empId:  "+ empId);
 		EmpEntity empEntity = empRepository.findByEmpId(empId);
+		System.out.println("&&&&&&&&&&&&&&  "+ empEntity.getEmpId());
 		if (empEntity == null) {
 			throw new RuntimeException("员工不存在");
 		}

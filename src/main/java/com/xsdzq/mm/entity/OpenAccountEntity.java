@@ -27,8 +27,7 @@ public class OpenAccountEntity implements Serializable {
 	@Column(name = "open_date")
 	private int openDate;
 	
-	@Column(name = "close_date")
-	private int closeDate;
+
 
 	public String getClientId() {
 		return clientId;
@@ -62,19 +61,12 @@ public class OpenAccountEntity implements Serializable {
 		this.openDate = openDate;
 	}
 
-	public int getCloseDate() {
-		return closeDate;
-	}
-
-	public void setCloseDate(int closeDate) {
-		this.closeDate = closeDate;
-	}
-
 	@Override
 	public String toString() {
 		return "OpenAccountEntity [clientId=" + clientId + ", orgName=" + orgName + ", orgAccount=" + orgAccount
-				+ ", openDate=" + openDate + ", closeDate=" + closeDate + "]";
+				+ ", openDate=" + openDate + "]";
 	}
-	
+
+
 	
 }

@@ -18,5 +18,7 @@ public interface EmpTicketRepository extends JpaRepository<EmpTicketEntity, Long
 	Page<EmpTicketEntity> findByEmpEntityDivisionOrderByNumberDesc(String division, Pageable pageable);
 
 	List<EmpTicketEntity> findByEmpEntityEmpNameLike(String name);
+	EmpTicketEntity findByEmpEntity_empId(String empId);
+
 
 }

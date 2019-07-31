@@ -43,7 +43,8 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 	@Transactional
 	public EmpTicketEntity getEmpTicketEntity(EmpEntity empEntity) {
 		// TODO Auto-generated method stub
-		EmpTicketEntity empTicketEntity = empTicketRepository.findByEmpEntity(empEntity);
+		System.out.println("KKKKKKKKKKKKKKKKKKKK  "+ empEntity.getEmpId());
+		EmpTicketEntity empTicketEntity = empTicketRepository.findByEmpEntity_empId(empEntity.getEmpId());
 		if (empTicketEntity == null) {
 			EmpTicketEntity eTicketEntity = new EmpTicketEntity();
 			eTicketEntity.setEmpEntity(empEntity);
@@ -88,6 +89,7 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 	public void addEmpTicketNumberByJOB(EmpEntity empEntity, int number, String reason, Date date) {
 		// TODO Auto-generated method stub
 		EmpTicketEntity empTicketEntity = getEmpTicketEntity(empEntity);
+
 		empTicketRepository.add(empTicketEntity, number);
 		addEmpTicketRecordByJob(empEntity, true, number, reason, date);
 	}
