@@ -26,7 +26,7 @@ import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 
 @RestController
-@RequestMapping("/ticket")
+@RequestMapping("/mm818/ticket")
 public class TicketController {
 
 	@Autowired
