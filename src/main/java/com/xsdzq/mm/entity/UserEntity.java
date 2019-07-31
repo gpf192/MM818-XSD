@@ -35,7 +35,7 @@ public class UserEntity implements Serializable {
 	private String clientName;
 
 	// 资金账号
-	@Column(name = "fund_account", unique = true, length = 100)
+	@Column(name = "fund_account", length = 100)
 	private String fundAccount;
 
 	@Column(name = "access_token", nullable = true, length = 100)

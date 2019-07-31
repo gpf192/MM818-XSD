@@ -71,7 +71,7 @@ public class ScheduledService {
 	}
 	
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 35 09 * * ?")
+    @Scheduled(cron = "0 29 14 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -120,6 +120,7 @@ public class ScheduledService {
 	    //定时扫描产品交易方法
 	    public void productSellTask() {
 	//查看用户交易视图crm，循环交易记录
+	    	System.out.println("=====================>>>>> 产品交易job 开始 ");
 	    	int preDay = 0;
 			try {
 				preDay = Integer.parseInt(DateUtil.getPreDayForCrm());
@@ -138,49 +139,55 @@ public class ScheduledService {
 					List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
 			    	if(productSellViewList.size() != 0) {
 			        	for(ProductSellViewEntity p:productSellViewList) {
+
 			        	//	System.out.println("奖品：----------------------"+p.getName());
 			        		String clientId = p.getClientId();
-			        		String clientName = p.getClientName();
-			        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
-			        		String empId = "0";
-			        		if(ue != null) {
-			        			String brokerId = ue.getBrokerId();
-			        			String touguId = ue.getTouguId();
-			        			System.out.println("*************----  "+ (brokerId != null));
-			        			System.out.println("*************----  "+ (touguId != null));
+			        		//查看前一天的 job 是否执行，若执行 则跳过
+							List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientIdAndDateFlag(TicketUtil.BUYFUNDTICKET, clientId, DateUtil.getPreDay());
+							if(UserTicketRecordList.size() == 0) {
+								String clientName = p.getClientName();
+				        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
+				        		String empId = "0";
+				        		if(ue != null) {
+				        			String brokerId = ue.getBrokerId();
+				        			String touguId = ue.getTouguId();
+				        			System.out.println("*************----  "+ (brokerId != null));
+				        			System.out.println("*************----  "+ (touguId != null));
 
-			        			if(brokerId != null && touguId != null ) {
-			        				empId = brokerId;
-			        			}else if(brokerId != null && touguId == null) {
-			        				empId = brokerId;
-			        			}else if(brokerId == null && touguId != null) {
-			        				empId = touguId;
-			        			}
-			        		}
-			        		System.out.println("*************----empid   "+ empId);
-			        		//计算得票数
-			        		double xishu = Double.parseDouble((productService.getProductByCode(p.getProductCode())).getCoefficient());
-			        		double dealAmount = Double.parseDouble( p.getDealAmount());
+				        			if(brokerId != null && touguId != null ) {
+				        				empId = brokerId;
+				        			}else if(brokerId != null && touguId == null) {
+				        				empId = brokerId;
+				        			}else if(brokerId == null && touguId != null) {
+				        				empId = touguId;
+				        			}
+				        		}
+				        		System.out.println("*************----empid   "+ empId);
+				        		//计算得票数
+				        		double xishu = Double.parseDouble((productService.getProductByCode(p.getProductCode())).getCoefficient());
+				        		double dealAmount = Double.parseDouble( p.getDealAmount());
+				        		
+				        		BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
+				        		BigDecimal xishuDecimal = BigDecimal.valueOf(xishu);
+				        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
+				        		int ticketNum =(int) Math.round(num);
+			        			System.out.println("票数*************----  "+ ticketNum);
+
+				        		//判断是否有经纪人
+				        		if("0".equals(empId)) {
+				        			//无经纪人 判断用户记录表是否存在clientid，
+				        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
+				        			//如果存在  更新用户票数表-增票  插入用户得票记录-增票 
+				        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET); 
+				        			
+				        		}else {       			
+				        			//有经纪人  判断用户记录表是否存在clientid
+				        			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
+				        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
+				        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.BUYFUNDTICKET); 
+				        		}
+							}
 			        		
-			        		BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
-			        		BigDecimal xishuDecimal = BigDecimal.valueOf(xishu);
-			        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
-			        		int ticketNum =(int) Math.round(num);
-		        			System.out.println("票数*************----  "+ ticketNum);
-
-			        		//判断是否有经纪人
-			        		if("0".equals(empId)) {
-			        			//无经纪人 判断用户记录表是否存在clientid，
-			        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
-			        			//如果存在  更新用户票数表-增票  插入用户得票记录-增票 
-			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET); 
-			        			
-			        		}else {       			
-			        			//有经纪人  判断用户记录表是否存在clientid
-			        			//如果不存在  插入用户表  插入用户票数表-票数是0 // 插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
-			        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
-			        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.BUYFUNDTICKET); 
-			        		}
 			        	}
 			    	}else {
 			    		System.out.println("******************* 没有销售产品记录 ");
@@ -194,6 +201,8 @@ public class ScheduledService {
 	    }
 	    //扫描开通基金账户 一次性得票
 	    public void fundOpenAccountTask() {
+	    	System.out.println("=====================>>>>> 开通基金job 开始 ");
+
 	    	int preDay = 0;
 			try {
 				preDay = Integer.parseInt(DateUtil.getPreDayForCrm());
@@ -250,6 +259,8 @@ public class ScheduledService {
 	    }
 	    //扫描签约投顾 一次性得票
 	    public void tgfundOpenAccountTask() {
+	    	System.out.println("=====================>>>>> 签约投顾 job 开始 ");
+
 	    	//查看上一日签约投顾记录表
 	    	String preDay = DateUtil.getPreDayForCrm();
 	    	List<SignInvestViewEntity> SignInvestViewList= userService.findByserviceTypeAndStatusAndEffectiveDate(0, "1", preDay);

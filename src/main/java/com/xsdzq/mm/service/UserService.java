@@ -36,6 +36,7 @@ public interface UserService {
 	List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientId(String votesSource, String clientId);
 	
 	List<SignInvestViewEntity>findByserviceTypeAndStatusAndEffectiveDate(int serviceType, String status, String effectiveDate);
+	List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientIdAndDateFlag(String votesSource, String clientId, String dateFlag);
 
 
 }

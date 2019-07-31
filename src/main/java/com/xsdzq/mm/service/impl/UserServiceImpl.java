@@ -279,4 +279,11 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return signInvestViewRepository.findByserviceTypeAndStatusAndEffectiveDate(serviceType, status, effectiveDate);
 	}
+
+	@Override
+	public List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientIdAndDateFlag(String votesSource,
+			String clientId, String dateFlag) {
+		// TODO Auto-generated method stub
+		 return userTicketRecordRepository.findByVotesSourceAndUserEntity_clientIdAndDateFlag(votesSource, clientId, dateFlag);
+	}
 }
