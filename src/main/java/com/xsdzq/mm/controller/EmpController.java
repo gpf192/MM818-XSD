@@ -18,7 +18,7 @@ import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.util.GsonUtil;
 
 @RestController
-@RequestMapping("/mm818/emp")
+@RequestMapping("/activity/emp")
 public class EmpController {
 
 	@Autowired

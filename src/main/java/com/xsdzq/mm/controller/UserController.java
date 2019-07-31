@@ -26,7 +26,7 @@ import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.UserUtil;
 
 @RestController
-@RequestMapping("/mm818/user")
+@RequestMapping("/activity/user")
 public class UserController {
 	private Logger logger = LoggerFactory.getLogger(UserController.class.getName());
 	@Autowired
