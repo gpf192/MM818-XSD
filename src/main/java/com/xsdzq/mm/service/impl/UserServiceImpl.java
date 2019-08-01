@@ -8,12 +8,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xsdzq.mm.dao.EmpRepository;
+import com.xsdzq.mm.dao.OpenAccountRepository;
+import com.xsdzq.mm.dao.ParamRepository;
 import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
+import com.xsdzq.mm.dao.SignInvestViewRepository;
 import com.xsdzq.mm.dao.UserRepository;
 import com.xsdzq.mm.dao.UserTicketRecordRepository;
+import com.xsdzq.mm.entity.EmpEntity;
+import com.xsdzq.mm.entity.OpenAccountEntity;
+import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
+import com.xsdzq.mm.entity.SignInvestViewEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.model.ActivityNumber;
@@ -44,12 +52,24 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserTicketRecordRepository userTicketRecordRepository;
-
+	
+	@Autowired
+	private EmpRepository empRepository;
+	
 	@Autowired
 	private PrizeService prizeService;
 
 	@Autowired
 	private UserTicketService userTicketService;
+	
+	@Autowired
+	OpenAccountRepository openAccountRepository;
+	
+	@Autowired
+	ParamRepository paramRepository;
+	
+	@Autowired
+	SignInvestViewRepository signInvestViewRepository;
 
 	@Override
 	public User getUserById(Long id) {
@@ -172,5 +192,98 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 	}
+	//JOB
+	@Override
+	@Transactional
+	public void addTicketByJobWithEmpId(String clientId, String clientName, String empId, int num, String reason) {
+		// TODO Auto-generated method stub
+		
+			//判断用户是否存在
+			UserEntity user = userRepository.findByClientId(clientId);
+			if (user == null) {
+				UserEntity newUser = new UserEntity();
+				newUser.setClientId(clientId);
+				newUser.setClientName(clientName);
+				//添加新用户
+				userRepository.save(newUser);
+				//添加用户票数表  先查存在不 若不存在则新建
+				//插入用户得票记录表,同时用户票数表增加票
+				Date date = new Date();
+				userTicketService.addUserTicketNumberByJob(newUser, num, reason, date);
+				//插入用户投票员工表,同时用户减票,员工增票
+				userTicketService.userVoteEmpByJob(newUser, empId, num, reason, date);
+				
+			}else {
+				Date date = new Date();
+				//插入用户得票记录表 票数表
+				userTicketService.addUserTicketNumberByJob(user, num, reason, date);
+				//插入用户投票员工表,同时用户减票,员工增票
+				userTicketService.userVoteEmpByJob(user, empId, num, reason, date);
+			}
+		
 
+	}
+	
+	@Override
+	@Transactional
+	public void addTicketByJob(String clientId, String clientName, int num, String reason) {
+		// TODO Auto-generated method stub
+		//判断用户是否存在
+		UserEntity user = userRepository.findByClientId(clientId);
+		Date date = new Date();
+		if (user == null) {
+			UserEntity newUser = new UserEntity();
+			newUser.setClientId(clientId);
+			newUser.setClientName(clientName);
+			//添加新用户
+			userRepository.save(newUser);
+			//添加用户票数表  先查存在不 若不存在则新建		
+			//插入用户得票记录表 同时用户票数表增加票
+			userTicketService.addUserTicketNumberByJob(newUser, num, reason, date);
+					
+		}else {
+			//插入用户得票记录表
+			userTicketService.addUserTicketNumberByJob(user, num, reason, date);
+			
+		}
+	}
+
+
+	@Override
+	public List<OpenAccountEntity> findByOpenDate(int preDay) {
+		// TODO Auto-generated method stub
+		return openAccountRepository.findByOpenDate(preDay);
+	}
+
+	@Override
+	public int countByOpenDateLessThanEqualAndOpenDateGreaterThanEqualAndClientId(int endDate, int beginDate,  String clientId) {
+		// TODO Auto-generated method stub
+		return openAccountRepository.countByOpenDateLessThanEqualAndOpenDateGreaterThanEqualAndClientId(endDate, beginDate, clientId);
+	}
+
+	@Override
+	public ParamEntity getValueByCode(String code) {
+		// TODO Auto-generated method stub
+		return paramRepository.getValueByCode(code);
+	}
+
+	@Override
+	public List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientId(String votesSource, String clientId) {
+		// TODO Auto-generated method stub
+		return userTicketRecordRepository.findByVotesSourceAndUserEntity_clientId(votesSource, clientId);
+	}
+
+	@Override
+	public List<SignInvestViewEntity> findByserviceTypeAndStatusAndEffectiveDate(int serviceType, String status,
+			String effectiveDate) {
+		// TODO Auto-generated method stub
+		return signInvestViewRepository.findByserviceTypeAndStatusAndEffectiveDate(serviceType, status, effectiveDate);
+	}
+
+	@Override
+	public List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientIdAndDateFlag(String votesSource,
+			String clientId, String dateFlag) {
+		// TODO Auto-generated method stub
+		 return userTicketRecordRepository.findByVotesSourceAndUserEntity_clientIdAndDateFlag(votesSource, clientId, dateFlag);
+	}
 }

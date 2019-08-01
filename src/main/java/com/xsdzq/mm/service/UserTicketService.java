@@ -1,5 +1,6 @@
 package com.xsdzq.mm.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.xsdzq.mm.entity.UserEntity;
@@ -23,4 +24,13 @@ public interface UserTicketService {
 
 	List<UserTicketTotalViewEntity> getUserTicketSort(int pageNumber, int pageSize);
 
+	//job
+
+	void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason, Date date);
+
+	void reduceUserTickeNumberByJob(UserEntity userEntity, int number, String reason, Date date);
+	void userVoteEmpByJob(UserEntity userEntity, String empId, int number, String reason, Date date);
+	
+	 List<UserTicketRecordEntity>  getByVotesSourceAndDateFlag(String votesSource, String dateFlag);
+	 
 }

@@ -33,7 +33,7 @@ public class EmpTicketRecordEntity implements Serializable {
 	@Column(name = "type", nullable = false)
 	private boolean type; // type 为0 表示减少 reason 以0开头 0X， 为1表示增加 reason 以1开头 1X
 
-	@Column(name = "votes_source", nullable = false) // 得票来源 ， 11.员工投票 12.员工购买理财产品
+	@Column(name = "votes_source", nullable = false) // 得票来源 ， 1.员工投票 2.员工购买理财产品 3.
 	private String votesSource;
 
 	@Column(name = "num", nullable = false)

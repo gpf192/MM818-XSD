@@ -1,5 +1,6 @@
 package com.xsdzq.mm.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +43,8 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 	@Transactional
 	public EmpTicketEntity getEmpTicketEntity(EmpEntity empEntity) {
 		// TODO Auto-generated method stub
-		EmpTicketEntity empTicketEntity = empTicketRepository.findByEmpEntity(empEntity);
+		System.out.println("KKKKKKKKKKKKKKKKKKKK  "+ empEntity.getEmpId());
+		EmpTicketEntity empTicketEntity = empTicketRepository.findByEmpEntity_empId(empEntity.getEmpId());
 		if (empTicketEntity == null) {
 			EmpTicketEntity eTicketEntity = new EmpTicketEntity();
 			eTicketEntity.setEmpEntity(empEntity);
@@ -81,5 +83,43 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 		empTicketRecordEntity.setRecordTime(new Date());
 		empTicketRecordRepository.save(empTicketRecordEntity);
 	}
+	//JOB
+	@Override
+	@Transactional
+	public void addEmpTicketNumberByJOB(EmpEntity empEntity, int number, String reason, Date date) {
+		// TODO Auto-generated method stub
+		EmpTicketEntity empTicketEntity = getEmpTicketEntity(empEntity);
 
+		empTicketRepository.add(empTicketEntity, number);
+		addEmpTicketRecordByJob(empEntity, true, number, reason, date);
+	}
+
+
+
+	// 添加员工票数变化的记录
+	private void addEmpTicketRecordByJob(EmpEntity empEntity, boolean type, int number, String votesSource, Date date) {
+		String nowString = DateUtil.getPreDay();
+		EmpTicketRecordEntity empTicketRecordEntity = new EmpTicketRecordEntity();
+		empTicketRecordEntity.setEmpEntity(empEntity);
+		empTicketRecordEntity.setNumber(number);
+		empTicketRecordEntity.setType(type);
+		empTicketRecordEntity.setVotesSource(votesSource);
+		empTicketRecordEntity.setDateFlag(nowString);
+		empTicketRecordEntity.setRecordTime(date);
+		empTicketRecordRepository.save(empTicketRecordEntity);
+	}
+	//JOB
+	//   添加员工票数变化的记录
+	/*
+	 * private void addEmpTicketRecordByJob(EmpEntity empEntity, boolean type, int
+	 * number, String votesSource) { Calendar cal=Calendar.getInstance();
+	 * cal.add(Calendar.DATE,-1); Date d=cal.getTime(); String nowString =
+	 * DateUtil.getStandardDate(d); EmpTicketRecordEntity empTicketRecordEntity =
+	 * new EmpTicketRecordEntity(); empTicketRecordEntity.setEmpEntity(empEntity);
+	 * empTicketRecordEntity.setNumber(number); empTicketRecordEntity.setType(type);
+	 * empTicketRecordEntity.setVotesSource(votesSource);
+	 * empTicketRecordEntity.setDateFlag(nowString);
+	 * empTicketRecordEntity.setRecordTime(new Date());
+	 * empTicketRecordRepository.save(empTicketRecordEntity); }
+	 */
 }

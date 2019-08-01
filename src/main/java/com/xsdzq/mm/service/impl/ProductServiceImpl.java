@@ -1,5 +1,6 @@
 package com.xsdzq.mm.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -34,4 +35,16 @@ public class ProductServiceImpl implements ProductService {
 		return productPage.getContent();
 	}
 
+	@Override
+	public ProductEntity getProductByCode(String code) {
+		// TODO Auto-generated method stub
+		return productRepository.findByCode(code);
+	}
+	@Override
+	public List<ProductEntity> getAll(Date preDay, Date preDay1) {
+		// TODO Auto-generated method stub
+	
+		return productRepository.findByBeginDateLessThanEqualAndEndDateGreaterThanEqual(preDay, preDay1);
+	
+	}
 }
