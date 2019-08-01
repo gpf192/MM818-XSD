@@ -5,6 +5,7 @@ public class TicketUtil {
 	// 活动登录:1;
 	//活动分享:2;抽奖:3; 购买理财产品:4;新开基金账户:5;签约投顾:6; 投票0
 	//7.抽奖，额外投票权
+	//8. 系统自动投票
 
 	public static String ACTIVITYLOGINTICKET = "1";
 
@@ -19,6 +20,8 @@ public class TicketUtil {
 	public static String BROKETICKET = "6";
 	
 	public static String PRIZEGETTICKET = "7";
+	
+	public static String SYSTEMVOTE = "8";
 
 	
 

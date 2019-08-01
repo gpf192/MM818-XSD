@@ -36,10 +36,35 @@ public class PrizeRecordRepositoryImpl implements PrizeRecordRepository {
 	@Override
 	public PrizeRecordEntity getLatestRealPrizeResult() {
 		// TODO Auto-generated method stub
-		
-		//TypedQuery<PrizeRecordEntity> sqlQuery =em.createQuery("SELECT r FROM PrizeResultEntity r WHERE r.userEntity=",PrizeRecordEntity.class);
+
+		// TypedQuery<PrizeRecordEntity> sqlQuery =em.createQuery("SELECT r FROM
+		// PrizeResultEntity r WHERE r.userEntity=",PrizeRecordEntity.class);
 		return null;
 	}
+
+	/*@Override
+	public List<PrizeRecordEntity> getSignAdviserRecord(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		TypedQuery<PrizeRecordEntity> sqlQuery = em.createQuery(
+				"SELECT r FROM PrizeRecordEntity r WHERE r.userEntity=?1 and r.type=?2 and r.votesSource=?3",
+				PrizeRecordEntity.class);
+		sqlQuery.setParameter(1, userEntity);
+		sqlQuery.setParameter(2, 1);
+		sqlQuery.setParameter(2, "6");
+		return sqlQuery.getResultList();
+	}
+
+	@Override
+	public List<PrizeRecordEntity> getNewFundAccountRecord(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		TypedQuery<PrizeRecordEntity> sqlQuery = em.createQuery(
+				"SELECT r FROM PrizeRecordEntity r WHERE r.userEntity=?1 and r.type=?2 and r.votesSource=?3",
+				PrizeRecordEntity.class);
+		sqlQuery.setParameter(1, userEntity);
+		sqlQuery.setParameter(2, 1);
+		sqlQuery.setParameter(2, "5");
+		return sqlQuery.getResultList();
+	}*/
 
 	@Override
 	public List<PrizeRecordEntity> getListByUserAndFlag(UserEntity userEntity, String flag) {

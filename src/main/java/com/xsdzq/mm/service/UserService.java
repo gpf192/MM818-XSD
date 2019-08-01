@@ -9,7 +9,11 @@ public interface UserService {
 	ActivityNumber login(User user);
 
 	User getUserById(Long id);
-	
+
+	boolean hasSignAdviser(UserEntity userEntity);
+
+	boolean hasNewFundAccount(UserEntity userEntity);
+
 	UserEntity getUserByClientId(String clientId);
 
 	void setUserInfo(UserEntity userEntity);
@@ -17,6 +21,5 @@ public interface UserService {
 	User getUserById(String id);
 
 	User findByClientId(String clientId);
-	
 
 }

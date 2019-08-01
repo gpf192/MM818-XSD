@@ -33,7 +33,7 @@ public class UserTicketRecordEntity implements Serializable {
 	@Column(name = "type", nullable = false)
 	private boolean type; // type 为0 表示减少 reason 以0开头 0X， 为1表示增加 reason 以1开头 1X
 
-	@Column(name = "votes_source", nullable = false) // 得票来源 ， 11.登陆 12.分享 13.理财产品 14.签约投顾 01 投票
+	@Column(name = "votes_source", nullable = false) // 得票来源 
 	private String votesSource;
 
 	@Column(name = "num", nullable = false)
