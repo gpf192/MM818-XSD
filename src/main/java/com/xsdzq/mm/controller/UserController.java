@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.ActivityNumber;
+import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.model.UserData;
 import com.xsdzq.mm.service.TokenService;
@@ -29,13 +30,14 @@ import com.xsdzq.mm.util.UserUtil;
 @RequestMapping("/activity/user")
 public class UserController {
 	private Logger logger = LoggerFactory.getLogger(UserController.class.getName());
-	@Autowired
-	@Qualifier("userServiceImpl")
-	UserService userService;
 
 	@Autowired
 	@Qualifier("tokenServiceImpl")
 	TokenService tokenService;
+
+	@Autowired
+	@Qualifier("userServiceImpl")
+	UserService userService;
 
 	@GetMapping(value = "/test")
 	public String Test() {
@@ -67,6 +69,26 @@ public class UserController {
 		// userService.addEveryLoginPrizeNumber(userEntity);
 		User realUser = userService.findByClientId(userEntity.getClientId());
 		return GsonUtil.buildMap(0, "ok", realUser);
+	}
+
+	@UserLoginToken
+	@GetMapping(value = "/hasSignAdviser", produces = "application/json; charset=utf-8")
+	public Map<String, Object> hasSignAdviser(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		boolean hasAdviser = userService.hasSignAdviser(userEntity);
+		HasNumber hasNumber = new HasNumber();
+		hasNumber.setHasNumber(hasAdviser);
+		return GsonUtil.buildMap(0, "ok", hasNumber);
+	}
+
+	@UserLoginToken
+	@GetMapping(value = "/hasNewFundAccount", produces = "application/json; charset=utf-8")
+	public Map<String, Object> hasNewFundAccount(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		boolean hasAccount = userService.hasNewFundAccount(userEntity);
+		HasNumber hasNumber = new HasNumber();
+		hasNumber.setHasNumber(hasAccount);
+		return GsonUtil.buildMap(0, "ok", hasNumber);
 	}
 
 }

@@ -72,6 +72,28 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public boolean hasSignAdviser(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<UserTicketRecordEntity> list = userTicketRecordRepository.findByUserEntityAndTypeAndVotesSource(userEntity,
+				true, "6");
+		if (list.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean hasNewFundAccount(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<UserTicketRecordEntity> list = userTicketRecordRepository.findByUserEntityAndTypeAndVotesSource(userEntity,
+				true, "5");
+		if (list.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	@Transactional
 	public ActivityNumber login(User user) {
 		UserEntity owner = userRepository.findByClientId(user.getClientId());
