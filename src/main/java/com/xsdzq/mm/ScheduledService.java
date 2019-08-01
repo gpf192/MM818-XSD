@@ -71,7 +71,7 @@ public class ScheduledService {
 	}
 	
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 29 14 * * ?")
+    @Scheduled(cron = "0 30 10 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -172,7 +172,8 @@ public class ScheduledService {
 				        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
 				        		int ticketNum =(int) Math.round(num);
 			        			System.out.println("票数*************----  "+ ticketNum);
-
+			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET);
+			        			/*
 				        		//判断是否有经纪人
 				        		if("0".equals(empId)) {
 				        			//无经纪人 判断用户记录表是否存在clientid，
@@ -186,6 +187,7 @@ public class ScheduledService {
 				        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
 				        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.BUYFUNDTICKET); 
 				        		}
+				        		*/
 							}
 			        		
 			        	}
@@ -236,6 +238,8 @@ public class ScheduledService {
 		        		int ticketNum = Integer.parseInt(userService.getValueByCode("fund_ticket_num").getValue());
 		        		//判断是否有经纪人
 		        		String clientName = "";
+		        		userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.NEEFUNDTICKET);
+		        		/*
 		        		if("0".equals(empId)) {
 		        			//无经纪人 判断用户记录表是否存在clientid，
 		        			//如果不存在  插入用户表  插入用户票数表-增票  插入用户得票记录表-增票
@@ -249,6 +253,7 @@ public class ScheduledService {
 		        			//如果存在  插入用户得票记录表-增票 -自动减票 //插入用户投票员工表//员工票数表添加
 		        			 userService.addTicketByJobWithEmpId(clientId, clientName, empId, ticketNum, TicketUtil.NEEFUNDTICKET); 
 		        		}
+		        		*/
 					}
 
 				}

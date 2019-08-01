@@ -154,16 +154,16 @@ public class UserTicketServiceImpl implements UserTicketService {
 		}
 		// 用户减操作
 		//时间标志是前一天  dataflag
-		reduceUserTickeNumberByJob(userEntity, number, reason, date);
+		reduceUserTickeNumberByJob(userEntity, number, TicketUtil.SYSTEMVOTE, date);
 		// 员工加操作
-		empTicketService.addEmpTicketNumberByJOB(empEntity, number, reason, date);
+		empTicketService.addEmpTicketNumberByJOB(empEntity, number, TicketUtil.SYSTEMVOTE, date);
 		// 写入结果记录
 		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
 		userVoteEmpResultEntity.setUserEntity(userEntity);
 		userVoteEmpResultEntity.setEmpEntity(empEntity);
 		userVoteEmpResultEntity.setNumber(number);
 		userVoteEmpResultEntity.setRecordTime(date);
-		userVoteEmpResultEntity.setType(reason);
+		userVoteEmpResultEntity.setType(TicketUtil.SYSTEMVOTE);
 		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
 
 	}
