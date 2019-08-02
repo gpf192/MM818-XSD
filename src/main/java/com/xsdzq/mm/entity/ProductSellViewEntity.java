@@ -15,6 +15,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class ProductSellViewEntity implements Serializable {
 	@Id
+	@Column(name = "lsh")
+	private String lsh;
+	
 	// 客户号
 	@Column(name = "client_id")
 	private String clientId;
@@ -101,5 +104,14 @@ public class ProductSellViewEntity implements Serializable {
 	public void setDealAmount(String dealAmount) {
 		this.dealAmount = dealAmount;
 	}
+
+	public String getLsh() {
+		return lsh;
+	}
+
+	public void setLsh(String lsh) {
+		this.lsh = lsh;
+	}
+	
 	
 }

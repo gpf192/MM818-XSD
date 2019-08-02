@@ -71,7 +71,7 @@ public class ScheduledService {
 	}
 	
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 30 10 * * ?")
+    @Scheduled(cron = "0 35 11 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
