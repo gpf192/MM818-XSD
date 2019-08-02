@@ -39,13 +39,12 @@ public class ProductSellViewEntity implements Serializable {
 	
 	@Column(name = "deal_amount")
 	private String dealAmount;//成交金额
-
-	@Override
-	public String toString() {
-		return "ProductSellViewEntity [clientId=" + clientId + ", clientName=" + clientName + ", productCode="
-				+ productCode + ", productName=" + productName + ", financeAccount=" + financeAccount + ", dealTime="
-				+ dealTime + ", dealAmount=" + dealAmount + "]";
-	}
+	
+	@Column(name = "emp_name")
+	private String empName;//对应服务员工
+		
+	@Column(name = "flag")
+	private int flag;//0-场内  1-场外
 
 	public String getClientId() {
 		return clientId;
@@ -111,6 +110,30 @@ public class ProductSellViewEntity implements Serializable {
 
 	public void setLsh(String lsh) {
 		this.lsh = lsh;
+	}
+
+	public String getEmpName() {
+		return empName;
+	}
+
+	public void setEmpName(String empName) {
+		this.empName = empName;
+	}
+
+	public int getFlag() {
+		return flag;
+	}
+
+	public void setFlag(int flag) {
+		this.flag = flag;
+	}
+
+	@Override
+	public String toString() {
+		return "ProductSellViewEntity [lsh=" + lsh + ", clientId=" + clientId + ", clientName=" + clientName
+				+ ", productCode=" + productCode + ", productName=" + productName + ", financeAccount=" + financeAccount
+				+ ", dealTime=" + dealTime + ", dealAmount=" + dealAmount + ", empName=" + empName + ", flag=" + flag
+				+ "]";
 	}
 	
 	

@@ -150,10 +150,7 @@ public class ScheduledService {
 				        		String empId = "0";
 				        		if(ue != null) {
 				        			String brokerId = ue.getBrokerId();
-				        			String touguId = ue.getTouguId();
-				        			System.out.println("*************----  "+ (brokerId != null));
-				        			System.out.println("*************----  "+ (touguId != null));
-
+				        			String touguId = ue.getTouguId();				        			
 				        			if(brokerId != null && touguId != null ) {
 				        				empId = brokerId;
 				        			}else if(brokerId != null && touguId == null) {
