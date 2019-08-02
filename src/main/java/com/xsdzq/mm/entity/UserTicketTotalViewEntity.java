@@ -17,11 +17,10 @@ public class UserTicketTotalViewEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-
 	@Column(name = "total")
 	private Integer total;
 
+	@Id
 	@Column(name = "client_id")
 	private String clientId;
 
