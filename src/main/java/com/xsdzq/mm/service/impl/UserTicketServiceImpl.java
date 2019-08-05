@@ -81,7 +81,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 	public List<UserTicketRecordAndResult> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize) {
 		// TODO Auto-generated method stub
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-		Page<UserTicketRecordEntity> uPage = userTicketRecordRepository.findByUserEntityOrderByGainTimeDesc(userEntity,
+		Page<UserTicketRecordEntity> uPage = userTicketRecordRepository.findByUserEntityOrderByGainTimeDescType(userEntity,
 				pageRequest);
 		List<UserTicketRecordEntity> userTicketRecordEntities = uPage.getContent();
 		List<UserTicketRecordAndResult> uRecordAndResultEntities = new ArrayList<UserTicketRecordAndResult>();
