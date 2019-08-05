@@ -1,7 +1,10 @@
 package com.xsdzq.mm.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +41,21 @@ public class ProductServiceImpl implements ProductService {
 	public List<ProductEntity> getAllProductList() {
 		// TODO Auto-generated method stub
 		List<ProductEntity> allList = productRepository.findAll();
-		return allList;
-	}
+		List<ProductEntity> list = new ArrayList<ProductEntity>();
+		for (ProductEntity productEntity : allList) {
+			Date nowDate = new Date();
+			Date endDate = productEntity.getEndDate();
+			if (endDate != null && !StringUtils.isBlank(endDate.toString())) {
+				if (nowDate.after(endDate)) {
 
+				} else {
+					list.add(productEntity);
+				}
+
+			} else {
+				list.add(productEntity);
+			}
+		}
+		return list;
+	}
 }

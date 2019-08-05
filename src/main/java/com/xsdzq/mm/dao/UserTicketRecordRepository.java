@@ -18,6 +18,6 @@ public interface UserTicketRecordRepository extends JpaRepository<UserTicketReco
 	List<UserTicketRecordEntity> findByUserEntityAndTypeAndVotesSource(UserEntity userEntity, boolean type,
 			String votesSource);
 
-	Page<UserTicketRecordEntity> findByUserEntityOrderByGainTimeDesc(UserEntity userEntity, Pageable pageable);
+	Page<UserTicketRecordEntity> findByUserEntityOrderByGainTimeDescType(UserEntity userEntity, Pageable pageable);
 
 }

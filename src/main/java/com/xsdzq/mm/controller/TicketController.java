@@ -1,8 +1,11 @@
 package com.xsdzq.mm.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,8 @@ import com.xsdzq.mm.util.PrizeUtil;
 @RestController
 @RequestMapping("/activity/ticket")
 public class TicketController {
+	
+	Logger logger = LoggerFactory.getLogger(TicketController.class.getName());
 
 	@Autowired
 	TokenService tokenService;
@@ -78,14 +83,21 @@ public class TicketController {
 	@GetMapping(value = "/userSort", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getUserTicketSort(@RequestParam int pageNumber, @RequestParam int pageSize) {
 		List<UserTicketTotalViewEntity> list = userTicketService.getUserTicketSort(pageNumber, pageSize);
+		List<UserTicketTotalViewEntity> responsEntities = new ArrayList<UserTicketTotalViewEntity>();
 		for (UserTicketTotalViewEntity entity : list) {
-			entity.setClientId(PrizeUtil.getInstance().getSecretString(entity.getClientId()));
+			// entity.setClientId(PrizeUtil.getInstance().getSecretString(entity.getClientId()));
+			logger.info("origin: " + entity.toString());
+			UserTicketTotalViewEntity uEntity = new UserTicketTotalViewEntity();
+			uEntity.setClientId(PrizeUtil.getInstance().getSecretString(entity.getClientId()));
+			uEntity.setTotal(entity.getTotal());
+			logger.info("secret: " + uEntity.toString());
+			responsEntities.add(uEntity);
 		}
 
 		Pagination pagination = new Pagination(pageNumber, pageSize);
 		int total = userTicketService.countVoteNumber();
 		pagination.setTotalItems(total);
-		return GsonUtil.buildMap(0, "ok", list, pagination);
+		return GsonUtil.buildMap(0, "ok", responsEntities, pagination);
 	}
 
 	@GetMapping(value = "/myVoteEmp", produces = "application/json; charset=utf-8")
