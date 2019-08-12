@@ -31,7 +31,7 @@ import com.xsdzq.mm.util.PrizeUtil;
 @RestController
 @RequestMapping("/activity/ticket")
 public class TicketController {
-	
+
 	Logger logger = LoggerFactory.getLogger(TicketController.class.getName());
 
 	@Autowired
@@ -72,6 +72,14 @@ public class TicketController {
 			System.out.println(voteModel.toString());
 			String numberString = voteModel.getTicketNumber();
 			int number = Integer.parseInt(numberString);
+			int myNumer = userTicketService.getUserTicket(userEntity);
+			logger.info("nubmer: " + number);
+			logger.info("myNumer: " + myNumer);
+			System.out.print("nubmer: " + number);
+			System.out.print("myNumer: " + myNumer);
+			if (number > myNumer) {
+				return GsonUtil.buildMap(1, "投票超过上限", null);
+			}
 			userTicketService.userVoteEmp(userEntity, empId, number);
 		} catch (Exception e) {
 			// TODO: handle exception
