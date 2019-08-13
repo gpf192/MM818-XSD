@@ -71,7 +71,7 @@ public class ScheduledService {
 	}
 	
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 35 11 * * ?")
+    @Scheduled(cron = "0 30 05 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -235,6 +235,12 @@ public class ScheduledService {
 		        		int ticketNum = Integer.parseInt(userService.getValueByCode("fund_ticket_num").getValue());
 		        		//判断是否有经纪人
 		        		String clientName = "";
+						try {
+							clientName = ue.getClientName();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 		        		userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.NEEFUNDTICKET);
 		        		/*
 		        		if("0".equals(empId)) {
