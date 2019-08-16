@@ -26,7 +26,7 @@ public interface UserTicketService {
 
 	//job
 
-	void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason, Date date);
+	void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason, Date date, String lsh);
 
 	void reduceUserTickeNumberByJob(UserEntity userEntity, int number, String reason, Date date);
 	void userVoteEmpByJob(UserEntity userEntity, String empId, int number, String reason, Date date);

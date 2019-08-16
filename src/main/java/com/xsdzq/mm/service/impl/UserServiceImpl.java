@@ -209,14 +209,14 @@ public class UserServiceImpl implements UserService {
 				//添加用户票数表  先查存在不 若不存在则新建
 				//插入用户得票记录表,同时用户票数表增加票
 				Date date = new Date();
-				userTicketService.addUserTicketNumberByJob(newUser, num, reason, date);
+				userTicketService.addUserTicketNumberByJob(newUser, num, reason, date,"");
 				//插入用户投票员工表,同时用户减票,员工增票
 				userTicketService.userVoteEmpByJob(newUser, empId, num, reason, date);
 				
 			}else {
 				Date date = new Date();
 				//插入用户得票记录表 票数表
-				userTicketService.addUserTicketNumberByJob(user, num, reason, date);
+				userTicketService.addUserTicketNumberByJob(user, num, reason, date,"");
 				//插入用户投票员工表,同时用户减票,员工增票
 				userTicketService.userVoteEmpByJob(user, empId, num, reason, date);
 			}
@@ -226,7 +226,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void addTicketByJob(String clientId, String clientName, int num, String reason) {
+	public void addTicketByJob(String clientId, String clientName, int num, String reason, String lsh) {
 		// TODO Auto-generated method stub
 		//判断用户是否存在
 		UserEntity user = userRepository.findByClientId(clientId);
@@ -239,11 +239,11 @@ public class UserServiceImpl implements UserService {
 			userRepository.save(newUser);
 			//添加用户票数表  先查存在不 若不存在则新建		
 			//插入用户得票记录表 同时用户票数表增加票
-			userTicketService.addUserTicketNumberByJob(newUser, num, reason, date);
+			userTicketService.addUserTicketNumberByJob(newUser, num, reason, date,lsh);
 					
 		}else {
 			//插入用户得票记录表
-			userTicketService.addUserTicketNumberByJob(user, num, reason, date);
+			userTicketService.addUserTicketNumberByJob(user, num, reason, date,lsh);
 			
 		}
 	}
@@ -285,5 +285,10 @@ public class UserServiceImpl implements UserService {
 			String clientId, String dateFlag) {
 		// TODO Auto-generated method stub
 		 return userTicketRecordRepository.findByVotesSourceAndUserEntity_clientIdAndDateFlag(votesSource, clientId, dateFlag);
+	}
+	@Override
+	public List<UserTicketRecordEntity> findBySerialNum(String serialNum) {
+		// TODO Auto-generated method stub
+		 return userTicketRecordRepository.findBySerialNum(serialNum);
 	}
 }

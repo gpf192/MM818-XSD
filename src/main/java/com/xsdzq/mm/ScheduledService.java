@@ -71,7 +71,7 @@ public class ScheduledService {
 	}
 	
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 30 05 * * ?")
+    @Scheduled(cron = "0 35 05 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -142,8 +142,10 @@ public class ScheduledService {
 
 			        	//	System.out.println("奖品：----------------------"+p.getName());
 			        		String clientId = p.getClientId();
+			        		String serialNum = p.getLsh();
 			        		//查看前一天的 job 是否执行，若执行 则跳过
-							List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientIdAndDateFlag(TicketUtil.BUYFUNDTICKET, clientId, DateUtil.getPreDay());
+							List<UserTicketRecordEntity> UserTicketRecordList = userService.findBySerialNum(serialNum);
+							//List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientIdAndDateFlag(TicketUtil.BUYFUNDTICKET, clientId, DateUtil.getPreDay());
 							if(UserTicketRecordList.size() == 0) {
 								String clientName = p.getClientName();
 				        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
@@ -169,7 +171,7 @@ public class ScheduledService {
 				        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
 				        		int ticketNum =(int) Math.round(num);
 			        			System.out.println("票数*************----  "+ ticketNum);
-			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET);
+			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET, serialNum);
 			        			/*
 				        		//判断是否有经纪人
 				        		if("0".equals(empId)) {
@@ -241,7 +243,7 @@ public class ScheduledService {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-		        		userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.NEEFUNDTICKET);
+		        		userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.NEEFUNDTICKET,"");
 		        		/*
 		        		if("0".equals(empId)) {
 		        			//无经纪人 判断用户记录表是否存在clientid，

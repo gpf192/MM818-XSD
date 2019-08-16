@@ -48,6 +48,17 @@ public class UserTicketRecordEntity implements Serializable {
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "client_id", referencedColumnName = "client_id")
 	private UserEntity userEntity;
+	
+	@Column(name = "serial_num")
+	private String serialNum; // 交易流水号
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
+	}
 
 	public Long getId() {
 		return id;

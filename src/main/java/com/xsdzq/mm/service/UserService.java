@@ -25,7 +25,7 @@ public interface UserService {
 	User findByClientId(String clientId);
 	//
 	void addTicketByJobWithEmpId(String clientId, String clientName, String empId, int num, String reason);
-	void addTicketByJob(String clientId, String clientName, int num, String reason);
+	void addTicketByJob(String clientId, String clientName, int num, String reason, String lsh);
 	
 	
 	List<OpenAccountEntity> findByOpenDate(int preDay);
@@ -37,6 +37,7 @@ public interface UserService {
 	
 	List<SignInvestViewEntity>findByserviceTypeAndStatusAndEffectiveDate(int serviceType, String status, String effectiveDate);
 	List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientIdAndDateFlag(String votesSource, String clientId, String dateFlag);
+	List<UserTicketRecordEntity> findBySerialNum(String serialNum);
 
 
 }

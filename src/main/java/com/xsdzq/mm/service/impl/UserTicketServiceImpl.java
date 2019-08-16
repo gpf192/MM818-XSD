@@ -97,10 +97,10 @@ public class UserTicketServiceImpl implements UserTicketService {
 	// JOB 增加用户票数，同时添加记录
 	@Override
 	@Transactional
-	public void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason, Date date) {
+	public void addUserTicketNumberByJob(UserEntity userEntity, int number, String reason, Date date, String lsh) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.add(userTicketEntity, number);
-		addUserTicketRecordByJob(userEntity, true, number, reason, date);
+		addUserTicketRecordByJob(userEntity, true, number, reason, date,lsh);
 		
 	}
 
@@ -110,7 +110,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 	public void reduceUserTickeNumberByJob(UserEntity userEntity, int number, String reason, Date date) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.reduce(userTicketEntity, number);
-		addUserTicketRecordByJob(userEntity, false, number, reason, date);
+		addUserTicketRecordByJob(userEntity, false, number, reason, date,"");
 	}
 
 	
@@ -169,7 +169,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 	}
 	
 	//定时任务添加票数变化记录
-	public void addUserTicketRecordByJob(UserEntity userEntity, boolean type, int number, String reason, Date date) {
+	public void addUserTicketRecordByJob(UserEntity userEntity, boolean type, int number, String reason, Date date, String lsh) {
 	      
 		String nowString = DateUtil.getPreDay();
 		UserTicketRecordEntity userTicketRecordEntity = new UserTicketRecordEntity();
@@ -177,6 +177,9 @@ public class UserTicketServiceImpl implements UserTicketService {
 		userTicketRecordEntity.setType(type);
 		userTicketRecordEntity.setNumber(number);
 		userTicketRecordEntity.setVotesSource(reason);
+		if(TicketUtil.BUYFUNDTICKET.equals(reason)) {
+			userTicketRecordEntity.setSerialNum(lsh);
+		}
 		userTicketRecordEntity.setDateFlag(nowString);
 		userTicketRecordEntity.setGainTime(date);
 		userTicketRecordRepository.save(userTicketRecordEntity);

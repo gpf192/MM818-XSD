@@ -19,6 +19,7 @@ public interface UserTicketRecordRepository extends JpaRepository<UserTicketReco
 	List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientId(String votesSource, String clientId);
 	//查看用户当天产品交易是否已经通过job获得票
 	List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientIdAndDateFlag(String votesSource, String clientId, String dateFlag);
-
+	//查看用户当天产品交易是否已经通过job获得票
+	List<UserTicketRecordEntity> findBySerialNum(String serialNum);
 
 }
