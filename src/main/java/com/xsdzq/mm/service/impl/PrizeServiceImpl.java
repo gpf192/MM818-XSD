@@ -13,6 +13,7 @@ import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
 import com.xsdzq.mm.dao.PrizeRepository;
 import com.xsdzq.mm.dao.PrizeResultRepository;
+import com.xsdzq.mm.dao.UserTicketRecordRepository;
 import com.xsdzq.mm.dao.impl.ParamRepositoryImpl;
 import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.PrizeEntity;
@@ -20,6 +21,7 @@ import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
+import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
@@ -46,6 +48,9 @@ public class PrizeServiceImpl implements PrizeService {
 	private PrizeResultRepository prizeResultRepository;
 
 	@Autowired
+	private UserTicketRecordRepository userTicketRecordRepository;
+
+	@Autowired
 	private UserTicketService userTicketService;
 
 	// 提供统一的PrizeNumberEntity，没有的话会新增，不会得到空值
@@ -68,6 +73,12 @@ public class PrizeServiceImpl implements PrizeService {
 	public List<PrizeEntity> getPrizeAll() {
 		// TODO Auto-generated method stub
 		return prizeRepository.findAll();
+	}
+
+	@Override
+	public boolean hasStockPrize(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		return checkStockNumber(userEntity);
 	}
 
 	@Override
@@ -118,6 +129,19 @@ public class PrizeServiceImpl implements PrizeService {
 			return prizeEntity;
 		} else {
 			return null;
+		}
+	}
+
+	@Override
+	@Transactional
+	public void selectStockPrize(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		if (checkStockNumber(userEntity)) {
+			return;
+		} else {
+			Date nowDate = new Date();
+			addPrizeNumber(userEntity, true, "3", 1);
+			userTicketService.addUserTicketNumber(userEntity, 500, TicketUtil.TOUPIAOSELECT, nowDate);
 		}
 	}
 
@@ -265,6 +289,16 @@ public class PrizeServiceImpl implements PrizeService {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean checkStockNumber(UserEntity userEntity) {
+		String nowString = DateUtil.getStandardDate(new Date());
+		List<UserTicketRecordEntity> list = userTicketRecordRepository
+				.findByUserEntityAndDateFlagAndVotesSource(userEntity, nowString, TicketUtil.TOUPIAOSELECT);
+		if (list.size() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 }
