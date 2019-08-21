@@ -24,6 +24,10 @@ public interface PrizeService {
 	int getShareEveryDayNumber(UserEntity userEntity);
 
 	boolean sharePutPrizeNumber(UserEntity userEntity);
+	
+	boolean hasStockPrize(UserEntity userEntity);
+
+	void selectStockPrize(UserEntity userEntity);
 
 	void addPrizeNumber(UserEntity userEntity, Boolean type, String reason, int number);
 

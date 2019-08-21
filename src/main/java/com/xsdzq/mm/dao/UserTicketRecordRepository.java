@@ -13,6 +13,9 @@ public interface UserTicketRecordRepository extends JpaRepository<UserTicketReco
 
 	List<UserTicketRecordEntity> findByUserEntityAndDateFlag(UserEntity userEntity, String dateFlag);
 
+	List<UserTicketRecordEntity> findByUserEntityAndDateFlagAndVotesSource(UserEntity userEntity, String dateFlag,
+			String VotesSource);
+
 	long countByUserEntity(UserEntity userEntity);
 
 	List<UserTicketRecordEntity> findByUserEntityAndTypeAndVotesSource(UserEntity userEntity, boolean type,

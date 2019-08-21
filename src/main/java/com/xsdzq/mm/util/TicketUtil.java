@@ -22,8 +22,8 @@ public class TicketUtil {
 	public static String PRIZEGETTICKET = "7";
 	
 	public static String SYSTEMVOTE = "8";
-
 	
+	public static String TOUPIAOSELECT = "9";
 
 	public static String USERVOTE = "0";
 

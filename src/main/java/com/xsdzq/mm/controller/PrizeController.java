@@ -15,6 +15,7 @@ import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
+import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.Number;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
@@ -76,6 +77,24 @@ public class PrizeController {
 		} else {
 			return GsonUtil.buildMap(1, "分享活动获得的票数，已经达到上限!", null);
 		}
+	}
+
+	@PostMapping(value = "/selectStockPrize", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> selectStockPrize(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		prizeService.selectStockPrize(userEntity);
+		return GsonUtil.buildMap(0, "ok", null);
+	}
+	
+	@GetMapping(value = "/hasStockPrize", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> hasStockPrize(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		boolean hasPrize = prizeService.hasStockPrize(userEntity);
+		HasNumber hasNumber = new HasNumber();
+		hasNumber.setHasNumber(hasPrize);
+		return GsonUtil.buildMap(0, "ok", hasNumber);
 	}
 
 	@GetMapping(value = "/shareNumber", produces = "application/json; charset=utf-8")
