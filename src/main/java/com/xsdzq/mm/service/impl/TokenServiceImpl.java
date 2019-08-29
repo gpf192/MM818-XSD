@@ -5,10 +5,13 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.xsdzq.mm.dao.ParamRepository;
 import com.xsdzq.mm.dao.UserRepository;
+import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.service.TokenService;
@@ -23,6 +26,9 @@ public class TokenServiceImpl implements TokenService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	ParamRepository paramRepository;
 
 	@Override
 	public String getToken(User user) {
@@ -45,6 +51,20 @@ public class TokenServiceImpl implements TokenService {
 		String clientId = JWT.decode(token).getAudience().get(0);
 		UserEntity userEntity = userRepository.findByClientId(clientId);
 		return userEntity;
+	}
+
+	@Override
+	public ParamEntity getValueByCode(String code) {
+		// TODO Auto-generated method stub
+		ParamEntity p = paramRepository.getValueByCode(code);
+		return p;
+	}
+
+	@Override
+	@Transactional
+	public void modifyParam(ParamEntity entity) {
+		// TODO Auto-generated method stub
+		paramRepository.modifyParam(entity);
 	}
 
 }
