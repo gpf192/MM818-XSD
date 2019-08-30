@@ -2,6 +2,8 @@ package com.xsdzq.mm.dao;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.xsdzq.mm.entity.UserEntity;
@@ -11,6 +13,14 @@ public interface UserTicketRecordRepository extends JpaRepository<UserTicketReco
 
 	List<UserTicketRecordEntity> findByUserEntityAndDateFlag(UserEntity userEntity, String dateFlag);
 
-	List<UserTicketRecordEntity> findByUserEntity(UserEntity userEntity);
+	List<UserTicketRecordEntity> findByUserEntityAndDateFlagAndVotesSource(UserEntity userEntity, String dateFlag,
+			String VotesSource);
+
+	long countByUserEntity(UserEntity userEntity);
+
+	List<UserTicketRecordEntity> findByUserEntityAndTypeAndVotesSource(UserEntity userEntity, boolean type,
+			String votesSource);
+
+	Page<UserTicketRecordEntity> findByUserEntityOrderByGainTimeDescType(UserEntity userEntity, Pageable pageable);
 
 }

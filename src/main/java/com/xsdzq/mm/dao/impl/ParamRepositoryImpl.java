@@ -28,4 +28,11 @@ public class ParamRepositoryImpl implements ParamRepository {
 		return sqlQuery.getSingleResult();
 	}
 
+	@Override
+	@Transactional
+	public void modifyParam(ParamEntity entity) {
+		// TODO Auto-generated method stub
+		em.merge(entity);
+	}
+
 }

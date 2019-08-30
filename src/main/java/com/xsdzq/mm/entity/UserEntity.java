@@ -26,13 +26,16 @@ public class UserEntity implements Serializable {
 	@Column(name = "id", unique = true, length = 20)
 	private Long id;
 
-	//lcj_user
+	// lcj_user
 	// 客户号
 	@Column(name = "client_id", unique = true, nullable = false, length = 100)
 	private String clientId;
 
+	@Column(name = "client_name", nullable = true, length = 300)
+	private String clientName;
+
 	// 资金账号
-	@Column(name = "fund_account", unique = true, length = 100)
+	@Column(name = "fund_account", nullable = true, length = 100)
 	private String fundAccount;
 
 	@Column(name = "access_token", nullable = true, length = 100)
@@ -41,7 +44,7 @@ public class UserEntity implements Serializable {
 	@Column(name = "password", nullable = true, length = 500)
 	private String password;
 
-	@Column(name = "mobile", unique = true, nullable = true, length = 12)
+	@Column(name = "mobile", nullable = true, length = 12)
 	private String mobile;
 
 	@Column(name = "app_version", nullable = true, length = 100)
@@ -68,11 +71,13 @@ public class UserEntity implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserEntity(Long id, String clientId, String fundAccount, String accessToken, String password, String mobile,
-			String appVersion, String lastOpIP, String lastLoginTime, Date createtime, Date modifytime) {
+	public UserEntity(Long id, String clientId, String clientName, String fundAccount, String accessToken,
+			String password, String mobile, String appVersion, String lastOpIP, String lastLoginTime, Date createtime,
+			Date modifytime) {
 		super();
 		this.id = id;
 		this.clientId = clientId;
+		this.clientName = clientName;
 		this.fundAccount = fundAccount;
 		this.accessToken = accessToken;
 		this.password = password;
@@ -98,6 +103,14 @@ public class UserEntity implements Serializable {
 
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	public String getFundAccount() {
@@ -174,10 +187,10 @@ public class UserEntity implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserEntity [id=" + id + ", clientId=" + clientId + ", fundAccount=" + fundAccount + ", accessToken="
-				+ accessToken + ", password=" + password + ", mobile=" + mobile + ", appVersion=" + appVersion
-				+ ", lastOpIP=" + lastOpIP + ", lastLoginTime=" + lastLoginTime + ", createtime=" + createtime
-				+ ", modifytime=" + modifytime + "]";
+		return "UserEntity [id=" + id + ", clientId=" + clientId + ", clientName=" + clientName + ", fundAccount="
+				+ fundAccount + ", accessToken=" + accessToken + ", password=" + password + ", mobile=" + mobile
+				+ ", appVersion=" + appVersion + ", lastOpIP=" + lastOpIP + ", lastLoginTime=" + lastLoginTime
+				+ ", createtime=" + createtime + ", modifytime=" + modifytime + "]";
 	}
 
 }

@@ -28,12 +28,24 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 	EmpTicketRecordRepository empTicketRecordRepository;
 
 	@Override
+	public int countEmpNumber() {
+		// TODO Auto-generated method stub
+		return (int) empTicketRepository.count();
+	}
+
+	@Override
+	public int countEmpNumberByDivison(String division) {
+		// TODO Auto-generated method stub
+		return (int) empTicketRepository.countByEmpEntityDivisionAndEmpEntityEnable(division, 1);
+	}
+
+	@Override
 	public List<EmpTicketEntity> getEmpTicketEntities(int pageNumber, int pageSize, String divison) {
 		// TODO Auto-generated method stub
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-		System.out.println("------------" + divison);
-		Page<EmpTicketEntity> empTIcketPage = empTicketRepository.findByEmpEntityDivisionOrderByNumberDesc(divison,
-				pageRequest);
+		Page<EmpTicketEntity> empTIcketPage = empTicketRepository
+				.findByEmpEntityDivisionAndEmpEntityEnableOrderByNumberDesc(divison, 1, pageRequest);
+
 		List<EmpTicketEntity> empTicketList = empTIcketPage.getContent();
 		return empTicketList;
 	}
@@ -55,22 +67,22 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 
 	@Override
 	@Transactional
-	public void addEmpTicketNumber(EmpEntity empEntity, int number, String reason) {
+	public void addEmpTicketNumber(EmpEntity empEntity, int number, String reason, Date date) {
 		// TODO Auto-generated method stub
 		EmpTicketEntity empTicketEntity = getEmpTicketEntity(empEntity);
 		empTicketRepository.add(empTicketEntity, number);
-		addEmpTicketRecord(empEntity, true, number, reason);
+		addEmpTicketRecord(empEntity, true, number, reason, date);
 	}
 
 	@Override
 	@Transactional
-	public void reduceEmpTickeNumber(EmpEntity empEntity, int number, String reason) {
+	public void reduceEmpTickeNumber(EmpEntity empEntity, int number, String reason, Date date) {
 		// TODO Auto-generated method stub
 
 	}
 
 	// 添加员工票数变化的记录
-	private void addEmpTicketRecord(EmpEntity empEntity, boolean type, int number, String votesSource) {
+	private void addEmpTicketRecord(EmpEntity empEntity, boolean type, int number, String votesSource, Date date) {
 		String nowString = DateUtil.getStandardDate(new Date());
 		EmpTicketRecordEntity empTicketRecordEntity = new EmpTicketRecordEntity();
 		empTicketRecordEntity.setEmpEntity(empEntity);
@@ -78,7 +90,7 @@ public class EmpTicketServiceImpl implements EmpTicketService {
 		empTicketRecordEntity.setType(type);
 		empTicketRecordEntity.setVotesSource(votesSource);
 		empTicketRecordEntity.setDateFlag(nowString);
-		empTicketRecordEntity.setRecordTime(new Date());
+		empTicketRecordEntity.setRecordTime(date);
 		empTicketRecordRepository.save(empTicketRecordEntity);
 	}
 

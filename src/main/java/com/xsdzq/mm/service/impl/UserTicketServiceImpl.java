@@ -1,5 +1,6 @@
 package com.xsdzq.mm.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.xsdzq.mm.entity.UserTicketEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.entity.UserTicketTotalViewEntity;
 import com.xsdzq.mm.entity.UserVoteEmpResultEntity;
+import com.xsdzq.mm.model.UserTicketRecordAndResult;
 import com.xsdzq.mm.service.EmpTicketService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
@@ -53,11 +55,48 @@ public class UserTicketServiceImpl implements UserTicketService {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		return userTicketEntity.getNumber();
 	}
-	
+
 	@Override
-	public List<UserTicketRecordEntity> getUserRecord(UserEntity userEntity) {
+	public int countVoteNumber() {
 		// TODO Auto-generated method stub
-		return userTicketRecordRepository.findByUserEntity(userEntity);
+		return (int) userTicketTotalViewRepository.count();
+	}
+
+	@Override
+	public int countUserVoteNumber(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		return (int) userTicketRecordRepository.countByUserEntity(userEntity);
+	}
+
+	@Override
+	public UserVoteEmpResultEntity getUserVoteEmpResultEntity(UserEntity userEntity, String gainTime) {
+		// TODO Auto-generated method stub
+		Date recordDate = DateUtil.stringToDateLong(gainTime);
+		UserVoteEmpResultEntity voteEmpResultEntity = userVoteEmpResultRepository
+				.findByUserEntityAndRecordTime(userEntity, recordDate);
+		return voteEmpResultEntity;
+	}
+
+	@Override
+	public List<UserTicketRecordAndResult> getUserRecord(UserEntity userEntity, int pageNumber, int pageSize) {
+		// TODO Auto-generated method stub
+		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+		Page<UserTicketRecordEntity> uPage = userTicketRecordRepository.findByUserEntityOrderByGainTimeDescType(userEntity,
+				pageRequest);
+		List<UserTicketRecordEntity> userTicketRecordEntities = uPage.getContent();
+		List<UserTicketRecordAndResult> uRecordAndResultEntities = new ArrayList<UserTicketRecordAndResult>();
+		for (UserTicketRecordEntity userTicketRecordEntity : userTicketRecordEntities) {
+			Date gainTimeDate = userTicketRecordEntity.getGainTime();
+			UserVoteEmpResultEntity userVoteEmpResultEntity = userVoteEmpResultRepository
+					.findByUserEntityAndRecordTime(userEntity, gainTimeDate);
+			UserTicketRecordAndResult userTicketRecordAndResult = new UserTicketRecordAndResult();
+			userTicketRecordAndResult.setUserTicketRecordEntity(userTicketRecordEntity);
+			if(userVoteEmpResultEntity != null) {
+				userTicketRecordAndResult.setUserVoteEmpResultEntity(userVoteEmpResultEntity);
+			}
+			uRecordAndResultEntities.add(userTicketRecordAndResult);
+		}
+		return uRecordAndResultEntities;
 	}
 
 	// 提供统一的UserTicketEntity，没有的话会新增，不会得到空值
@@ -78,47 +117,49 @@ public class UserTicketServiceImpl implements UserTicketService {
 	// 增加用户票数，同时添加记录
 	@Override
 	@Transactional
-	public void addUserTicketNumber(UserEntity userEntity, int number, String reason) {
+	public void addUserTicketNumber(UserEntity userEntity, int number, String reason, Date date) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.add(userTicketEntity, number);
-		addUserTicketRecord(userEntity, true, number, reason);
+		addUserTicketRecord(userEntity, true, number, reason, date);
 	}
 
 	// 减少用户票数，同时添加记录
 	@Override
 	@Transactional
-	public void reduceUserTickeNumber(UserEntity userEntity, int number, String reason) {
+	public void reduceUserTickeNumber(UserEntity userEntity, int number, String reason, Date date) {
 		UserTicketEntity userTicketEntity = getUserTicketEntity(userEntity);
 		userTicketRepository.reduce(userTicketEntity, number);
-		addUserTicketRecord(userEntity, false, number, reason);
+		addUserTicketRecord(userEntity, false, number, reason, date);
 	}
 
 	@Override
 	@Transactional
 	public void userVoteEmp(UserEntity userEntity, String empId, int number) {
 		// TODO Auto-generated method stub
-		int empInt = Integer.parseInt(empId);
-		EmpEntity empEntity = empRepository.findByEmpId(empInt);
+		// int empInt = Integer.parseInt(empId);
+		EmpEntity empEntity = empRepository.findByEmpId(empId);
 		if (empEntity == null) {
 			throw new RuntimeException("员工不存在");
 		}
+		// 保持投票的时间一致性，作为一系列的唯一订单号 1.用户操作的时间，2.员工增加的时间，3.写入结果的时间
+		Date nowDate = new Date();
 		// 用户减操作
-		reduceUserTickeNumber(userEntity, number, TicketUtil.USERVOTE);
+		reduceUserTickeNumber(userEntity, number, TicketUtil.USERVOTE, nowDate);
 		// 员工加操作
-		empTicketService.addEmpTicketNumber(empEntity, number, TicketUtil.USERVOTE);
+		empTicketService.addEmpTicketNumber(empEntity, number, TicketUtil.USERVOTE, nowDate);
 		// 写入结果记录
 		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
 		userVoteEmpResultEntity.setUserEntity(userEntity);
 		userVoteEmpResultEntity.setEmpEntity(empEntity);
 		userVoteEmpResultEntity.setNumber(number);
-		userVoteEmpResultEntity.setRecordTime(new Date());
-		userVoteEmpResultEntity.setType(TicketUtil.USERVOTEEMPRESULTVOTE);
+		userVoteEmpResultEntity.setRecordTime(nowDate);
+		userVoteEmpResultEntity.setType(TicketUtil.USERVOTE);
 		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
 
 	}
 
 	// 添加用户票数变化的记录
-	public void addUserTicketRecord(UserEntity userEntity, boolean type, int number, String reason) {
+	public void addUserTicketRecord(UserEntity userEntity, boolean type, int number, String reason, Date date) {
 		String nowString = DateUtil.getStandardDate(new Date());
 		UserTicketRecordEntity userTicketRecordEntity = new UserTicketRecordEntity();
 		userTicketRecordEntity.setUserEntity(userEntity);
@@ -126,7 +167,7 @@ public class UserTicketServiceImpl implements UserTicketService {
 		userTicketRecordEntity.setNumber(number);
 		userTicketRecordEntity.setVotesSource(reason);
 		userTicketRecordEntity.setDateFlag(nowString);
-		userTicketRecordEntity.setGainTime(new Date());
+		userTicketRecordEntity.setGainTime(date);
 		userTicketRecordRepository.save(userTicketRecordEntity);
 	}
 

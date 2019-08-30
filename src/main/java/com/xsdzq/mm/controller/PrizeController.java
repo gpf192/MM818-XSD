@@ -15,13 +15,15 @@ import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
+import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.Number;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.util.GsonUtil;
+import com.xsdzq.mm.util.PrizeUtil;
 
 @RestController
-@RequestMapping("/prize")
+@RequestMapping("/activity/prize")
 public class PrizeController {
 
 	@Autowired
@@ -39,7 +41,8 @@ public class PrizeController {
 
 	@GetMapping(value = "/latest", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getLatestPrize() {
-		PrizeResultEntity prizeResultEntity = prizeService.getLatestPrize();
+		PrizeResultEntity prizeResultEntity = PrizeUtil.getInstance()
+				.getSecretPrizeResultEntity(prizeService.getLatestPrize());
 		return GsonUtil.buildMap(0, "ok", prizeResultEntity);
 	}
 
@@ -76,11 +79,40 @@ public class PrizeController {
 		}
 	}
 
+	@PostMapping(value = "/selectStockPrize", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> selectStockPrize(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		prizeService.selectStockPrize(userEntity);
+		return GsonUtil.buildMap(0, "ok", null);
+	}
+	
+	@GetMapping(value = "/hasStockPrize", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> hasStockPrize(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		boolean hasPrize = prizeService.hasStockPrize(userEntity);
+		HasNumber hasNumber = new HasNumber();
+		hasNumber.setHasNumber(hasPrize);
+		return GsonUtil.buildMap(0, "ok", hasNumber);
+	}
+
+	@GetMapping(value = "/shareNumber", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> getShareEveryDayNumber(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		int shareNumber = prizeService.getShareEveryDayNumber(userEntity);
+		Number mNumber = new Number();
+		mNumber.setNumber(shareNumber);
+		return GsonUtil.buildMap(0, "ok", mNumber);
+
+	}
+
 	@GetMapping(value = "/prizes", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getOwnPrizes(@RequestHeader("Authorization") String token) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
-		List<PrizeEntity> prizeEntities = prizeService.getMyPrizeEntities(userEntity);
-		return GsonUtil.buildMap(0, "ok", prizeEntities);
+		List<PrizeResultEntity> myRealPrizeResultEntity = prizeService.getMyPrizeEntities(userEntity);
+		return GsonUtil.buildMap(0, "ok", myRealPrizeResultEntity);
 	}
 
 }

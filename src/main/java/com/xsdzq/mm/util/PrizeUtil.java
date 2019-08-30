@@ -5,17 +5,14 @@ import java.util.List;
 import java.util.Random;
 
 import com.xsdzq.mm.entity.PrizeEntity;
+import com.xsdzq.mm.entity.PrizeResultEntity;
+import com.xsdzq.mm.entity.UserEntity;
 
 public class PrizeUtil {
-	
-	
+
 	public static String PRIZE_LOGIN_TYPE = "11";
 	public static String PRIZE_SHARE_TYPE = "12";
 	public static String PRIZE_REDUCE_TYPE = "01";
-	
-	
-	
-	
 
 	private Random r = null;
 
@@ -61,4 +58,47 @@ public class PrizeUtil {
 		}
 		return null;
 	}
+
+	// [0,n)
+	public int getRandomTicket() {
+		int numberArray[] = { 100, 200, 300, 500 };
+		int random = r.nextInt(4);
+		System.out.println("random: " + random);
+		return numberArray[random];
+	}
+
+	public PrizeResultEntity getSecretPrizeResultEntity(PrizeResultEntity prizeResultEntity) {
+		UserEntity userEntity = prizeResultEntity.getUserEntity();
+		userEntity.setClientId(getSecretString(userEntity.getClientId()));
+		userEntity.setFundAccount(getSecretString(userEntity.getFundAccount()));
+		prizeResultEntity.setUserEntity(userEntity);
+		return prizeResultEntity;
+	}
+
+	public String getSecretString(String no) {
+		if (no.length() > 6) {
+			return getStarString(no, 1, 5);
+		}
+		return no;
+	}
+
+	private static String getStarString(String content, int begin, int end) {
+
+		if (begin >= content.length() || begin < 0) {
+			return content;
+		}
+		if (end >= content.length() || end < 0) {
+			return content;
+		}
+		if (begin >= end) {
+			return content;
+		}
+		String starStr = "";
+		for (int i = begin; i < end; i++) {
+			starStr = starStr + "*";
+		}
+		return content.substring(0, begin) + starStr + content.substring(end, content.length());
+
+	}
+
 }

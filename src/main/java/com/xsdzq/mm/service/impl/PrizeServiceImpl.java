@@ -13,6 +13,7 @@ import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
 import com.xsdzq.mm.dao.PrizeRepository;
 import com.xsdzq.mm.dao.PrizeResultRepository;
+import com.xsdzq.mm.dao.UserTicketRecordRepository;
 import com.xsdzq.mm.dao.impl.ParamRepositoryImpl;
 import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.PrizeEntity;
@@ -20,6 +21,7 @@ import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
+import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
@@ -44,6 +46,9 @@ public class PrizeServiceImpl implements PrizeService {
 
 	@Autowired
 	private PrizeResultRepository prizeResultRepository;
+
+	@Autowired
+	private UserTicketRecordRepository userTicketRecordRepository;
 
 	@Autowired
 	private UserTicketService userTicketService;
@@ -71,11 +76,31 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	@Override
+	public boolean hasStockPrize(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		return checkStockNumber(userEntity);
+	}
+
+	@Override
 	public PrizeResultEntity getLatestPrize() {
 		// TODO Auto-generated method stub
 		PrizeResultEntity prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
 		// return prizeResultEntity.getPrizeEntity();
 		return prizeResultEntity;
+	}
+
+	@Override
+	public int getShareEveryDayNumber(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		String nowString = DateUtil.getStandardDate(new Date());
+		List<PrizeRecordEntity> list = prizeRecordRepository.getListByUserAndFlag(userEntity, nowString);
+		int total = 0;
+		for (PrizeRecordEntity prizeRecordEntity : list) {
+			if (PrizeUtil.PRIZE_SHARE_TYPE.endsWith(prizeRecordEntity.getReason())) {
+				total += 1;
+			}
+		}
+		return total;
 	}
 
 	@Override
@@ -85,18 +110,21 @@ public class PrizeServiceImpl implements PrizeService {
 		// check user available
 		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录
 		if (checkAvailable(userEntity)) {
+			Date nowDate = new Date();
 			PrizeEntity prizeEntity = getRandomPrize();
 			PrizeResultEntity prizeResultEntity = new PrizeResultEntity();
 			prizeResultEntity.setUserEntity(userEntity);
 			prizeResultEntity.setPrizeEntity(prizeEntity);
-			prizeResultEntity.setRecordTime(new Date());
-			// 1.添加减少记录
+			prizeResultEntity.setRecordTime(nowDate);
+			// 1.处理额外投票券
+			addTicketNumber(userEntity, prizeEntity, nowDate);
+			// 2.添加减少记录
 			addReduceRecordPrize(userEntity);
-			// 2.增加中奖人数
+			// 3.增加中奖人数
 			prizeRepository.addPrizeWinningNumber(prizeEntity);
-			// 3.用户抽奖次数减少
+			// 4.用户抽奖次数减少
 			prizeNumberRepository.reduceNumber(userEntity);
-			// 4.保存用户抽奖结果
+			// 5.保存用户抽奖结果
 			prizeResultRepository.save(prizeResultEntity);
 			return prizeEntity;
 		} else {
@@ -105,17 +133,42 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	@Override
-	public List<PrizeEntity> getMyPrizeEntities(UserEntity userEntity) {
+	@Transactional
+	public void selectStockPrize(UserEntity userEntity) {
 		// TODO Auto-generated method stub
-		List<PrizeResultEntity> list = prizeResultRepository.findByUserEntity(userEntity);
-		List<PrizeEntity> prizeEntities = new ArrayList<PrizeEntity>();
+		if (checkStockNumber(userEntity)) {
+			return;
+		} else {
+			Date nowDate = new Date();
+			addPrizeNumber(userEntity, true, "3", 1);
+			userTicketService.addUserTicketNumber(userEntity, 500, TicketUtil.TOUPIAOSELECT, nowDate);
+		}
+	}
+
+	private void addTicketNumber(UserEntity userEntity, PrizeEntity prizeEntity, Date date) {
+		if (prizeEntity.getImage().equals("award6")) {
+			// 额外投票券
+			PrizeUtil prizeUtil = PrizeUtil.getInstance();
+			int ticketNumber = prizeUtil.getRandomTicket();
+			System.out.println("ticketNumber: " + ticketNumber);
+			userTicketService.addUserTicketNumber(userEntity, ticketNumber, TicketUtil.PRIZENTICKET, date);
+		}
+	}
+
+	@Override
+	public List<PrizeResultEntity> getMyPrizeEntities(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<PrizeResultEntity> list = prizeResultRepository.findByUserEntityOrderByRecordTimeDesc(userEntity);
+		List<PrizeResultEntity> myRealPrizeResultEntity = new ArrayList<PrizeResultEntity>();
 		for (PrizeResultEntity prizeResultEntity : list) {
 			PrizeEntity prizeEntity = prizeResultEntity.getPrizeEntity();
 			if (prizeEntity.isType()) {
-				prizeEntities.add(prizeEntity);
+				// System.out.println(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()).toString());
+				// prizeResultEntity.setRecordTime(DateUtil.getPrizeStandardDate(prizeResultEntity.getRecordTime()));
+				myRealPrizeResultEntity.add(prizeResultEntity);
 			}
 		}
-		return prizeEntities;
+		return myRealPrizeResultEntity;
 	}
 
 	public PrizeEntity getRandomPrize() {
@@ -190,11 +243,12 @@ public class PrizeServiceImpl implements PrizeService {
 			return false;
 		}
 		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
+		Date nowDate = new Date();
 		// 分享获得抽奖次数
 		prizeNumberRepository.addNumber(prizeNumberEntity);
 		addPrizeRecord(userEntity, true, PrizeUtil.PRIZE_SHARE_TYPE);
 		// 分享获得投票数量
-		userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET);
+		userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET, nowDate);
 		return true;
 	}
 
@@ -235,6 +289,16 @@ public class PrizeServiceImpl implements PrizeService {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean checkStockNumber(UserEntity userEntity) {
+		String nowString = DateUtil.getStandardDate(new Date());
+		List<UserTicketRecordEntity> list = userTicketRecordRepository
+				.findByUserEntityAndDateFlagAndVotesSource(userEntity, nowString, TicketUtil.TOUPIAOSELECT);
+		if (list.size() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

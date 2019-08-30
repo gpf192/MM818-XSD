@@ -29,7 +29,7 @@ public class EmpEntity implements Serializable {
 	private long id;
 
 	@Column(name = "emp_id", unique = true, nullable = false)
-	private int empId;
+	private String empId;
 
 	@Column(name = "emp_name")
 	private String empName;// 人员姓名
@@ -55,18 +55,18 @@ public class EmpEntity implements Serializable {
 	@Column(name = "division")
 	private String division;// 隶属赛区
 
-	@Column(name = "departmentCode", insertable = false, updatable = false)
-	private String departmentCode;
+	@Column(name = "enable", columnDefinition = "int default 1") // 中奖人数
+	private int enable = 1;// 默认账户开启，1-开启 2-关闭
 
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "departmentCode", referencedColumnName = "code")
+	@JoinColumn(name = "department_code", referencedColumnName = "code")
 	private DepartmentEntity departmentEntity;
 
-	public int getEmpId() {
+	public String getEmpId() {
 		return empId;
 	}
 
-	public void setEmpId(int empId) {
+	public void setEmpId(String empId) {
 		this.empId = empId;
 	}
 
@@ -118,6 +118,14 @@ public class EmpEntity implements Serializable {
 		this.contract = contract;
 	}
 
+	public int getEnable() {
+		return enable;
+	}
+
+	public void setEnable(int enable) {
+		this.enable = enable;
+	}
+
 	public String getEntryTime() {
 		return entryTime;
 	}
@@ -140,14 +148,6 @@ public class EmpEntity implements Serializable {
 
 	public void setDivision(String division) {
 		this.division = division;
-	}
-
-	public String getDepartmentCode() {
-		return departmentCode;
-	}
-
-	public void setDepartmentCode(String departmentCode) {
-		this.departmentCode = departmentCode;
 	}
 
 	public DepartmentEntity getDepartmentEntity() {

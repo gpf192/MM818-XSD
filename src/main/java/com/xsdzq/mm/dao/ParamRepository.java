@@ -7,4 +7,5 @@ import com.xsdzq.mm.entity.ParamEntity;
 @Repository
 public interface ParamRepository {
 	ParamEntity getValueByCode(String code);
+	void modifyParam(ParamEntity entity);
 }

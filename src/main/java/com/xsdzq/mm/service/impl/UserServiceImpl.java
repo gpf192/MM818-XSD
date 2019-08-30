@@ -72,6 +72,28 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public boolean hasSignAdviser(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<UserTicketRecordEntity> list = userTicketRecordRepository.findByUserEntityAndTypeAndVotesSource(userEntity,
+				true, "6");
+		if (list.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean hasNewFundAccount(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<UserTicketRecordEntity> list = userTicketRecordRepository.findByUserEntityAndTypeAndVotesSource(userEntity,
+				true, "5");
+		if (list.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	@Transactional
 	public ActivityNumber login(User user) {
 		UserEntity owner = userRepository.findByClientId(user.getClientId());
@@ -114,7 +136,8 @@ public class UserServiceImpl implements UserService {
 			// 已经添加过登陆票数了，不需要添加
 		} else {
 			// 添加每天的登陆票数 100票
-			userTicketService.addUserTicketNumber(userEntity, 100, TicketUtil.ACTIVITYLOGINTICKET);
+			Date nowDate = new Date();
+			userTicketService.addUserTicketNumber(userEntity, 100, TicketUtil.ACTIVITYLOGINTICKET, nowDate);
 		}
 		int number = userTicketService.getUserTicket(userEntity);
 		return number;

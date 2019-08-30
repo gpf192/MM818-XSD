@@ -8,7 +8,7 @@ import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 
 public interface PrizeResultRepository extends JpaRepository<PrizeResultEntity, Long>, PrizeResultWrapper {
-	
-	List<PrizeResultEntity> findByUserEntity(UserEntity userEntity);
+
+	List<PrizeResultEntity> findByUserEntityOrderByRecordTimeDesc(UserEntity userEntity);
 
 }
