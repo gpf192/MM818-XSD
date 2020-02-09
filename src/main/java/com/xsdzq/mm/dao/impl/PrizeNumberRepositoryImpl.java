@@ -59,6 +59,13 @@ public class PrizeNumberRepositoryImpl implements PrizeNumberRepository {
 
 	@Override
 	@Transactional
+	public void addNumber(PrizeNumberEntity prizeNumberEntity, int number) {
+		// TODO Auto-generated method stub
+		prizeNumberEntity.setNumber(prizeNumberEntity.getNumber() + number);
+		em.merge(prizeNumberEntity);
+	}
+	@Override
+	@Transactional
 	public void reduceNumber(UserEntity userEntity) {
 		// TODO Auto-generated method stub
 		PrizeNumberEntity prizeNumberEntity = findByUserEntity(userEntity);

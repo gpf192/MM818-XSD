@@ -12,6 +12,7 @@ public interface PrizeNumberRepository {
 	void addNumber(UserEntity userEntity);
 	
 	void addNumber(PrizeNumberEntity prizeNumberEntity);
+	void addNumber(PrizeNumberEntity prizeNumberEntity, int number);//开门红通过基金购买、开通期权两融账户添加相应的抽奖次数
 
 	void reduceNumber(UserEntity userEntity);
 

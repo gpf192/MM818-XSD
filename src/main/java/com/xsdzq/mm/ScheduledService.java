@@ -10,9 +10,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.xsdzq.mm.entity.CreditAccountOpenViewEntity;
 import com.xsdzq.mm.entity.OpenAccountEntity;
+import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.ProductEntity;
 import com.xsdzq.mm.entity.ProductSellViewEntity;
+import com.xsdzq.mm.entity.ShareOptionAccountOpenViewEntity;
 import com.xsdzq.mm.entity.SignInvestViewEntity;
 import com.xsdzq.mm.entity.UserEmpRelationEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
@@ -23,6 +26,7 @@ import com.xsdzq.mm.service.UserEmpRelationService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
+import com.xsdzq.mm.util.PrizeUtil;
 import com.xsdzq.mm.util.TicketUtil;
 
 
@@ -69,7 +73,7 @@ public class ScheduledService {
 		}
 		return empId;
 	}
-	
+	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
     @Scheduled(cron = "0 35 05 * * ?")
     public void scheduled(){
@@ -79,7 +83,7 @@ public class ScheduledService {
     	String flag = userService.getValueByCode("jobFlag").getValue();
     	System.out.println("=====>>>>> job 开关为 "+ flag);
     	if("1".equals(flag)) {
-    		//定时扫描交易任务
+    		/*//定时扫描交易任务
         	try {
     			productSellTask();
     		} catch (Exception e) {
@@ -109,8 +113,46 @@ public class ScheduledService {
 				  +"111111111111111111111111111111111111111111111111");
 				  
 				  e.printStackTrace(); 
+			  }*/
+    		//扫描理财产品购买记录
+    		try {
+    			productSellTaskForKMH();
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			System.out.println("productSellTaskForKMH 发生异常"+"111111111111111111111111111111111111111111111111");
+
+    			e.printStackTrace();
+    		}
+        	 	
+        	//扫描签约投顾			
+			  try { 
+				  tgfundOpenAccountTaskForKMH(); 
+				  } catch (Exception e) { // TODO Auto-generated
+					  System.out.println("tgfundOpenAccountTaskForKMH 发生异常"+"111111111111111111111111111111111111111111111111");
+			  
+					  e.printStackTrace(); 
 			  }
 			 
+        	//扫描开通信用账户			
+			  try { 
+				  creditAccountTaskForKMH(); 
+			  } catch (Exception e) { 
+					  // TODO Auto-generated
+				    System.out.println("creditAccountTaskForKMH 发生异常"
+				  +"111111111111111111111111111111111111111111111111");
+				  
+				  e.printStackTrace(); 
+			  }
+			//扫描开通期权			
+			  try { 
+				  shareOptionAccountTaskForKMH(); 
+			  } catch (Exception e) { 
+					  // TODO Auto-generated
+				    System.out.println("shareOptionAccountTaskForKMH 发生异常"
+				  +"111111111111111111111111111111111111111111111111");
+				  
+				  e.printStackTrace(); 
+			  }
     	}
     	
     	
@@ -200,6 +242,54 @@ public class ScheduledService {
 			
 	    	
 	    }
+	    
+	    //开门红活动     定时扫描产品交易方法 2020年2月
+	    public void productSellTaskForKMH() {
+	//查看用户交易视图crm，循环交易记录
+	    	System.out.println("=====================>>>>> 产品交易job 开始 ");
+	    	int preDay = 0;
+			try {
+				preDay = Integer.parseInt(DateUtil.getPreDayForCrm());
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//查询所有的产品 循环每一个产品与销售记录进行匹配
+			Date  d = DateUtil.getPreDayAs();
+			List<ProductEntity> productList = productService.getAll(d, d);//查询有效期内的产品
+			System.out.println("产品 个数："+ productList.size());
+			if(productList.size() != 0) {
+				for(ProductEntity Product:productList) {
+					String productCode = Product.getCode();
+					System.out.println("******************* 本次扫描产品code：  "+productCode);
+					List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
+			    	if(productSellViewList.size() != 0) {
+			        	for(ProductSellViewEntity p:productSellViewList) {
+			        		//条件  金额 大于等于 5k 放在数据库视图里判断
+
+			        		String clientId = p.getClientId();
+			        		String serialNum = p.getLsh();
+			        		//查看前一天的 job 是否执行，若执行 则跳过
+			        		//查看 记录表中是否有该条流水号的记录，若没有就加入
+							List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
+							if(prizeRecordList.size() == 0) {												        					 			        		
+			        			//计算抽奖次数
+								double dealAmount = Double.parseDouble( p.getDealAmount());
+			        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
+			        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("5000"),0,BigDecimal.ROUND_HALF_UP);
+			        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
+							}
+			        		
+			        	}
+			    	}else {
+			    		System.out.println("******************* 没有销售产品记录 ");
+			    	}
+				}
+			}else{
+				System.out.println("******************* 没有  产品记录 ");
+			}				    	
+	    }
+	    
 	    //扫描开通基金账户 一次性得票
 	    public void fundOpenAccountTask() {
 	    	System.out.println("=====================>>>>> 开通基金job 开始 ");
@@ -310,4 +400,62 @@ public class ScheduledService {
 	    	}
 	    }
 
+	    //开门红   扫描签约投顾 一次性得5次抽奖次数  
+	    public void tgfundOpenAccountTaskForKMH() {
+	    	System.out.println("=====================>>>>> 签约投顾 job 开始 ");
+
+	    	//查看上一日签约投顾记录表
+	    	String preDay = DateUtil.getPreDayForCrm();
+	    	List<SignInvestViewEntity> SignInvestViewList= userService.findByserviceTypeAndStatusAndEffectiveDate(0, "1", preDay);
+	    	System.out.println("***********************+ " +(SignInvestViewList == null)+ "--"+SignInvestViewList.size());
+	    	if(SignInvestViewList.size() != 0) {
+	    		//如果有记录
+	    		for(SignInvestViewEntity si:SignInvestViewList) {
+	    			String clientId = si.getClientId();	
+	    			
+        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_TOUGU_TYPE, 5, "");        		
+					
+	    		}
+	    	}else{
+				System.out.println("******************* 没有 qianyue 签约投顾 记录 ");
+	    	}
+	    }
+	    //开门红，开通信用账户，10次抽奖机会
+	    public void creditAccountTaskForKMH() {
+	    	System.out.println("=====================>>>>> 开通信用账户 job 开始 ");
+
+	    	//查看上一日签约投顾记录表
+	    	String preDay = DateUtil.getPreDayForCrm();
+	    	List<CreditAccountOpenViewEntity> creditAccountViewList= userService.findCreditAccountBydataFlag(preDay);
+	    	if(creditAccountViewList.size() != 0) {
+	    		//如果有记录
+	    		for(CreditAccountOpenViewEntity si:creditAccountViewList) {
+	    			String clientId = si.getClientId();	
+	    			
+        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_XINYONG_TYPE, 10, "");        		
+					
+	    		}
+	    	}else{
+				System.out.println("******************* 没有 开通信用账户 记录 ");
+	    	}
+	    }
+	    //开门红，开通期权账户,10次抽奖机会
+	    public void shareOptionAccountTaskForKMH() {
+	    	System.out.println("=====================>>>>> 开通期权账户 job 开始 ");
+
+	    	//查看上一日签约投顾记录表
+	    	String preDay = DateUtil.getPreDayForCrm();
+	    	List<ShareOptionAccountOpenViewEntity> creditAccountViewList= userService.findShareOptionAccountBydataFlag(preDay);
+	    	if(creditAccountViewList.size() != 0) {
+	    		//如果有记录
+	    		for(ShareOptionAccountOpenViewEntity si:creditAccountViewList) {
+	    			String clientId = si.getClientId();	
+	    			
+        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_QIQUAN_TYPE, 10, "");        		
+					
+	    		}
+	    	}else{
+				System.out.println("******************* 没有 开通期权账户 记录 ");
+	    	}
+	    }
 }

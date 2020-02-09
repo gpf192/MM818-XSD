@@ -8,19 +8,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xsdzq.mm.dao.CreditAccountOpenViewRepository;
 import com.xsdzq.mm.dao.EmpRepository;
 import com.xsdzq.mm.dao.OpenAccountRepository;
 import com.xsdzq.mm.dao.ParamRepository;
 import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
+import com.xsdzq.mm.dao.ShareOptionAccountOpenViewRepository;
 import com.xsdzq.mm.dao.SignInvestViewRepository;
 import com.xsdzq.mm.dao.UserRepository;
 import com.xsdzq.mm.dao.UserTicketRecordRepository;
+import com.xsdzq.mm.entity.CreditAccountOpenViewEntity;
 import com.xsdzq.mm.entity.EmpEntity;
 import com.xsdzq.mm.entity.OpenAccountEntity;
 import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
+import com.xsdzq.mm.entity.ShareOptionAccountOpenViewEntity;
 import com.xsdzq.mm.entity.SignInvestViewEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
@@ -70,7 +74,13 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	SignInvestViewRepository signInvestViewRepository;
-
+	//开门红
+	@Autowired
+	private CreditAccountOpenViewRepository creditAccountOpenViewRepository;
+	
+	@Autowired
+	private ShareOptionAccountOpenViewRepository shareOptionAccountOpenViewRepository;
+	
 	@Override
 	public User getUserById(Long id) {
 		// TODO Auto-generated method stub
@@ -290,5 +300,37 @@ public class UserServiceImpl implements UserService {
 	public List<UserTicketRecordEntity> findBySerialNum(String serialNum) {
 		// TODO Auto-generated method stub
 		 return userTicketRecordRepository.findBySerialNum(serialNum);
+	}
+	@Override
+	public List<PrizeRecordEntity> findPrizeRecordBySerialNum(String serialNum) {
+		// TODO Auto-generated method stub
+		 return prizeRecordRepository.findPrizeRecordBySerialNum(serialNum);
+	}
+	//开门红活动
+	@Override
+	@Transactional
+	public void addPrizeNumAndRecordForKMH(String clientId, String reason, int number, String serialNum) {
+		// TODO Auto-generated method stub
+		UserEntity user = userRepository.findByClientId(clientId);
+		Date date = new Date();
+		if (user == null) {
+			UserEntity newUser = new UserEntity();
+			newUser.setClientId(clientId);
+			//添加新用户
+			userRepository.save(newUser);
+			user = newUser;
+		}
+		prizeService.addPrizeNumberForKMH(user, reason, number, serialNum);
+	}
+	@Override  
+	public List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(String dataFlag) {
+		// TODO Auto-generated method stub
+		return creditAccountOpenViewRepository.findByDateFlag(dataFlag);
+	}
+	
+	@Override 
+	public List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(String dataFlag) {
+		// TODO Auto-generated method stub
+		return shareOptionAccountOpenViewRepository.findByDateFlag(dataFlag);
 	}
 }

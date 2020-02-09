@@ -26,5 +26,6 @@ public interface PrizeService {
 	boolean sharePutPrizeNumber(UserEntity userEntity);
 
 	void addPrizeNumber(UserEntity userEntity, Boolean type, String reason, int number);
+	void addPrizeNumberForKMH(UserEntity userEntity, String reason, int number, String serialNum);//开门红活动添加
 
 }

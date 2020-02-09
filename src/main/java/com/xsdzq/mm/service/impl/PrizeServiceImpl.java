@@ -207,7 +207,18 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeNumberRepository.addNumber(prizeNumberEntity);
 		addPrizeRecord(userEntity, type, reason);
 	}
-
+	//开门红活动
+	@Override
+	@Transactional
+	public void addPrizeNumberForKMH(UserEntity userEntity, String reason, int number, String serialNum) {
+		// TODO Auto-generated method stub
+		// type 0 表示减少 1 表示增加
+		// reason 1. 表示每日登陆。 2. 表示分享
+		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
+		prizeNumberRepository.addNumber(prizeNumberEntity, number);
+		addPrizeRecordForKMH(userEntity, true, reason, number, serialNum);
+	}
+	
 	@Override
 	@Transactional
 	public boolean sharePutPrizeNumber(UserEntity userEntity) {
@@ -235,7 +246,18 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeRecordEntity.setRecordTime(new Date());
 		prizeRecordRepository.add(prizeRecordEntity);
 	}
-
+	private void addPrizeRecordForKMH(UserEntity userEntity, boolean type, String reason, int number, String serialNum) {
+		String nowString = DateUtil.getStandardDate(new Date());
+		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
+		prizeRecordEntity.setUserEntity(userEntity);
+		prizeRecordEntity.setType(type);
+		prizeRecordEntity.setReason(reason);
+		prizeRecordEntity.setNumber(number);
+		prizeRecordEntity.setDateFlag(nowString);
+		prizeRecordEntity.setRecordTime(new Date());
+		prizeRecordEntity.setSerialNum(serialNum);
+		prizeRecordRepository.add(prizeRecordEntity);
+	}
 	public void addReduceRecordPrize(UserEntity userEntity) {
 		String nowString = DateUtil.getStandardDate(new Date());
 		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();

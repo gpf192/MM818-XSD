@@ -13,7 +13,10 @@ public class PrizeUtil {
 	public static String PRIZE_LOGIN_TYPE = "11";
 	public static String PRIZE_SHARE_TYPE = "12";
 	public static String PRIZE_REDUCE_TYPE = "01";
-
+	public static String PRIZE_BUY_TYPE = "13";//购买理财
+	public static String PRIZE_XINYONG_TYPE = "14";//开通信用账户
+	public static String PRIZE_QIQUAN_TYPE = "15";//开通期权账户
+	public static String PRIZE_TOUGU_TYPE = "16";//签约投顾
 	private Random r = null;
 
 	private PrizeUtil() {

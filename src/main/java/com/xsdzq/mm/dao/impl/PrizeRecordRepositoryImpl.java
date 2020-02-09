@@ -50,5 +50,14 @@ public class PrizeRecordRepositoryImpl implements PrizeRecordRepository {
 		sqlQuery.setParameter(2, flag);
 		return sqlQuery.getResultList();
 	}
-
+	//开门红活动
+	@Override
+	public List<PrizeRecordEntity> findPrizeRecordBySerialNum(String serialNum) {
+		// TODO Auto-generated method stub
+		TypedQuery<PrizeRecordEntity> sqlQuery = em.createQuery(
+				"SELECT r FROM PrizeRecordEntity r WHERE  r.serialNum=?1", PrizeRecordEntity.class);
+		sqlQuery.setParameter(1, serialNum);
+		
+		return sqlQuery.getResultList();
+	}
 }

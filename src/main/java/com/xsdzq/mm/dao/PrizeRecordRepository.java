@@ -14,5 +14,6 @@ public interface PrizeRecordRepository {
 	public List<PrizeRecordEntity> getListByUserAndFlag(UserEntity userEntity, String flag);
 
 	public void reduce();
-
+	//开门红活动
+	List<PrizeRecordEntity> findPrizeRecordBySerialNum(String serialNum);
 }

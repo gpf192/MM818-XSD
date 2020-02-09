@@ -2,8 +2,11 @@ package com.xsdzq.mm.service;
 
 import java.util.List;
 
+import com.xsdzq.mm.entity.CreditAccountOpenViewEntity;
 import com.xsdzq.mm.entity.OpenAccountEntity;
 import com.xsdzq.mm.entity.ParamEntity;
+import com.xsdzq.mm.entity.PrizeRecordEntity;
+import com.xsdzq.mm.entity.ShareOptionAccountOpenViewEntity;
 import com.xsdzq.mm.entity.SignInvestViewEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
@@ -38,6 +41,12 @@ public interface UserService {
 	List<SignInvestViewEntity>findByserviceTypeAndStatusAndEffectiveDate(int serviceType, String status, String effectiveDate);
 	List<UserTicketRecordEntity> findByVotesSourceAndUserEntity_clientIdAndDateFlag(String votesSource, String clientId, String dateFlag);
 	List<UserTicketRecordEntity> findBySerialNum(String serialNum);
+	//开门红活动
+	List<PrizeRecordEntity> findPrizeRecordBySerialNum(String serialNum);
+	//开门红活动 增加用户抽奖次数 以及记录表
+	void addPrizeNumAndRecordForKMH(String clientId, String reason, int number, String serialNum);
 
+	List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(String dataFlag);
 
+	List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(String dataFlag);
 }
