@@ -26,6 +26,12 @@ public class AwardEntity implements Serializable {
 	@Column(name = "award_name_alias")
 	private String awardNameAlias;// 奖品别名 京东E卡，价值50元
 
+	@Column(name = "image_name") // 关联图片名称
+	private String imageName;
+
+	@Column(name = "image_number")
+	private Integer imageNumber;
+
 	@Column(name = "award_value") // 奖品价值
 	private Integer awardValue;
 
@@ -51,6 +57,22 @@ public class AwardEntity implements Serializable {
 
 	public void setAwardNameAlias(String awardNameAlias) {
 		this.awardNameAlias = awardNameAlias;
+	}
+
+	public String getImageName() {
+		return imageName;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
+	}
+
+	public Integer getImageNumber() {
+		return imageNumber;
+	}
+
+	public void setImageNumber(Integer imageNumber) {
+		this.imageNumber = imageNumber;
 	}
 
 	public Integer getAwardValue() {
