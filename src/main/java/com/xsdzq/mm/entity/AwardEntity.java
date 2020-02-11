@@ -29,6 +29,9 @@ public class AwardEntity implements Serializable {
 	@Column(name = "image_name") // 关联图片名称
 	private String imageName;
 
+	@Column(name = "prize_index") // 奖品序列
+	private Integer index;
+
 	@Column(name = "image_number")
 	private Integer imageNumber;
 
@@ -57,6 +60,14 @@ public class AwardEntity implements Serializable {
 
 	public void setAwardNameAlias(String awardNameAlias) {
 		this.awardNameAlias = awardNameAlias;
+	}
+
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
 	}
 
 	public String getImageName() {

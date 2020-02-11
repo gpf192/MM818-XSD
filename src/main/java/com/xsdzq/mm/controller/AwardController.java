@@ -36,18 +36,24 @@ public class AwardController {
 		List<AwardEntity> awardEntities = awardService.getConvertAward();
 		return GsonUtil.buildMap(0, "ok", awardEntities);
 	}
+	
+	@GetMapping(value = "/record", produces = "application/json; charset=utf-8")
+	public Map<String, Object> getConvertRecord() {
+		List<AwardEntity> awardEntities = awardService.getConvertAward();
+		return GsonUtil.buildMap(0, "ok", awardEntities);
+	}
 
 	@PostMapping(value = "/convert", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> convertAward(@RequestHeader("Authorization") String token,
 			@RequestBody AwardNumber awardNumber) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
-		AwardEntity awardEntity = awardNumber.getAward();
-		int num =awardNumber.getNum();
-		
-		
-
-		return GsonUtil.buildMap(0, "ok", null);
+		boolean result = awardService.convertAward(userEntity, awardNumber);
+		if(result) {
+			return GsonUtil.buildMap(0, "ok", null);
+		}else {
+			return GsonUtil.buildMap(-1, "兑换失败", null);
+		}
 	}
 
 }

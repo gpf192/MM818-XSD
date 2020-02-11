@@ -309,6 +309,9 @@ public class PrizeServiceImpl implements PrizeService {
 		// TODO Auto-generated method stub
 		List<PrizeResultEntity> allList = prizeResultRepository.findByUserEntityOrderByRecordTimeDesc(userEntity);
 		List<ZodiacNumber> zodiacList = getEmptyZodiacList();
+		if (allList == null) {
+			return zodiacList;
+		}
 		for (ZodiacNumber zodiacNumber : zodiacList) {
 			PrizeEntity emptyPrizeEntity = zodiacNumber.getPrizeEntity();
 			int myNumber = zodiacNumber.getNum();
