@@ -47,10 +47,11 @@ public class AwardServiceImpl implements AwardService {
 		List<AwardEntity> awardEntities = awardRepository.findAll();
 		return awardEntities;
 	}
+
 	@Override
 	public List<AwardResultEntity> getAwardResultRecord(UserEntity userEntity) {
 		// TODO Auto-generated method stub
-		return awardResultRepository.findAll();
+		return awardResultRepository.findByUserEntity(userEntity);
 	}
 
 	@Override

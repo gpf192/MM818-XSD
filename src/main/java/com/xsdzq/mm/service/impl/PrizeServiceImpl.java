@@ -318,7 +318,7 @@ public class PrizeServiceImpl implements PrizeService {
 			for (PrizeResultEntity prizeResultEntity : allList) {
 				PrizeEntity myPrizeEntity = prizeResultEntity.getPrizeEntity();
 				if (myPrizeEntity.getId() == emptyPrizeEntity.getId()) {
-					if (myPrizeEntity.isType()) {
+					if (prizeResultEntity.isType()) {
 						myNumber += prizeResultEntity.getNumber();
 					} else {
 						myNumber -= prizeResultEntity.getNumber();
