@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.xsdzq.mm.entity.ChangWaiSellViewEntity;
 import com.xsdzq.mm.entity.CreditAccountOpenViewEntity;
 import com.xsdzq.mm.entity.OpenAccountEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
@@ -259,31 +260,59 @@ public class ScheduledService {
 			List<ProductEntity> productList = productService.getAll(d, d);//查询有效期内的产品
 			System.out.println("产品 个数："+ productList.size());
 			if(productList.size() != 0) {
-				for(ProductEntity Product:productList) {
-					String productCode = Product.getCode();
+				for(ProductEntity product:productList) {
+					String productCode = product.getCode();
 					System.out.println("******************* 本次扫描产品code：  "+productCode);
-					List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
-			    	if(productSellViewList.size() != 0) {
-			        	for(ProductSellViewEntity p:productSellViewList) {
-			        		//条件  金额 大于等于 5k 放在数据库视图里判断
+					if(product.getScanFlag() == 1) {
+						//1 标识 需要扫场内， 此时场内场外一起扫 ，否则只扫场外
+						List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
+				    	if(productSellViewList.size() != 0) {
+				        	for(ProductSellViewEntity p:productSellViewList) {
+				        		//条件  金额 大于等于 5k 放在数据库视图里判断
 
-			        		String clientId = p.getClientId();
-			        		String serialNum = p.getLsh();
-			        		//查看前一天的 job 是否执行，若执行 则跳过
-			        		//查看 记录表中是否有该条流水号的记录，若没有就加入
-							List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
-							if(prizeRecordList.size() == 0) {												        					 			        		
-			        			//计算抽奖次数
-								double dealAmount = Double.parseDouble( p.getDealAmount());
-			        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
-			        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("5000"),0,BigDecimal.ROUND_HALF_UP);
-			        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
-							}
-			        		
-			        	}
-			    	}else {
-			    		System.out.println("******************* 没有销售产品记录 ");
-			    	}
+				        		String clientId = p.getClientId();
+				        		String serialNum = p.getLsh();
+				        		//查看前一天的 job 是否执行，若执行 则跳过
+				        		//查看 记录表中是否有该条流水号的记录，若没有就加入
+								List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
+								if(prizeRecordList.size() == 0) {												        					 			        		
+				        			//计算抽奖次数
+									double dealAmount = Double.parseDouble( p.getDealAmount());
+				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
+				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("5000"),0,BigDecimal.ROUND_HALF_UP);
+				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
+								}
+				        		
+				        	}
+				    	}else {
+				    		System.out.println("******************* 没有销售产品记录 ");
+				    	}
+					}else {
+						//只扫场外
+						List<ChangWaiSellViewEntity> productSellViewList = productSellViewService.getCwByDealTimeAndProductCode(preDay, productCode);
+				    	if(productSellViewList.size() != 0) {
+				        	for(ChangWaiSellViewEntity p:productSellViewList) {
+				        		//条件  金额 大于等于 5k 放在数据库视图里判断
+
+				        		String clientId = p.getClientId();
+				        		String serialNum = p.getLsh();
+				        		//查看前一天的 job 是否执行，若执行 则跳过
+				        		//查看 记录表中是否有该条流水号的记录，若没有就加入
+								List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
+								if(prizeRecordList.size() == 0) {												        					 			        		
+				        			//计算抽奖次数
+									double dealAmount = Double.parseDouble( p.getDealAmount());
+				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
+				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("5000"),0,BigDecimal.ROUND_HALF_UP);
+				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
+								}
+				        		
+				        	}
+				    	}else {
+				    		System.out.println("******************* 没有销售产品记录 ");
+				    	}
+					}
+
 				}
 			}else{
 				System.out.println("******************* 没有  产品记录 ");
