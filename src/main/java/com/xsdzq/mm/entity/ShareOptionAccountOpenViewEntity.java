@@ -14,7 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * 开门红活动，  期权账户开通记录视图
  */
 @Entity
-@Table(name = "kmh_share_option_account_open_view")
+@Table(name = "kmh_share_option_open_view")
 @EntityListeners(AuditingEntityListener.class)
 public class ShareOptionAccountOpenViewEntity implements Serializable {
 	@Id
