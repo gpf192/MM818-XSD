@@ -51,7 +51,7 @@ public class AwardServiceImpl implements AwardService {
 	@Override
 	public List<AwardResultEntity> getAwardResultRecord(UserEntity userEntity) {
 		// TODO Auto-generated method stub
-		return awardResultRepository.findByUserEntity(userEntity);
+		return awardResultRepository.findByUserEntityOrderByRecordTimeDesc(userEntity);
 	}
 
 	@Override
