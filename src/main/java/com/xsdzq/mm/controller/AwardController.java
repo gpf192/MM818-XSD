@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.AwardEntity;
+import com.xsdzq.mm.entity.AwardResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.AwardNumber;
 import com.xsdzq.mm.service.AwardService;
@@ -38,9 +39,11 @@ public class AwardController {
 	}
 	
 	@GetMapping(value = "/record", produces = "application/json; charset=utf-8")
-	public Map<String, Object> getConvertRecord() {
-		List<AwardEntity> awardEntities = awardService.getConvertAward();
-		return GsonUtil.buildMap(0, "ok", awardEntities);
+	@UserLoginToken
+	public Map<String, Object> getConvertRecord(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		List<AwardResultEntity> awardResultEntities = awardService.getAwardResultRecord(userEntity);
+		return GsonUtil.buildMap(0, "ok", awardResultEntities);
 	}
 
 	@PostMapping(value = "/convert", produces = "application/json; charset=utf-8")
