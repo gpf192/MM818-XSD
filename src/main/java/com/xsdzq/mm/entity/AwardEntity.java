@@ -82,4 +82,10 @@ public class AwardEntity implements Serializable {
 	public void setAwardValue(Integer awardValue) {
 		this.awardValue = awardValue;
 	}
+
+	@Override
+	public String toString() {
+		return "AwardEntity [id=" + id + ", awardName=" + awardName + ", awardNameAlias=" + awardNameAlias
+				+ ", imageName=" + imageName + ", imageNumber=" + imageNumber + ", awardValue=" + awardValue + "]";
+	}
 }

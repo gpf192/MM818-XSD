@@ -42,6 +42,9 @@ public class PrizeEntity implements Serializable {
 	@Column(name = "amount") // 奖品总量
 	private Integer amount;
 
+	@Column(name = "prize_index") // 奖品序列
+	private Integer index;
+
 	@Column(name = "type") // 奖品类型
 	private boolean type;
 
@@ -75,6 +78,14 @@ public class PrizeEntity implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
 	}
 
 	public String getPrice() {
