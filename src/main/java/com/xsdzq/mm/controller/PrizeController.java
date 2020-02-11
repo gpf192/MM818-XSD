@@ -17,6 +17,7 @@ import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.Number;
+import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.util.GsonUtil;
@@ -67,6 +68,14 @@ public class PrizeController {
 		return GsonUtil.buildMap(0, "ok", prizeNumber);
 	}
 
+	@GetMapping(value = "/myZodiac", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> getMyZodiac(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		List<ZodiacNumber> list = prizeService.getMyZodiacNumbers(userEntity);
+		return GsonUtil.buildMap(0, "ok", list);
+	}
+
 	@PostMapping(value = "/share", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> sharePutPrizeNumber(@RequestHeader("Authorization") String token) {
@@ -86,7 +95,7 @@ public class PrizeController {
 		prizeService.selectStockPrize(userEntity);
 		return GsonUtil.buildMap(0, "ok", null);
 	}
-	
+
 	@GetMapping(value = "/hasStockPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> hasStockPrize(@RequestHeader("Authorization") String token) {

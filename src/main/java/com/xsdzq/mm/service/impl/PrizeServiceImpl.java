@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.validator.internal.util.privilegedactions.GetAnnotationAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
+import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
@@ -66,7 +68,6 @@ public class PrizeServiceImpl implements PrizeService {
 			prizeNumberEntity = prizeNumberRepository.findByUserEntity(userEntity);
 		}
 		return prizeNumberEntity;
-
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public class PrizeServiceImpl implements PrizeService {
 	public PrizeEntity getMyPrize(UserEntity userEntity) {
 		// TODO Auto-generated method stub
 		// check user available
-		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录
+		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录,4.抽奖次数和奖品的个数一减一增
 		if (checkAvailable(userEntity)) {
 			Date nowDate = new Date();
 			PrizeEntity prizeEntity = getRandomPrize();
@@ -116,8 +117,10 @@ public class PrizeServiceImpl implements PrizeService {
 			prizeResultEntity.setUserEntity(userEntity);
 			prizeResultEntity.setPrizeEntity(prizeEntity);
 			prizeResultEntity.setRecordTime(nowDate);
-			// 1.处理额外投票券
-			addTicketNumber(userEntity, prizeEntity, nowDate);
+			prizeResultEntity.setNumber(1);
+			prizeResultEntity.setType(true);
+			// 1.处理额外投票券 开门红逻辑不需要
+			// addTicketNumber(userEntity, prizeEntity, nowDate);
 			// 2.添加减少记录
 			addReduceRecordPrize(userEntity);
 			// 3.增加中奖人数
@@ -285,7 +288,7 @@ public class PrizeServiceImpl implements PrizeService {
 				total += 1;
 			}
 		}
-		if (total >= 5) {
+		if (total >= 150) {
 			return false;
 		}
 		return true;
@@ -299,6 +302,41 @@ public class PrizeServiceImpl implements PrizeService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<ZodiacNumber> getMyZodiacNumbers(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<PrizeResultEntity> allList = prizeResultRepository.findByUserEntityOrderByRecordTimeDesc(userEntity);
+		List<ZodiacNumber> zodiacList = getEmptyZodiacList();
+		for (ZodiacNumber zodiacNumber : zodiacList) {
+			PrizeEntity emptyPrizeEntity = zodiacNumber.getPrizeEntity();
+			int myNumber = zodiacNumber.getNum();
+			for (PrizeResultEntity prizeResultEntity : allList) {
+				PrizeEntity myPrizeEntity = prizeResultEntity.getPrizeEntity();
+				if (myPrizeEntity.getId() == emptyPrizeEntity.getId()) {
+					if (myPrizeEntity.isType()) {
+						myNumber += prizeResultEntity.getNumber();
+					} else {
+						myNumber -= prizeResultEntity.getNumber();
+					}
+				}
+			}
+			zodiacNumber.setNum(myNumber);
+		}
+		return zodiacList;
+	}
+
+	public List<ZodiacNumber> getEmptyZodiacList() {
+		List<ZodiacNumber> list = new ArrayList<>();
+		List<PrizeEntity> allPrizeEntities = prizeRepository.findAll();
+		for (PrizeEntity prizeEntity : allPrizeEntities) {
+			ZodiacNumber zodiacNumber = new ZodiacNumber();
+			zodiacNumber.setNum(0);
+			zodiacNumber.setPrizeEntity(prizeEntity);
+			list.add(zodiacNumber);
+		}
+		return list;
 	}
 
 }

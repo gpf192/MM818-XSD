@@ -6,12 +6,15 @@ import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
+import com.xsdzq.mm.model.ZodiacNumber;
 
 public interface PrizeService {
 
 	List<PrizeEntity> getPrizeAll();
 
 	PrizeResultEntity getLatestPrize();
+
+	List<ZodiacNumber> getMyZodiacNumbers(UserEntity userEntity);
 
 	PrizeEntity getMyPrize(UserEntity userEntity);
 
@@ -24,7 +27,7 @@ public interface PrizeService {
 	int getShareEveryDayNumber(UserEntity userEntity);
 
 	boolean sharePutPrizeNumber(UserEntity userEntity);
-	
+
 	boolean hasStockPrize(UserEntity userEntity);
 
 	void selectStockPrize(UserEntity userEntity);
