@@ -9,6 +9,6 @@ import com.xsdzq.mm.entity.UserEntity;
 
 public interface AwardResultRepository extends JpaRepository<AwardResultEntity, Long> {
 	
-	List<AwardResultEntity> findByUserEntity(UserEntity userEntity);
+	List<AwardResultEntity> findByUserEntityOrderByRecordTimeDesc(UserEntity userEntity);
 
 }
