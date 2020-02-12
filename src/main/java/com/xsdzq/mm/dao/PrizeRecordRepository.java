@@ -10,6 +10,8 @@ public interface PrizeRecordRepository {
 	public void add(PrizeRecordEntity prizeRecordEntity);
 
 	public PrizeRecordEntity getLatestRealPrizeResult();
+	
+	public List<PrizeRecordEntity> getByUser(UserEntity userEntity);
 
 	public List<PrizeRecordEntity> getListByUserAndFlag(UserEntity userEntity, String flag);
 

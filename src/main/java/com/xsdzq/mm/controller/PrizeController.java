@@ -17,6 +17,7 @@ import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.Number;
+import com.xsdzq.mm.model.PrizeRecordAndResult;
 import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
@@ -56,6 +57,14 @@ public class PrizeController {
 			return GsonUtil.buildMap(1, "没有抽奖机会了", null);
 		}
 		return GsonUtil.buildMap(0, "ok", prize);
+	}
+
+	@GetMapping(value = "/getMyPrizeRecord", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> getMyPrizeRecord(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		List<PrizeRecordAndResult> list = prizeService.getMyPrizeRecord(userEntity);
+		return GsonUtil.buildMap(0, "ok", list);
 	}
 
 	@GetMapping(value = "/number", produces = "application/json; charset=utf-8")
@@ -114,7 +123,6 @@ public class PrizeController {
 		Number mNumber = new Number();
 		mNumber.setNumber(shareNumber);
 		return GsonUtil.buildMap(0, "ok", mNumber);
-
 	}
 
 	@GetMapping(value = "/prizes", produces = "application/json; charset=utf-8")
