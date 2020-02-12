@@ -49,10 +49,8 @@ public class UserController {
 	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
 	public Map<String, Object> login(@RequestBody UserData userData) throws Exception {
 		logger.info(userData.toString());
-		System.out.println(userData.toString());
 		String cryptUserString = userData.getEncryptData();
 		String userString = AESUtil.decryptAES(cryptUserString);
-		logger.info(userString);
 		User user = JSON.parseObject(userString, User.class);
 		ActivityNumber activityNumber = userService.login(user);
 		UserEntity userEntity = userService.getUserByClientId(user.getClientId());
