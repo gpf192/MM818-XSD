@@ -22,9 +22,9 @@ public class ParamRepositoryImpl implements ParamRepository {
 	@Override
 	public ParamEntity getValueByCode(String code) {
 		// TODO Auto-generated method stub
-		TypedQuery<ParamEntity> sqlQuery = em.createQuery("SELECT c FROM ParamEntity c WHERE c.code=?0",
+		TypedQuery<ParamEntity> sqlQuery = em.createQuery("SELECT c FROM ParamEntity c WHERE c.code=?1",
 				ParamEntity.class);
-		sqlQuery.setParameter(0, code);
+		sqlQuery.setParameter(1, code);
 		return sqlQuery.getSingleResult();
 	}
 
