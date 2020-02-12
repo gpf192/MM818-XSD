@@ -76,4 +76,13 @@ public class PrizeRecordRepositoryImpl implements PrizeRecordRepository {
 		return sqlQuery.getResultList();
 	}
 
+	@Override
+	public List<PrizeRecordEntity> getByUser(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		TypedQuery<PrizeRecordEntity> sqlQuery = em.createQuery(
+				"SELECT r FROM PrizeRecordEntity r WHERE r.userEntity=?1 order by r.recordTime desc", PrizeRecordEntity.class);
+		sqlQuery.setParameter(1, userEntity);
+		return sqlQuery.getResultList();
+	}
+
 }

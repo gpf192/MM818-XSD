@@ -6,6 +6,7 @@ import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
+import com.xsdzq.mm.model.PrizeRecordAndResult;
 import com.xsdzq.mm.model.ZodiacNumber;
 
 public interface PrizeService {
@@ -17,6 +18,8 @@ public interface PrizeService {
 	List<ZodiacNumber> getMyZodiacNumbers(UserEntity userEntity);
 
 	PrizeEntity getMyPrize(UserEntity userEntity);
+
+	List<PrizeRecordAndResult> getMyPrizeRecord(UserEntity userEntity);
 
 	List<PrizeResultEntity> getMyPrizeEntities(UserEntity userEntity);
 

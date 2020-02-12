@@ -23,6 +23,7 @@ import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
+import com.xsdzq.mm.model.PrizeRecordAndResult;
 import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserTicketService;
@@ -104,14 +105,16 @@ public class PrizeServiceImpl implements PrizeService {
 		return total;
 	}
 
+	private Date nowDate = null;
+
 	@Override
 	@Transactional
 	public PrizeEntity getMyPrize(UserEntity userEntity) {
 		// TODO Auto-generated method stub
 		// check user available
 		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录,4.抽奖次数和奖品的个数一减一增
+		nowDate = new Date();
 		if (checkAvailable(userEntity)) {
-			Date nowDate = new Date();
 			PrizeEntity prizeEntity = getRandomPrize();
 			PrizeResultEntity prizeResultEntity = new PrizeResultEntity();
 			prizeResultEntity.setUserEntity(userEntity);
@@ -146,6 +149,26 @@ public class PrizeServiceImpl implements PrizeService {
 			addPrizeNumber(userEntity, true, "3", 1);
 			userTicketService.addUserTicketNumber(userEntity, 500, TicketUtil.TOUPIAOSELECT, nowDate);
 		}
+	}
+
+	@Override
+	public List<PrizeRecordAndResult> getMyPrizeRecord(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<PrizeRecordEntity> prizeRecordEntities = prizeRecordRepository.getByUser(userEntity);
+		List<PrizeResultEntity> prizeResultEntities = prizeResultRepository
+				.findByUserEntityOrderByRecordTimeDesc(userEntity);
+		List<PrizeRecordAndResult> prizeRecordAndResults = new ArrayList<>();
+		for (PrizeRecordEntity prizeRecordEntity : prizeRecordEntities) {
+			PrizeRecordAndResult prizeRecordAndResult = new PrizeRecordAndResult();
+			prizeRecordAndResult.setPrizeRecordEntity(prizeRecordEntity);
+			for (PrizeResultEntity prizeResultEntity : prizeResultEntities) {
+				if (prizeRecordEntity.getRecordTime().equals(prizeResultEntity.getRecordTime())) {
+					prizeRecordAndResult.setPrizeEntity(prizeResultEntity.getPrizeEntity());
+				}
+			}
+			prizeRecordAndResults.add(prizeRecordAndResult);
+		}
+		return prizeRecordAndResults;
 	}
 
 	private void addTicketNumber(UserEntity userEntity, PrizeEntity prizeEntity, Date date) {
@@ -256,6 +279,9 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	private void addPrizeRecord(UserEntity userEntity, boolean type, String reason) {
+		if (nowDate == null) {
+			nowDate = new Date();
+		}
 		String nowString = DateUtil.getStandardDate(new Date());
 		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
 		prizeRecordEntity.setUserEntity(userEntity);
@@ -263,11 +289,14 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeRecordEntity.setReason(reason);
 		prizeRecordEntity.setNumber(1);
 		prizeRecordEntity.setDateFlag(nowString);
-		prizeRecordEntity.setRecordTime(new Date());
+		prizeRecordEntity.setRecordTime(nowDate);
 		prizeRecordRepository.add(prizeRecordEntity);
 	}
 
 	public void addReduceRecordPrize(UserEntity userEntity) {
+		if (nowDate == null) {
+			nowDate = new Date();
+		}
 		String nowString = DateUtil.getStandardDate(new Date());
 		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
 		prizeRecordEntity.setUserEntity(userEntity);
@@ -275,7 +304,7 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeRecordEntity.setReason(PrizeUtil.PRIZE_REDUCE_TYPE);
 		prizeRecordEntity.setNumber(1);
 		prizeRecordEntity.setDateFlag(nowString);
-		prizeRecordEntity.setRecordTime(new Date());
+		prizeRecordEntity.setRecordTime(nowDate);
 		prizeRecordRepository.add(prizeRecordEntity);
 	}
 
