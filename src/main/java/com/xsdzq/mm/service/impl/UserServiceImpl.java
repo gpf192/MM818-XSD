@@ -323,13 +323,13 @@ public class UserServiceImpl implements UserService {
 		prizeService.addPrizeNumberForKMH(user, reason, number, serialNum);
 	}
 	@Override  
-	public List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(String dataFlag) {
+	public List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(int dataFlag) {
 		// TODO Auto-generated method stub
 		return creditAccountOpenViewRepository.findByDateFlag(dataFlag);
 	}
 	
 	@Override 
-	public List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(String dataFlag) {
+	public List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(int dataFlag) {
 		// TODO Auto-generated method stub
 		return shareOptionAccountOpenViewRepository.findByDateFlag(dataFlag);
 	}

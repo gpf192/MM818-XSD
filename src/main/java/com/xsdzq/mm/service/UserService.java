@@ -46,7 +46,7 @@ public interface UserService {
 	//开门红活动 增加用户抽奖次数 以及记录表
 	void addPrizeNumAndRecordForKMH(String clientId, String reason, int number, String serialNum);
 
-	List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(String dataFlag);
+	List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(int dataFlag);
 
-	List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(String dataFlag);
+	List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(int dataFlag);
 }

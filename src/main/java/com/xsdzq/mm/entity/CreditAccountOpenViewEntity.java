@@ -22,7 +22,7 @@ public class CreditAccountOpenViewEntity implements Serializable {
 	private String clientId;
 	
 	@Column(name = "date_flag")
-	private String dataFlag;
+	private int dateFlag;
 
 	public String getClientId() {
 		return clientId;
@@ -32,13 +32,14 @@ public class CreditAccountOpenViewEntity implements Serializable {
 		this.clientId = clientId;
 	}
 
-	public String getDataFlag() {
-		return dataFlag;
+	public int getDateFlag() {
+		return dateFlag;
 	}
 
-	public void setDataFlag(String dataFlag) {
-		this.dataFlag = dataFlag;
+	public void setDateFlag(int dateFlag) {
+		this.dateFlag = dateFlag;
 	}
+
 	
 	
 }

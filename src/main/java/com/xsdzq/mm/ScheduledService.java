@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 35 05 * * ?")
+    @Scheduled(cron = "0 50 14 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -454,7 +454,14 @@ public class ScheduledService {
 	    	System.out.println("=====================>>>>> 开通信用账户 job 开始 ");
 
 	    	//查看上一日签约投顾记录表
-	    	String preDay = DateUtil.getPreDayForCrm();
+	    	//String preDay = DateUtil.getPreDayForCrm();
+	    	int preDay = 0;
+			try {
+				preDay = Integer.parseInt(DateUtil.getPreDayForCrm());
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    	List<CreditAccountOpenViewEntity> creditAccountViewList= userService.findCreditAccountBydataFlag(preDay);
 	    	if(creditAccountViewList.size() != 0) {
 	    		//如果有记录
@@ -473,7 +480,15 @@ public class ScheduledService {
 	    	System.out.println("=====================>>>>> 开通期权账户 job 开始 ");
 
 	    	//查看上一日签约投顾记录表
-	    	String preDay = DateUtil.getPreDayForCrm();
+	    	int preDay = 0;
+			try {
+				preDay = Integer.parseInt(DateUtil.getPreDayForCrm());
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+	    	//String preDay = DateUtil.getPreDayForCrm();
 	    	List<ShareOptionAccountOpenViewEntity> creditAccountViewList= userService.findShareOptionAccountBydataFlag(preDay);
 	    	if(creditAccountViewList.size() != 0) {
 	    		//如果有记录
