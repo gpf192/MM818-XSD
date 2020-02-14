@@ -13,6 +13,8 @@ public interface AwardService {
 
 	List<AwardResultEntity> getAwardResultRecord(UserEntity userEntity);
 
+	int checkMyValue(UserEntity userEntity, AwardNumber awardNumber);
+
 	boolean convertAward(UserEntity userEntity, AwardNumber awardNumber);
 
 }
