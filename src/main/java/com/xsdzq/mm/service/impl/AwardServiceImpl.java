@@ -63,7 +63,7 @@ public class AwardServiceImpl implements AwardService {
 		date = new Date();
 		List<ZodiacNumber> zodiacNumbers = prizeService.getMyZodiacNumbers(userEntity);
 		// check 是否可以兑换
-		if (checkConvert(zodiacNumbers, awardNumber)) {
+		if (checkConvert(userEntity, zodiacNumbers, awardNumber)) {
 			// 减卡操作
 			reducePrizeCard(userEntity, zodiacNumbers, awardNumber);
 			// 兑换成功，增加记录
@@ -79,7 +79,36 @@ public class AwardServiceImpl implements AwardService {
 		return false;
 	}
 
-	boolean checkConvert(List<ZodiacNumber> zodiacNumbers, AwardNumber awardNumber) {
+	@Override
+	public int checkMyValue(UserEntity userEntity, AwardNumber awardNumber) {
+		// TODO Auto-generated method stub
+		return checkMyValueAward(userEntity, awardNumber);
+	}
+
+	int checkMyValueAward(UserEntity userEntity, AwardNumber awardNumber) {
+		List<AwardResultEntity> awardResultEntities = awardResultRepository
+				.findByUserEntityOrderByRecordTimeDesc(userEntity);
+		// 5000块钱判断
+		// 1.计算已经有的价值
+		int myTotal = 0;
+		for (AwardResultEntity awardResultEntity : awardResultEntities) {
+			int value = awardResultEntity.getAwardNumber() * awardResultEntity.getAwardEntity().getAwardValue();
+			myTotal += value;
+		}
+		// 2.计算本次的价值
+		int requestTotal = awardNumber.getAward().getAwardValue() * awardNumber.getNum();
+		int total = myTotal + requestTotal;
+		if (total > 4999) {
+			int code = (5000 - myTotal) / awardNumber.getAward().getAwardValue();
+			return code;
+		}
+		return -1;
+	}
+
+	boolean checkConvert(UserEntity userEntity, List<ZodiacNumber> zodiacNumbers, AwardNumber awardNumber) {
+		if (checkMyValueAward(userEntity, awardNumber) > -1) {
+			return false;
+		}
 		AwardEntity awardEntity = awardNumber.getAward();
 		int converNumber = awardNumber.getNum();
 		if (awardEntity.getIndex() == 1) {

@@ -199,10 +199,10 @@ public class PrizeServiceImpl implements PrizeService {
 
 	public PrizeEntity getRandomPrize() {
 		// 计算中奖项，返回中奖项
-		//ParamEntity paramEntity = paramRepository.getValueByCode(ParamRepositoryImpl.LCJCOMPUSER);
+		ParamEntity paramEntity = paramRepository.getValueByCode(ParamRepositoryImpl.LCJCOMPUSER);
 		PrizeUtil prizeUtil = PrizeUtil.getInstance();
-		//String totalString = paramEntity.getValue();
-		String totalString = "5000";
+		String totalString = paramEntity.getValue();
+		//String totalString = "5000";
 		List<PrizeEntity> prizeList = getPrizeAll();
 		if (totalString != null) {
 			try {

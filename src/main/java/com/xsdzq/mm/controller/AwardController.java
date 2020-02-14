@@ -37,7 +37,7 @@ public class AwardController {
 		List<AwardEntity> awardEntities = awardService.getConvertAward();
 		return GsonUtil.buildMap(0, "ok", awardEntities);
 	}
-	
+
 	@GetMapping(value = "/record", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getConvertRecord(@RequestHeader("Authorization") String token) {
@@ -51,10 +51,17 @@ public class AwardController {
 	public Map<String, Object> convertAward(@RequestHeader("Authorization") String token,
 			@RequestBody AwardNumber awardNumber) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
+		// 5000的逻辑
+		int codePlus = awardService.checkMyValue(userEntity, awardNumber);
+		if (codePlus > -1) {
+			String message = "因为兑换总额限制，当前最多可兑换" + codePlus + "个" + awardNumber.getAward().getAwardName()
+					+ "，请您重新输入再兑换~";
+			return GsonUtil.buildMap(-1, message, null);
+		}
 		boolean result = awardService.convertAward(userEntity, awardNumber);
-		if(result) {
+		if (result) {
 			return GsonUtil.buildMap(0, "ok", null);
-		}else {
+		} else {
 			return GsonUtil.buildMap(-1, "兑换失败", null);
 		}
 	}
