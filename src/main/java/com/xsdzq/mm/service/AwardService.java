@@ -11,6 +11,8 @@ public interface AwardService {
 
 	List<AwardEntity> getConvertAward();
 
+	AwardEntity getAwardEntity(int index);
+
 	List<AwardResultEntity> getAwardResultRecord(UserEntity userEntity);
 
 	int checkMyValue(UserEntity userEntity, AwardNumber awardNumber);

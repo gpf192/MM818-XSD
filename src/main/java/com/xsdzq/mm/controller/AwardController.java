@@ -51,6 +51,14 @@ public class AwardController {
 	public Map<String, Object> convertAward(@RequestHeader("Authorization") String token,
 			@RequestBody AwardNumber awardNumber) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
+		// 对全家福大奖进行个数检查
+		if (awardNumber.getAward().getIndex() == 4) {
+			AwardEntity serverAwardEntity = awardService.getAwardEntity(4);
+			if (serverAwardEntity.getImageNumber() < 1) {
+				String message = serverAwardEntity.getAwardName() + "已经兑换完";
+				return GsonUtil.buildMap(-1, message, null);
+			}
+		}
 		// 5000的逻辑
 		int codePlus = awardService.checkMyValue(userEntity, awardNumber);
 		if (codePlus > -1) {

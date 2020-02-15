@@ -74,6 +74,10 @@ public class AwardServiceImpl implements AwardService {
 			awardResultEntity.setAwardNumber(num);
 			awardResultEntity.setRecordTime(date);
 			awardResultRepository.save(awardResultEntity);
+			// 奖品为手机时，减数量
+			if (awardEntity.getIndex() == 4) {
+				reduceAwardNumber(awardEntity);
+			}
 			return true;
 		}
 		return false;
@@ -83,6 +87,12 @@ public class AwardServiceImpl implements AwardService {
 	public int checkMyValue(UserEntity userEntity, AwardNumber awardNumber) {
 		// TODO Auto-generated method stub
 		return checkMyValueAward(userEntity, awardNumber);
+	}
+	
+	@Override
+	public AwardEntity getAwardEntity(int index) {
+		// TODO Auto-generated method stub
+		return awardRepository.findByIndex(index).get(0);
 	}
 
 	int checkMyValueAward(UserEntity userEntity, AwardNumber awardNumber) {
@@ -98,6 +108,9 @@ public class AwardServiceImpl implements AwardService {
 		// 2.计算本次的价值
 		int requestTotal = awardNumber.getAward().getAwardValue() * awardNumber.getNum();
 		int total = myTotal + requestTotal;
+		if (myTotal > 4999) {
+			return 0;
+		}
 		if (total > 4999) {
 			int code = (5000 - myTotal) / awardNumber.getAward().getAwardValue();
 			return code;
@@ -178,11 +191,11 @@ public class AwardServiceImpl implements AwardService {
 			// 鼠你最牛奖逻辑
 			ZodiacNumber reduceShuZodiacNumber = new ZodiacNumber();
 			ZodiacNumber reduceNiuZodiacNumber = new ZodiacNumber();
+			PrizeEntity shuPrizeEntity = prizeRepository.findByIndex(1).get(0);
 			PrizeEntity niuPrizeEntity = prizeRepository.findByIndex(2).get(0);
-			PrizeEntity shuPrizeEntity = prizeRepository.findByIndex(2).get(0);
+			reduceShuZodiacNumber.setPrizeEntity(shuPrizeEntity);
+			reduceShuZodiacNumber.setNum(awardNumber.getNum());
 			reduceNiuZodiacNumber.setPrizeEntity(niuPrizeEntity);
-			reduceNiuZodiacNumber.setNum(awardNumber.getNum());
-			reduceNiuZodiacNumber.setPrizeEntity(shuPrizeEntity);
 			reduceNiuZodiacNumber.setNum(awardNumber.getNum());
 			reducePrizeNumber(userEntity, reduceShuZodiacNumber);
 			reducePrizeNumber(userEntity, reduceNiuZodiacNumber);
@@ -196,6 +209,11 @@ public class AwardServiceImpl implements AwardService {
 				reducePrizeNumber(userEntity, reduceZodiacNumber);
 			}
 		}
+	}
+
+	void reduceAwardNumber(AwardEntity awardEntity) {
+		awardEntity.setImageNumber(awardEntity.getImageNumber() - 1);
+		awardRepository.saveAndFlush(awardEntity);
 	}
 
 	void reducePrizeNumber(UserEntity userEntity, ZodiacNumber zodiacNumber) {
