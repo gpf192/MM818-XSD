@@ -33,6 +33,9 @@ public class UserEmpRelationEntity implements Serializable {
 	
 	@Column(name = "broker_name")
 	private String brokerName;//经纪人
+	
+	@Column(name = "depart_name")
+	private String departName;//经纪人
 
 	public String getClientId() {
 		return clientId;
@@ -80,6 +83,15 @@ public class UserEmpRelationEntity implements Serializable {
 
 	public void setBrokerName(String brokerName) {
 		this.brokerName = brokerName;
+	}
+
+	
+	public String getDepartName() {
+		return departName;
+	}
+
+	public void setDepartName(String departName) {
+		this.departName = departName;
 	}
 
 	@Override

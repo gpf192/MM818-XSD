@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 50 14 * * ?")
+    @Scheduled(cron = "0 18 21 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -271,7 +271,13 @@ public class ScheduledService {
 				        		//条件  金额 大于等于 5k 放在数据库视图里判断
 
 				        		String clientId = p.getClientId();
-				        		String serialNum = p.getLsh();
+				        		String serialNum = null;
+								try {
+									serialNum = p.getLsh();
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 				        		//查看前一天的 job 是否执行，若执行 则跳过
 				        		//查看 记录表中是否有该条流水号的记录，若没有就加入
 								List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
@@ -279,7 +285,7 @@ public class ScheduledService {
 				        			//计算抽奖次数
 									double dealAmount = Double.parseDouble( p.getDealAmount());
 				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
-				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("5000"),0,BigDecimal.ROUND_HALF_UP);
+				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("10000"),0,BigDecimal.ROUND_HALF_UP);
 				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
 								}
 				        		
@@ -295,7 +301,13 @@ public class ScheduledService {
 				        		//条件  金额 大于等于 5k 放在数据库视图里判断
 
 				        		String clientId = p.getClientId();
-				        		String serialNum = p.getLsh();
+				        		String serialNum = null;
+								try {
+									serialNum = p.getLsh();
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 				        		//查看前一天的 job 是否执行，若执行 则跳过
 				        		//查看 记录表中是否有该条流水号的记录，若没有就加入
 								List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
@@ -303,7 +315,7 @@ public class ScheduledService {
 				        			//计算抽奖次数
 									double dealAmount = Double.parseDouble( p.getDealAmount());
 				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
-				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("5000"),0,BigDecimal.ROUND_HALF_UP);
+				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("10000"),0,BigDecimal.ROUND_HALF_UP);
 				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
 								}
 				        		
