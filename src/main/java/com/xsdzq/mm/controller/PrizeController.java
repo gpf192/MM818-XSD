@@ -1,5 +1,6 @@
 package com.xsdzq.mm.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +44,13 @@ public class PrizeController {
 
 	@GetMapping(value = "/latest", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getLatestPrize() {
-		PrizeResultEntity prizeResultEntity = PrizeUtil.getInstance()
-				.getSecretPrizeResultEntity(prizeService.getLatestPrize());
-		return GsonUtil.buildMap(0, "ok", prizeResultEntity);
+		List<PrizeResultEntity> prizeResultEntities = prizeService.getLatestPrize();
+		List<PrizeResultEntity> responsEntities = new ArrayList<PrizeResultEntity>();
+		for (PrizeResultEntity prizeResultEntity : prizeResultEntities) {
+			PrizeUtil.getInstance().getSecretPrizeResultEntity(prizeResultEntity);
+			responsEntities.add(prizeResultEntity);
+		}
+		return GsonUtil.buildMap(0, "ok", responsEntities);
 	}
 
 	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")

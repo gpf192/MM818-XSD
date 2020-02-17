@@ -84,9 +84,9 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	@Override
-	public PrizeResultEntity getLatestPrize() {
+	public List<PrizeResultEntity> getLatestPrize() {
 		// TODO Auto-generated method stub
-		PrizeResultEntity prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
+		List<PrizeResultEntity> prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
 		// return prizeResultEntity.getPrizeEntity();
 		return prizeResultEntity;
 	}
@@ -202,7 +202,7 @@ public class PrizeServiceImpl implements PrizeService {
 		ParamEntity paramEntity = paramRepository.getValueByCode(ParamRepositoryImpl.LCJCOMPUSER);
 		PrizeUtil prizeUtil = PrizeUtil.getInstance();
 		String totalString = paramEntity.getValue();
-		//String totalString = "5000";
+		// String totalString = "5000";
 		List<PrizeEntity> prizeList = getPrizeAll();
 		if (totalString != null) {
 			try {
