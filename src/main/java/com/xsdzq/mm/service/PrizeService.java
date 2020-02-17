@@ -13,7 +13,7 @@ public interface PrizeService {
 
 	List<PrizeEntity> getPrizeAll();
 
-	PrizeResultEntity getLatestPrize();
+	List<PrizeResultEntity> getLatestPrize();
 
 	List<ZodiacNumber> getMyZodiacNumbers(UserEntity userEntity);
 
