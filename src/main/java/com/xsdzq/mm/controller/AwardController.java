@@ -62,13 +62,13 @@ public class AwardController {
 		// 5000的逻辑
 		int codePlus = awardService.checkMyValue(userEntity, awardNumber);
 		if (codePlus > -1) {
-			String message = "因为兑换总额限制，当前最多可兑换" + codePlus + "个" + awardNumber.getAward().getAwardName()
+			String message = "当前最多可兑换" + codePlus + "个" + awardNumber.getAward().getAwardName()
 					+ "，请您重新输入再兑换~";
 			return GsonUtil.buildMap(-1, message, null);
 		}
 		boolean result = awardService.convertAward(userEntity, awardNumber);
 		if (result) {
-			return GsonUtil.buildMap(0, "ok", null);
+			return GsonUtil.buildMap(0, "ok", awardNumber);
 		} else {
 			return GsonUtil.buildMap(-1, "兑换失败", null);
 		}
