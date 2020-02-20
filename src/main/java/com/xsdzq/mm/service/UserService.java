@@ -49,4 +49,6 @@ public interface UserService {
 	List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(int dataFlag);
 
 	List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(int dataFlag);
+
+	List<PrizeRecordEntity> findPrizeRecordByClinetIdAndReason(String clientId, String reason);
 }

@@ -453,8 +453,12 @@ public class ScheduledService {
 	    		//如果有记录
 	    		for(SignInvestViewEntity si:SignInvestViewList) {
 	    			String clientId = si.getClientId();	
-	    			
-        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_TOUGU_TYPE, 5, "");        		
+	    			//判断用户 是否已经添加过票，防止用户刷票，每人一次
+	    			List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordByClinetIdAndReason(clientId,PrizeUtil.PRIZE_TOUGU_TYPE);
+	    			if(prizeRecordList.size() != 0) {
+	    				userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_TOUGU_TYPE, 5, "");    
+	    			}
+        			    		
 					
 	    		}
 	    	}else{

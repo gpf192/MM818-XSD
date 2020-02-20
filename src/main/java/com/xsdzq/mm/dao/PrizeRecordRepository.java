@@ -16,4 +16,6 @@ public interface PrizeRecordRepository {
 	public void reduce();
 	//开门红活动
 	List<PrizeRecordEntity> findPrizeRecordBySerialNum(String serialNum);
+
+	List<PrizeRecordEntity> findPrizeRecordByClinetIdAndReason(UserEntity userEntity, String reason);
 }

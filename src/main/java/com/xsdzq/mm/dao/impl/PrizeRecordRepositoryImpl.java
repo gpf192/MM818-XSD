@@ -60,4 +60,14 @@ public class PrizeRecordRepositoryImpl implements PrizeRecordRepository {
 		
 		return sqlQuery.getResultList();
 	}
+	@Override
+	public List<PrizeRecordEntity> findPrizeRecordByClinetIdAndReason(UserEntity userEntity, String reason) {
+		// TODO Auto-generated method stub
+		TypedQuery<PrizeRecordEntity> sqlQuery = em.createQuery(
+				"SELECT r FROM PrizeRecordEntity r WHERE  r.userEntity =?1 and r.reason = ?2", PrizeRecordEntity.class);
+		sqlQuery.setParameter(1, userEntity);
+		sqlQuery.setParameter(2, reason);
+		
+		return sqlQuery.getResultList();
+	}
 }

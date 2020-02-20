@@ -333,4 +333,11 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return shareOptionAccountOpenViewRepository.findByDateFlag(dataFlag);
 	}
+	
+	@Override 
+	public List<PrizeRecordEntity> findPrizeRecordByClinetIdAndReason(String clientId, String reason) {
+		// TODO Auto-generated method stub
+		UserEntity userEntity = userRepository.findByClientId(clientId);
+		return prizeRecordRepository.findPrizeRecordByClinetIdAndReason(userEntity, reason);
+	}
 }
