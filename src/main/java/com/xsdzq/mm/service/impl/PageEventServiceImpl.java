@@ -1,6 +1,7 @@
 package com.xsdzq.mm.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,10 @@ public class PageEventServiceImpl implements PageEventService {
 	
 	@Autowired
 	private PageEventRepository pageEventRepository;
-
+	
+	/*@Autowired
+	private MyPageEventRepository myPageEventRepository;
+*/
 	@Override
 	@Transactional
 	public void savePageEvent(UserEntity userEntity, PageEvent pageEvent) {
@@ -28,7 +32,16 @@ public class PageEventServiceImpl implements PageEventService {
 		pageEventEntity.setPageEventId(pageEvent.getPageEventId());
 		pageEventEntity.setActionEvent(pageEvent.getActionEvent());
 		pageEventEntity.setRecordTime(new Date());
-		pageEventRepository.save(pageEventEntity);
+		List<PageEventEntity> plist =pageEventRepository.findByUserEntityAndPageEventId(userEntity, pageEvent.getPageEventId());
+		if(plist.size() == 0) {
+			pageEventRepository.save(pageEventEntity);
+		}else {
+			for(PageEventEntity p:plist) {
+				pageEventRepository.delete(p);
+			}
+			pageEventRepository.save(pageEventEntity);
+		}
+		
 	}
 
 }
