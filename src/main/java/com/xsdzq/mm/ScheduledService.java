@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 18 21 * * ?")
+    @Scheduled(cron = "0 59 12 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -455,7 +455,7 @@ public class ScheduledService {
 	    			String clientId = si.getClientId();	
 	    			//判断用户 是否已经添加过票，防止用户刷票，每人一次
 	    			List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordByClinetIdAndReason(clientId,PrizeUtil.PRIZE_TOUGU_TYPE);
-	    			if(prizeRecordList.size() != 0) {
+	    			if(prizeRecordList.size() == 0) {
 	    				userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_TOUGU_TYPE, 5, "");    
 	    			}
         			    		
