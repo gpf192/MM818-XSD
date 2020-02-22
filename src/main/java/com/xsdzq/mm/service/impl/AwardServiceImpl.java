@@ -2,11 +2,15 @@ package com.xsdzq.mm.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xsdzq.mm.controller.TicketController;
 import com.xsdzq.mm.dao.AwardRepository;
 import com.xsdzq.mm.dao.AwardResultRepository;
 import com.xsdzq.mm.dao.PrizeRepository;
@@ -25,6 +29,7 @@ import com.xsdzq.mm.service.PrizeService;
 @Transactional(readOnly = true)
 public class AwardServiceImpl implements AwardService {
 
+	Logger logger = LoggerFactory.getLogger(AwardServiceImpl.class.getName());
 	@Autowired
 	private AwardRepository awardRepository;
 
@@ -45,7 +50,31 @@ public class AwardServiceImpl implements AwardService {
 	public List<AwardEntity> getConvertAward() {
 		// TODO Auto-generated method stub
 		List<AwardEntity> awardEntities = awardRepository.findAll();
+		for (AwardEntity awardEntity : awardEntities) {
+			if (awardEntity.getIndex() == 4) {
+				int resultNumber = getAwardResultNumber(awardEntity);
+				int total = awardEntity.getImageNumber();
+				int residueNumber = total - resultNumber;
+				if (residueNumber < 0) {
+					residueNumber = 0;
+				}
+				awardEntity.setImageNumber(residueNumber);
+			}
+		}
 		return awardEntities;
+	}
+
+	@Override
+	public int getSurplusAwardNumber(AwardEntity awardEntity) {
+		// TODO Auto-generated method stub
+		AwardEntity myAwardEntity = awardRepository.findById(awardEntity.getId()).get();
+		int resultNumber = getAwardResultNumber(myAwardEntity);
+		int total = myAwardEntity.getImageNumber();
+		int residueNumber = total - resultNumber;
+		if (residueNumber < 0) {
+			residueNumber = 0;
+		}
+		return residueNumber;
 	}
 
 	@Override
@@ -62,6 +91,14 @@ public class AwardServiceImpl implements AwardService {
 		int num = awardNumber.getNum();
 		date = new Date();
 		List<ZodiacNumber> zodiacNumbers = prizeService.getMyZodiacNumbers(userEntity);
+		// 奖品为手机时，减数量 总数不变
+		if (awardEntity.getIndex() == 4) {
+			// 再次校验奖品数量
+			int qjfNumber = getSurplusAwardNumber(awardEntity);
+			if (qjfNumber <= 0) {
+				return false;
+			}
+		}
 		// check 是否可以兑换
 		if (checkConvert(userEntity, zodiacNumbers, awardNumber)) {
 			// 减卡操作
@@ -74,10 +111,6 @@ public class AwardServiceImpl implements AwardService {
 			awardResultEntity.setAwardNumber(num);
 			awardResultEntity.setRecordTime(date);
 			awardResultRepository.save(awardResultEntity);
-			// 奖品为手机时，减数量
-			if (awardEntity.getIndex() == 4) {
-				reduceAwardNumber(awardEntity);
-			}
 			return true;
 		}
 		return false;
@@ -86,9 +119,19 @@ public class AwardServiceImpl implements AwardService {
 	@Override
 	public int checkMyValue(UserEntity userEntity, AwardNumber awardNumber) {
 		// TODO Auto-generated method stub
+		// int countNumber =
 		return checkMyValueAward(userEntity, awardNumber);
 	}
-	
+
+	public int getAwardResultNumber(AwardEntity awardEntity) {
+		int total = 0;
+		List<AwardResultEntity> awardResultEntities = awardResultRepository.findByAwardEntity(awardEntity);
+		for (AwardResultEntity awardResultEntity : awardResultEntities) {
+			total += awardResultEntity.getAwardNumber();
+		}
+		return total;
+	}
+
 	@Override
 	public AwardEntity getAwardEntity(int index) {
 		// TODO Auto-generated method stub

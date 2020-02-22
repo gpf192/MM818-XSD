@@ -14,6 +14,8 @@ public interface AwardService {
 	AwardEntity getAwardEntity(int index);
 
 	List<AwardResultEntity> getAwardResultRecord(UserEntity userEntity);
+	
+	int getSurplusAwardNumber(AwardEntity awardEntity);
 
 	int checkMyValue(UserEntity userEntity, AwardNumber awardNumber);
 

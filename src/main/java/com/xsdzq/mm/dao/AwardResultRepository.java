@@ -4,11 +4,16 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.xsdzq.mm.entity.AwardEntity;
 import com.xsdzq.mm.entity.AwardResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 
 public interface AwardResultRepository extends JpaRepository<AwardResultEntity, Long> {
-	
+
 	List<AwardResultEntity> findByUserEntityOrderByRecordTimeDesc(UserEntity userEntity);
+	
+	List<AwardResultEntity> findByAwardEntity(AwardEntity awardEntity);
+
+	int countByAwardEntity(AwardEntity awardEntity);
 
 }
