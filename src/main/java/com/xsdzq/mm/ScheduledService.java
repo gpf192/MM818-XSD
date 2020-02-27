@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 59 12 * * ?")
+    @Scheduled(cron = "0 35 05 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -483,9 +483,11 @@ public class ScheduledService {
 	    		//如果有记录
 	    		for(CreditAccountOpenViewEntity si:creditAccountViewList) {
 	    			String clientId = si.getClientId();	
-	    			
-        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_XINYONG_TYPE, 10, "");        		
-					
+	    			//判断用户 是否已经添加过票，防止用户刷票，每人一次
+	    			List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordByClinetIdAndReason(clientId,PrizeUtil.PRIZE_XINYONG_TYPE);
+	    			if(prizeRecordList.size() == 0) {
+	    				userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_XINYONG_TYPE, 10, "");        		
+	    			}
 	    		}
 	    	}else{
 				System.out.println("******************* 没有 开通信用账户 记录 ");
@@ -510,9 +512,11 @@ public class ScheduledService {
 	    		//如果有记录
 	    		for(ShareOptionAccountOpenViewEntity si:creditAccountViewList) {
 	    			String clientId = si.getClientId();	
-	    			
-        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_QIQUAN_TYPE, 10, "");        		
-					
+	    			//判断用户 是否已经添加过票，防止用户刷票，每人一次
+	    			List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordByClinetIdAndReason(clientId,PrizeUtil.PRIZE_QIQUAN_TYPE);
+	    			if(prizeRecordList.size() == 0) {
+	    				userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_QIQUAN_TYPE, 10, "");        		
+	    			}
 	    		}
 	    	}else{
 				System.out.println("******************* 没有 开通期权账户 记录 ");
