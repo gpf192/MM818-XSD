@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.xsdzq.mm.annotation.UserLoginToken;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.ActivityNumber;
+import com.xsdzq.mm.model.AesInfo;
 import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.model.UserData;
@@ -58,6 +59,26 @@ public class UserController {
 		activityNumber.setToken(token);
 		return GsonUtil.buildMap(0, "ok", activityNumber);
 	}
+	  @PostMapping(value={"/loginHx"}, produces={"application/json; charset=utf-8"})
+	  public Map<String, Object> loginHx(@RequestBody UserData userData)
+	    throws Exception
+	  {
+	    this.logger.info(userData.toString());
+	    System.out.println(userData.toString());
+	    this.logger.info(userData.toString());
+	    System.out.println(userData.toString());
+	    String cryptUserString = userData.getEncryptData();
+	    String userString = AESUtil.decryptAES(cryptUserString);
+	    this.logger.info(userString);
+	    User user = (User)JSON.parseObject(userString, User.class);
+	    
+	    String uuid = this.userService.loginHx(user);
+	    
+	    String aesUid = AESUtil.encryptAES(uuid);
+	    AesInfo aesInfo = new AesInfo();
+	    aesInfo.setAesUid(aesUid);
+	    return GsonUtil.buildMap(0, "ok", aesInfo);
+	  }
 
 	@UserLoginToken
 	@GetMapping(value = "/getUserInfo", produces = "application/json; charset=utf-8")
