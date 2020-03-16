@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.xsdzq.mm.entity.ShareOptionAccountOpenViewEntity;
 
 public interface ShareOptionAccountOpenViewRepository extends JpaRepository<ShareOptionAccountOpenViewEntity, Long> {
-	List<ShareOptionAccountOpenViewEntity>findByDateFlag(int dataFlag);
+	List<ShareOptionAccountOpenViewEntity>findByDateFlagLessThanEqual(int dataFlag);
 }

@@ -325,13 +325,13 @@ public class UserServiceImpl implements UserService {
 	@Override  
 	public List<CreditAccountOpenViewEntity> findCreditAccountBydataFlag(int dataFlag) {
 		// TODO Auto-generated method stub
-		return creditAccountOpenViewRepository.findByDateFlag(dataFlag);
+		return creditAccountOpenViewRepository.findByDateFlagLessThanEqual(dataFlag);
 	}
 	
 	@Override 
 	public List<ShareOptionAccountOpenViewEntity> findShareOptionAccountBydataFlag(int dataFlag) {
 		// TODO Auto-generated method stub
-		return shareOptionAccountOpenViewRepository.findByDateFlag(dataFlag);
+		return shareOptionAccountOpenViewRepository.findByDateFlagLessThanEqual(dataFlag);
 	}
 	
 	@Override 

@@ -8,6 +8,6 @@ import com.xsdzq.mm.entity.CreditAccountOpenViewEntity;
 
 
 public interface CreditAccountOpenViewRepository extends JpaRepository<CreditAccountOpenViewEntity, Long> {
-	List<CreditAccountOpenViewEntity>findByDateFlag(int dataFlag);
+	List<CreditAccountOpenViewEntity>findByDateFlagLessThanEqual(int dataFlag);
 
 }
