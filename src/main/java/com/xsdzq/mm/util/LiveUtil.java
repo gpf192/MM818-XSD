@@ -14,15 +14,35 @@ public static void main(String[] args) {
 		e.printStackTrace();
 	}
 	
+	 String str = "****";
+	 String s = "1234567891123456";
+    int begin = s.length()/2-1;
+    int end  = s.length()/2+2;
+          StringBuilder sb = new StringBuilder(s);
+          sb.replace(begin-1, end, str);
+          System.out.println(begin);
+          System.out.println("========"+sb.toString());
+     
+	
+}
+public static String replace(String s) {
+	 String str = "****";
+	 //String s = "1234567891123456";
+    int begin = s.length()/2-1;
+    int end  = s.length()/2+2;
+          StringBuilder sb = new StringBuilder(s);
+          sb.replace(begin-1, end, str);
+         return sb.toString();
 }
 public static String getUrl(User user, String uuid) {
 	String httpUrl = "https://betasaas.yundzh.com/api/auth/sync";
-	String nickname = URLEncoder.encode(user.getClientName());
+	String clientId = replace(user.getClientId());
+	String nickname = URLEncoder.encode(clientId);
 	String headimgurl = URLEncoder.encode("https://activity.e95399.com/live/yhtx.jpg");//头像位置，固定，需https并进行urlencode utf-8编码
 	String key  = "xsy68hu9l^nza39@dzh";
 	long timestamp = System.currentTimeMillis();
 	//加密的数据源={openid}+{source}+{timestamp}+{nickname}+{headimgurl}+{url}
-	String data = uuid+"xsdzq_app"+timestamp+user.getClientName()+"https://activity.e95399.com/live/yhtx.jpg";
+	String data = uuid+"xsdzq_app"+timestamp+clientId+"https://activity.e95399.com/live/yhtx.jpg";
 	String sign = null;
 	try {
 		sign = Hmacsha256.getHMACSHA256(data, key);

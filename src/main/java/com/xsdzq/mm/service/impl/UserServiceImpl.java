@@ -245,7 +245,7 @@ public class UserServiceImpl implements UserService {
 		      String uuid = null;
 		      try
 		      {
-		        uuid = AESUtil.getUuid();
+		        uuid = AESUtil.getUuid().substring(0, 20);
 		      }
 		      catch (Exception e)
 		      {

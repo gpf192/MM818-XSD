@@ -95,7 +95,7 @@ public class UserController {
 	    this.logger.info(userString);
 	    User user = (User)JSON.parseObject(userString, User.class);
 	    //生成唯一标识
-	    String uuid = this.userService.loginLive(user).substring(0, 20);
+	    String uuid = this.userService.loginLive(user);
 	    //获取直播url
 	    String liveUrl = LiveUtil.getUrl(user, uuid);
 	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
