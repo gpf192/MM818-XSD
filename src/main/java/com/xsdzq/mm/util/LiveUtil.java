@@ -18,11 +18,11 @@ public static void main(String[] args) {
 public static String getUrl(User user, String uuid) {
 	String httpUrl = "https://betasaas.yundzh.com/api/auth/sync";
 	String nickname = URLEncoder.encode(user.getClientName());
-	String headimgurl = URLEncoder.encode("https://activity.e95399.com/live/yhtx");//头像位置，固定，需https并进行urlencode utf-8编码
+	String headimgurl = URLEncoder.encode("https://activity.e95399.com/live/yhtx.jpg");//头像位置，固定，需https并进行urlencode utf-8编码
 	String key  = "xsy68hu9l^nza39@dzh";
 	long timestamp = System.currentTimeMillis();
 	//加密的数据源={openid}+{source}+{timestamp}+{nickname}+{headimgurl}+{url}
-	String data = uuid+"xsdzq_app"+timestamp+user.getClientName()+"https://activity.e95399.com/live/yhtx";
+	String data = uuid+"xsdzq_app"+timestamp+user.getClientName()+"https://activity.e95399.com/live/yhtx.jpg";
 	String sign = null;
 	try {
 		sign = Hmacsha256.getHMACSHA256(data, key);
