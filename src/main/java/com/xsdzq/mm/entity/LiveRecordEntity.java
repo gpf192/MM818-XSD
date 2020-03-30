@@ -2,11 +2,15 @@ package com.xsdzq.mm.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -26,6 +30,10 @@ public class LiveRecordEntity {
 	@CreatedDate
 	private Date recordTime;
 
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "client_id", referencedColumnName = "client_id")
+	private LiveUserEntity userEntity;
+	
 	public long getId() {
 		return id;
 	}
@@ -40,6 +48,14 @@ public class LiveRecordEntity {
 
 	public void setRecordTime(Date recordTime) {
 		this.recordTime = recordTime;
+	}
+
+	public LiveUserEntity getUserEntity() {
+		return userEntity;
+	}
+
+	public void setUserEntity(LiveUserEntity userEntity) {
+		this.userEntity = userEntity;
 	}
 	
 	

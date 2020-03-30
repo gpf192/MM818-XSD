@@ -21,5 +21,7 @@ public interface UserService {
 	User getUserById(String id);
 
 	User findByClientId(String clientId);
+	
+	String loginLive(User paramUser);
 
 }

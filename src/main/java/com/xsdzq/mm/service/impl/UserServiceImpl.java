@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xsdzq.mm.dao.HxUserRepository;
+import com.xsdzq.mm.dao.LiveUserRepository;
 import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
 import com.xsdzq.mm.dao.UserRepository;
 import com.xsdzq.mm.dao.UserTicketRecordRepository;
 import com.xsdzq.mm.entity.HxUserEntity;
+import com.xsdzq.mm.entity.LiveUserEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.UserEntity;
@@ -41,6 +43,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private HxUserRepository hxUserRepository;
+	
+	@Autowired
+	private LiveUserRepository liveUserRepository;
 	
 	@Autowired
 	private PrizeNumberRepository prizeNumberRepository;
@@ -230,4 +235,30 @@ public class UserServiceImpl implements UserService {
 		    return owner.getUuid();
 	}
 
+	@Override
+	@Transactional
+	public String loginLive(User user) {
+		// TODO Auto-generated method stub
+		 LiveUserEntity owner = this.liveUserRepository.findByClientId(user.getClientId());
+		    if (owner == null)
+		    {
+		      String uuid = null;
+		      try
+		      {
+		        uuid = AESUtil.getUuid();
+		      }
+		      catch (Exception e)
+		      {
+		        e.printStackTrace();
+		      }
+		      LiveUserEntity requestUser = UserUtil.convertLiveUserEntityByUser(user);
+		      requestUser.setUuid(uuid);
+		      liveUserRepository.save(requestUser);
+		      return uuid;
+		    }
+		    UserUtil.updateLiveUserEntityByUser(owner, user);
+		    
+		    liveUserRepository.saveAndFlush(owner);
+		    return owner.getUuid();
+	}
 }

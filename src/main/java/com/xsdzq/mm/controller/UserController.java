@@ -19,12 +19,14 @@ import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.ActivityNumber;
 import com.xsdzq.mm.model.AesInfo;
 import com.xsdzq.mm.model.HasNumber;
+import com.xsdzq.mm.model.LiveInfo;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.model.UserData;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.util.AESUtil;
 import com.xsdzq.mm.util.GsonUtil;
+import com.xsdzq.mm.util.LiveUtil;
 import com.xsdzq.mm.util.UserUtil;
 
 @RestController
@@ -92,13 +94,15 @@ public class UserController {
 	    String userString = AESUtil.decryptAES(cryptUserString);
 	    this.logger.info(userString);
 	    User user = (User)JSON.parseObject(userString, User.class);
-	    
-	    String uuid = this.userService.loginHx(user);
-	    
-	    String aesUid = AESUtil.encryptAES(uuid);
-	    AesInfo aesInfo = new AesInfo();
-	    aesInfo.setAesUid(aesUid);
-	    return GsonUtil.buildMap(0, "ok", aesInfo);
+	    //生成唯一标识
+	    String uuid = this.userService.loginLive(user).substring(0, 20);
+	    //获取直播url
+	    String liveUrl = LiveUtil.getUrl(user, uuid);
+	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
+
+	    LiveInfo liveInfo = new LiveInfo();
+	    liveInfo.setLiveUrl(liveUrl);
+	    return GsonUtil.buildMap(0, "ok", liveInfo);
 	  }
 
 	  
