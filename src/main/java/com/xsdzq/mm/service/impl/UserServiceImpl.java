@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xsdzq.mm.dao.HxUserRepository;
+import com.xsdzq.mm.dao.LiveRecordRepository;
 import com.xsdzq.mm.dao.LiveUserRepository;
 import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
 import com.xsdzq.mm.dao.UserRepository;
 import com.xsdzq.mm.dao.UserTicketRecordRepository;
 import com.xsdzq.mm.entity.HxUserEntity;
+import com.xsdzq.mm.entity.LiveRecordEntity;
 import com.xsdzq.mm.entity.LiveUserEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
@@ -46,6 +48,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private LiveUserRepository liveUserRepository;
+	@Autowired
+	private LiveRecordRepository liveRecordRepository;
 	
 	@Autowired
 	private PrizeNumberRepository prizeNumberRepository;
@@ -240,25 +244,26 @@ public class UserServiceImpl implements UserService {
 	public String loginLive(User user) {
 		// TODO Auto-generated method stub
 		 LiveUserEntity owner = this.liveUserRepository.findByClientId(user.getClientId());
-		    if (owner == null)
-		    {
+		    if (owner == null){
 		      String uuid = null;
-		      try
-		      {
+		      try{
 		        uuid = AESUtil.getUuid().substring(0, 20);
-		      }
-		      catch (Exception e)
-		      {
+		      }catch (Exception e){
 		        e.printStackTrace();
 		      }
 		      LiveUserEntity requestUser = UserUtil.convertLiveUserEntityByUser(user);
 		      requestUser.setUuid(uuid);
 		      liveUserRepository.save(requestUser);
+		      LiveRecordEntity loginRecord = new LiveRecordEntity();
+		      loginRecord.setUserEntity(requestUser);
+		      liveRecordRepository.add(loginRecord);//增加登录记录
 		      return uuid;
 		    }
-		    UserUtil.updateLiveUserEntityByUser(owner, user);
-		    
+		    UserUtil.updateLiveUserEntityByUser(owner, user);	    
 		    liveUserRepository.saveAndFlush(owner);
+		    LiveRecordEntity loginRecord = new LiveRecordEntity();
+		    loginRecord.setUserEntity(owner);
+		    liveRecordRepository.add(loginRecord);//增加登录记录
 		    return owner.getUuid();
 	}
 }
