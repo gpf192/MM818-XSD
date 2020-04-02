@@ -35,7 +35,9 @@ public static String replace(String s) {
          return sb.toString();
 }
 public static String getUrl(User user, String uuid) {
-	String httpUrl = "https://betasaas.yundzh.com/api/auth/sync";
+	//String httpUrl = "https://betasaas.yundzh.com/api/auth/sync";//非游客测试
+	String httpUrl = "https://saas.yundzh.com/api/auth/sync";//非游客生产
+	
 	String clientId = replace(user.getClientId());
 	String nickname = URLEncoder.encode(clientId);
 	String headimgurl = URLEncoder.encode("https://activity.e95399.com/live/yhtx.jpg");//头像位置，固定，需https并进行urlencode utf-8编码

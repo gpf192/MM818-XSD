@@ -255,6 +255,7 @@ public class UserServiceImpl implements UserService {
 		      requestUser.setUuid(uuid);
 		      liveUserRepository.save(requestUser);
 		      LiveRecordEntity loginRecord = new LiveRecordEntity();
+		      loginRecord.setRecordTime(new Date());
 		      loginRecord.setUserEntity(requestUser);
 		      liveRecordRepository.add(loginRecord);//增加登录记录
 		      return uuid;
@@ -262,6 +263,7 @@ public class UserServiceImpl implements UserService {
 		    UserUtil.updateLiveUserEntityByUser(owner, user);	    
 		    liveUserRepository.saveAndFlush(owner);
 		    LiveRecordEntity loginRecord = new LiveRecordEntity();
+		    loginRecord.setRecordTime(new Date());
 		    loginRecord.setUserEntity(owner);
 		    liveRecordRepository.add(loginRecord);//增加登录记录
 		    return owner.getUuid();
