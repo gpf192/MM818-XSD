@@ -1,5 +1,7 @@
 package com.xsdzq.mm.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.ActivityNumber;
 import com.xsdzq.mm.model.AesInfo;
 import com.xsdzq.mm.model.HasNumber;
+import com.xsdzq.mm.model.KmhFlag;
 import com.xsdzq.mm.model.LiveInfo;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.model.UserData;
@@ -48,7 +51,23 @@ public class UserController {
 		userService.getUserById(id);
 		return "test";
 	}
-
+	//获取活动是否结束标识
+	@PostMapping(value = "/getEndFlag", produces = "application/json; charset=utf-8")
+	public Map<String, Object> getEndFlag() throws Exception {
+		
+		KmhFlag k = new KmhFlag();
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
+		Date endTime= formatter.parse(endFlag);
+		
+		if(new Date().getTime() <= endTime.getTime()) {
+			k.setEndFlag(true);
+		}else {
+			k.setEndFlag(false);
+		}
+		return GsonUtil.buildMap(0, "ok", k);
+	}
+	//
 	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
 	public Map<String, Object> login(@RequestBody UserData userData) throws Exception {
 		logger.info(userData.toString());
