@@ -28,6 +28,7 @@ import com.xsdzq.mm.model.UserData;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.util.AESUtil;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.LiveUtil;
 import com.xsdzq.mm.util.UserUtil;
@@ -57,14 +58,8 @@ public class UserController {
 		
 		KmhFlag k = new KmhFlag();
 		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
-		Date endTime= formatter.parse(endFlag);
+		k.setEndFlag(DateUtil.checkDate(endFlag));
 		
-		if(new Date().getTime() <= endTime.getTime()) {
-			k.setEndFlag(true);
-		}else {
-			k.setEndFlag(false);
-		}
 		return GsonUtil.buildMap(0, "ok", k);
 	}
 	//

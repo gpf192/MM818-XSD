@@ -1,5 +1,6 @@
 package com.xsdzq.mm.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,13 @@ import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.HasNumber;
+import com.xsdzq.mm.model.KmhFlag;
 import com.xsdzq.mm.model.Number;
 import com.xsdzq.mm.model.PrizeRecordAndResult;
 import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 
@@ -55,7 +58,12 @@ public class PrizeController {
 
 	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
-	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) {
+	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) throws ParseException {
+		KmhFlag k = new KmhFlag();
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		if(!DateUtil.checkDate(endFlag)) {
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+		}
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		PrizeEntity prize = prizeService.getMyPrize(userEntity);
 		if (prize == null) {

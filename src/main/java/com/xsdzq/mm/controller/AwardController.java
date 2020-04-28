@@ -1,5 +1,6 @@
 package com.xsdzq.mm.controller;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +18,10 @@ import com.xsdzq.mm.entity.AwardEntity;
 import com.xsdzq.mm.entity.AwardResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.AwardNumber;
+import com.xsdzq.mm.model.KmhFlag;
 import com.xsdzq.mm.service.AwardService;
 import com.xsdzq.mm.service.TokenService;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 
 @RestController
@@ -49,7 +52,14 @@ public class AwardController {
 	@PostMapping(value = "/convert", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> convertAward(@RequestHeader("Authorization") String token,
-			@RequestBody AwardNumber awardNumber) {
+			@RequestBody AwardNumber awardNumber) throws ParseException {
+		//判断活动是否结束
+		KmhFlag k = new KmhFlag();
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		if(!DateUtil.checkDate(endFlag)) {
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+		}
+		
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		awardService.checkMyValue(userEntity, awardNumber);
 		// 对全家福大奖进行个数检查
