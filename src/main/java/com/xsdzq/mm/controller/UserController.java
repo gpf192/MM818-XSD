@@ -118,6 +118,29 @@ public class UserController {
 	    liveInfo.setLiveUrl(liveUrl);
 	    return GsonUtil.buildMap(0, "ok", liveInfo);
 	  }
+	  //直播专用接口
+	  @PostMapping(value={"/loginLivePro"}, produces={"application/json; charset=utf-8"})
+	  public Map<String, Object> loginLivePro(@RequestBody UserData userData)
+	    throws Exception
+	  {
+	    this.logger.info(userData.toString());
+	    System.out.println(userData.toString());
+	    this.logger.info(userData.toString());
+	    System.out.println(userData.toString());
+	    String cryptUserString = userData.getEncryptData();
+	    String userString = AESUtil.decryptAES(cryptUserString);
+	    this.logger.info(userString);
+	    User user = (User)JSON.parseObject(userString, User.class);
+	    //生成唯一标识
+	    String uuid = this.userService.loginLive(user);
+	    //获取直播url
+	    String liveUrl = LiveUtil.getUrlPro(user, uuid);
+	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
+
+	    LiveInfo liveInfo = new LiveInfo();
+	    liveInfo.setLiveUrl(liveUrl);
+	    return GsonUtil.buildMap(0, "ok", liveInfo);
+	  }
 
 	  
 	@UserLoginToken
