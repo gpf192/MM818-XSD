@@ -108,8 +108,15 @@ public class UserController {
 	    String userString = AESUtil.decryptAES(cryptUserString);
 	    this.logger.info(userString);
 	    User user = (User)JSON.parseObject(userString, User.class);
-	    //生成唯一标识
-	    String uuid = this.userService.loginLive(user);
+	    String uuid = "";
+	    if("".equals(user.getClientId())) {
+	    	//游客，不用生成登录记录
+	    	uuid = AESUtil.getUuid().substring(0, 20);
+	    }else {
+	    	//非游客生成唯一标识
+		    uuid = this.userService.loginLive(user);
+	    }
+	    
 	    //获取直播url
 	    String liveUrl = LiveUtil.getUrl(user, uuid);
 	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
@@ -131,8 +138,15 @@ public class UserController {
 	    String userString = AESUtil.decryptAES(cryptUserString);
 	    this.logger.info(userString);
 	    User user = (User)JSON.parseObject(userString, User.class);
-	    //生成唯一标识
-	    String uuid = this.userService.loginLive(user);
+	    String uuid = "";
+	    if("".equals(user.getClientId())) {
+	    	//游客，不用生成登录记录
+	    	uuid = AESUtil.getUuid().substring(0, 20);
+	    }else {
+	    	//非游客生成唯一标识
+		    uuid = this.userService.loginLive(user);
+	    }
+	        
 	    //获取直播url
 	    String liveUrl = LiveUtil.getUrlPro(user, uuid);
 	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
