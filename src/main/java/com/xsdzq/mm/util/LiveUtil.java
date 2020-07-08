@@ -38,14 +38,14 @@ public static String getUrl(User user, String uuid) {
 	String liveUrl = "";
 	String key  = "xsy68hu9l^nza39@dzh";
 	long timestamp = System.currentTimeMillis();
-
+	String httpUrl = "https://saas.yundzh.com/api/auth/sync";//生产
 	if("".equals(user.getClientId())) {
 		//游客
-		String httpUrl = "https://guestsaas.yundzh.com/#/xsdzq/home";//游客生产
+		//String httpUrl = "https://guestsaas.yundzh.com/#/xsdzq/home";//游客生产
 		//， 游客只加密 timestamp、channel、source
 		
-		//加密的数据源={timestamp}+{channel}+{source}
-		String data = timestamp+"xsdzq"+"xsdzq_app";
+		//游客,加密的数据源={source}+{timestamp}
+		String data = "xsdzq_app"+timestamp;
 		String sign = null;
 		try {
 			sign = Hmacsha256.getHMACSHA256(data, key);
@@ -53,11 +53,11 @@ public static String getUrl(User user, String uuid) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 liveUrl = httpUrl+"&timestamp="+timestamp+"&channel=xsdzq&source=xsdzq_app&sign="+sign;
+		 liveUrl = httpUrl+"?timestamp="+timestamp+"&channel=xsdzq&source=xsdzq_app&sign="+sign;
 		
 	}else {
 		//非游客
-		String httpUrl = "https://saas.yundzh.com/api/auth/sync";//非游客生产
+		//String httpUrl = "https://saas.yundzh.com/api/auth/sync";//非游客生产
 		String clientId = replace(user.getClientId());
 		String nickname = URLEncoder.encode(clientId);
 		String headimgurl = URLEncoder.encode("https://activity.e95399.com/live/yhtx.jpg");//头像位置，固定，需https并进行urlencode utf-8编码
@@ -81,15 +81,12 @@ public static String getUrlPro(User user, String uuid) {
 	String liveUrl = "";
 	String key  = "xsy68hu9l^nza39@dzh";
 	long timestamp = System.currentTimeMillis();
+	String httpUrl = "https://saas.yundzh.com/api/auth/sync";//生产
 
 	if("".equals(user.getClientId())) {
-		//游客
-		String httpUrl = "https://guestsaas.yundzh.com/#/xsdzq/home";//游客生产
-		
-		//， 游客只加密 timestamp、channel、source
-		
-		//加密的数据源={timestamp}+{channel}+{source}+{url}
-		String data = timestamp+"xsdzq"+"xsdzq_app"+user.getLiveUrl();
+			
+		//加密的数据源={source}+{timestamp}+url
+		String data = "xsdzq_app"+timestamp+user.getLiveUrl();
 		String sign = null;
 		try {
 			sign = Hmacsha256.getHMACSHA256(data, key);
@@ -98,11 +95,11 @@ public static String getUrlPro(User user, String uuid) {
 			e.printStackTrace();
 		}
 		String urlPro = URLEncoder.encode(user.getLiveUrl());
-		 liveUrl = httpUrl+"&timestamp="+timestamp+"&channel=xsdzq&source=xsdzq_app&sign="+sign+"&url="+urlPro;
+		 liveUrl = httpUrl+"?timestamp="+timestamp+"&channel=xsdzq&source=xsdzq_app&sign="+sign+"&url="+urlPro;//+"&url="+urlPro
 		
 	}else {
 		//非游客
-		String httpUrl = "https://saas.yundzh.com/api/auth/sync";//非游客生产
+		//String httpUrl = "https://saas.yundzh.com/api/auth/sync";//非游客生产
 		String clientId = replace(user.getClientId());
 		String nickname = URLEncoder.encode(clientId);//昵称
 		String headimgurl = URLEncoder.encode("https://activity.e95399.com/live/yhtx.jpg");//头像位置，固定，需https并进行urlencode utf-8编码
