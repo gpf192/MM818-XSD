@@ -83,8 +83,25 @@ public class ShareController {
 		en.setName(name);
 		en.setPhone(phone);
 		en.setRecordtime(new Date());
-		dzhggService.addEntity(en);
-		return GsonUtil.buildMap(0, "ok", null);
+		int code;
+		
+		try {
+			code = dzhggService.addEntity(en);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return   GsonUtil.buildMap(2, "提交失败", null);
+		}
+		if(code == 0) {
+			return GsonUtil.buildMap(0, "提交成功", null);
+		}
+		if(code == 1) {
+			return   GsonUtil.buildMap(1, "请勿重复提交", null);
+		}
+		else {
+			return   GsonUtil.buildMap(2, "提交失败", null);
+		}
+		
 	}
 
 }
