@@ -17,7 +17,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "lcj_prize_info")
+@Table(name = "lcj818_prize_info")
 @EntityListeners(AuditingEntityListener.class)
 public class PrizeEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
