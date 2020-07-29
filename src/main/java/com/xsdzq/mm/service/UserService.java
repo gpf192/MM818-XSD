@@ -7,7 +7,7 @@ import com.xsdzq.mm.model.User;
 public interface UserService {
 
 	ActivityNumber login(User user);
-
+	String loginHx(User paramUser);
 	User getUserById(Long id);
 
 	boolean hasSignAdviser(UserEntity userEntity);
@@ -22,4 +22,5 @@ public interface UserService {
 
 	User findByClientId(String clientId);
 
+	String loginLive(User paramUser);
 }

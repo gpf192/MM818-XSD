@@ -10,14 +10,14 @@ public class User {
 	private String appVersion;
 	private String lastOpIP;
 	private String lastLoginTime;
-
+	private String liveUrl;
 	public User() {
 		super();
 
 	}
 
 	public User(String clientId, String clientName, String fundAccount, String accessToken, String mobile,
-			String appVersion, String lastOpIP, String lastLoginTime) {
+			String appVersion, String lastOpIP, String lastLoginTime, String liveUrl) {
 		super();
 		this.clientId = clientId;
 		this.clientName = clientName;
@@ -27,6 +27,7 @@ public class User {
 		this.appVersion = appVersion;
 		this.lastOpIP = lastOpIP;
 		this.lastLoginTime = lastLoginTime;
+		this.liveUrl = liveUrl;
 	}
 
 	public String getClientName() {
@@ -93,11 +94,19 @@ public class User {
 		this.lastLoginTime = lastLoginTime;
 	}
 
+	public String getLiveUrl() {
+		return liveUrl;
+	}
+
+	public void setLiveUrl(String liveUrl) {
+		this.liveUrl = liveUrl;
+	}
+
 	@Override
 	public String toString() {
 		return "User [clientId=" + clientId + ", clientName=" + clientName + ", fundAccount=" + fundAccount
 				+ ", accessToken=" + accessToken + ", mobile=" + mobile + ", appVersion=" + appVersion + ", lastOpIP="
-				+ lastOpIP + ", lastLoginTime=" + lastLoginTime + "]";
+				+ lastOpIP + ", lastLoginTime=" + lastLoginTime + ", liveUrl=" + liveUrl + "]";
 	}
 
 }
