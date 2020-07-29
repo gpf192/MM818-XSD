@@ -1,5 +1,6 @@
 package com.xsdzq.mm.controller;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xsdzq.mm.entity.DzhggEntity;
 import com.xsdzq.mm.entity.ParamEntity;
 import com.xsdzq.mm.entity.SignatureEntity;
+import com.xsdzq.mm.service.DzhggService;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.RandomUtil;
@@ -26,6 +29,9 @@ public class ShareController {
 
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	DzhggService dzhggService;
 	
 	@GetMapping(value = "/getSign", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getSign(@RequestParam String url, @RequestParam String appid) {		 
@@ -68,6 +74,34 @@ public class ShareController {
 		signatureEntity.setNoncestr(noncestr);
 		signatureEntity.setTimestamp(timestamp);
 		return GsonUtil.buildMap(0, "ok", signatureEntity);
+	}
+	
+	@GetMapping(value = "/dzhgg", produces = "application/json; charset=utf-8")
+	public Map<String, Object> dzhgg(@RequestParam String name, @RequestParam String phone, @RequestParam String activity) {
+		DzhggEntity en = new DzhggEntity();
+		en.setActivity(activity);
+		en.setName(name);
+		en.setPhone(phone);
+		en.setRecordtime(new Date());
+		int code;
+		
+		try {
+			code = dzhggService.addEntity(en);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return   GsonUtil.buildMap(2, "提交失败", null);
+		}
+		if(code == 0) {
+			return GsonUtil.buildMap(0, "提交成功", null);
+		}
+		if(code == 1) {
+			return   GsonUtil.buildMap(1, "请勿重复提交", null);
+		}
+		else {
+			return   GsonUtil.buildMap(2, "提交失败", null);
+		}
+		
 	}
 
 }

@@ -8,10 +8,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xsdzq.mm.dao.HxUserRepository;
+import com.xsdzq.mm.dao.LiveRecordRepository;
+import com.xsdzq.mm.dao.LiveUserRepository;
 import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
 import com.xsdzq.mm.dao.UserRepository;
 import com.xsdzq.mm.dao.UserTicketRecordRepository;
+import com.xsdzq.mm.entity.HxUserEntity;
+import com.xsdzq.mm.entity.LiveRecordEntity;
+import com.xsdzq.mm.entity.LiveUserEntity;
 import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.UserEntity;
@@ -21,6 +27,7 @@ import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.service.UserTicketService;
+import com.xsdzq.mm.util.AESUtil;
 import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 import com.xsdzq.mm.util.TicketUtil;
@@ -35,7 +42,14 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-
+	@Autowired
+	private HxUserRepository hxUserRepository;
+	
+	@Autowired
+	private LiveUserRepository liveUserRepository;
+	@Autowired
+	private LiveRecordRepository liveRecordRepository;
+	
 	@Autowired
 	private PrizeNumberRepository prizeNumberRepository;
 
@@ -195,5 +209,60 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 	}
+	@Override
+	@Transactional
+	public String loginHx(User user) {
+		// TODO Auto-generated method stub
+		 HxUserEntity owner = this.hxUserRepository.findByClientId(user.getClientId());
+		    if (owner == null)
+		    {
+		      String uuid = null;
+		      try
+		      {
+		        uuid = AESUtil.getUuid();
+		      }
+		      catch (Exception e)
+		      {
+		        e.printStackTrace();
+		      }
+		      HxUserEntity requestUser = UserUtil.convertHxUserEntityByUser(user);
+		      requestUser.setUuid(uuid);
+		      hxUserRepository.save(requestUser);
+		      return uuid;
+		    }
+		    UserUtil.updateHxUserEntityByUser(owner, user);
+		    
+		    hxUserRepository.saveAndFlush(owner);
+		    return owner.getUuid();
+	}
 
+	@Override
+	@Transactional
+	public String loginLive(User user) {
+		// TODO Auto-generated method stub
+		 LiveUserEntity owner = this.liveUserRepository.findByClientId(user.getClientId());
+		    if (owner == null){
+		      String uuid = null;
+		      try{
+		        uuid = AESUtil.getUuid().substring(0, 20);
+		      }catch (Exception e){
+		        e.printStackTrace();
+		      }
+		      LiveUserEntity requestUser = UserUtil.convertLiveUserEntityByUser(user);
+		      requestUser.setUuid(uuid);
+		      liveUserRepository.save(requestUser);
+		      LiveRecordEntity loginRecord = new LiveRecordEntity();
+		      loginRecord.setRecordTime(new Date());
+		      loginRecord.setUserEntity(requestUser);
+		      liveRecordRepository.add(loginRecord);//增加登录记录
+		      return uuid;
+		    }
+		    UserUtil.updateLiveUserEntityByUser(owner, user);	    
+		    liveUserRepository.saveAndFlush(owner);
+		    LiveRecordEntity loginRecord = new LiveRecordEntity();
+		    loginRecord.setRecordTime(new Date());
+		    loginRecord.setUserEntity(owner);
+		    liveRecordRepository.add(loginRecord);//增加登录记录
+		    return owner.getUuid();
+	}
 }
