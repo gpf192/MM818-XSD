@@ -18,7 +18,7 @@ import javax.persistence.Table;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "lcj_prize_record")
+@Table(name = "lcj818_prize_record")
 @EntityListeners(AuditingEntityListener.class)
 public class PrizeRecordEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

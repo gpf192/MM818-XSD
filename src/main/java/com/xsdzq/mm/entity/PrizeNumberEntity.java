@@ -20,7 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "lcj_prize_number")
+@Table(name = "lcj818_prize_number")
 @EntityListeners(AuditingEntityListener.class)
 public class PrizeNumberEntity implements Serializable {
 
