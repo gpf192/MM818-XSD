@@ -36,12 +36,15 @@ public class PrizeRecordEntity implements Serializable {
 
 	@Column(name = "num", nullable = false)
 	private Integer number = 0; // 增加或者减少的数量,默认为0
-	
+
 	@Column(name = "data_flag", nullable = false)
 	private String dateFlag; // 每日的判断标准
 
 	@Column(name = "record_time", nullable = false)
 	private Date recordTime;
+
+	@Column(name = "serial_num")
+	private String serialNum; // 扫描的产品交易流水号
 
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "client_id", referencedColumnName = "client_id")
@@ -93,6 +96,14 @@ public class PrizeRecordEntity implements Serializable {
 
 	public void setRecordTime(Date recordTime) {
 		this.recordTime = recordTime;
+	}
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
 	}
 
 	public UserEntity getUserEntity() {
