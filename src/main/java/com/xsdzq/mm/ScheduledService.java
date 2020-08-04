@@ -173,12 +173,17 @@ public class ScheduledService {
 			}
 			//查询所有的产品 循环每一个产品与销售记录进行匹配
 			Date  d = DateUtil.getPreDayAs();
-			List<ProductEntity> productList = productService.getAll(d, d);
+			List<ProductEntity> productList = productService.getAll(d, d);//获取前一天仍有效的产品
 			System.out.println("产品 个数："+ productList.size());
 			if(productList.size() != 0) {
 				for(ProductEntity Product:productList) {
 					String productCode = Product.getCode();
 					System.out.println("******************* chanpin shi  "+productCode);
+					
+					if(Product.getScanFlag() == 1) {
+					//	1 标识 需要扫场内， 此时场内场外一起扫 ，否则只扫场外
+					
+					//根据产品code 和前一天日期 ，获取crm接口的交易数据
 					List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
 			    	if(productSellViewList.size() != 0) {
 			        	for(ProductSellViewEntity p:productSellViewList) {
@@ -191,7 +196,7 @@ public class ScheduledService {
 							//List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientIdAndDateFlag(TicketUtil.BUYFUNDTICKET, clientId, DateUtil.getPreDay());
 							if(UserTicketRecordList.size() == 0) {
 								String clientName = p.getClientName();
-				        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
+				        		/*UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
 				        		String empId = "0";
 				        		if(ue != null) {
 				        			String brokerId = ue.getBrokerId();
@@ -204,7 +209,7 @@ public class ScheduledService {
 				        				empId = touguId;
 				        			}
 				        		}
-				        		System.out.println("*************----empid   "+ empId);
+				        		System.out.println("*************----empid   "+ empId);*/
 				        		//计算得票数
 				        		double xishu = Double.parseDouble((productService.getProductByCode(p.getProductCode())).getCoefficient());
 				        		double dealAmount = Double.parseDouble( p.getDealAmount());
@@ -233,16 +238,40 @@ public class ScheduledService {
 							}
 			        		
 			        	}
-			    	}else {
-			    		System.out.println("******************* 没有销售产品记录 ");
+			    	}
+				}else {
+					//只扫场外
+					List<ChangWaiSellViewEntity> productSellViewList = productSellViewService.getCwByDealTimeAndProductCode(preDay, productCode);
+					if(productSellViewList.size() != 0) {
+			        	for(ChangWaiSellViewEntity p:productSellViewList) {
+
+			        		String clientId = p.getClientId();
+			        		String serialNum = p.getLsh();
+			        		//查看前一天的 job 是否执行，若执行 则跳过
+							List<UserTicketRecordEntity> UserTicketRecordList = userService.findBySerialNum(serialNum);
+							//List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientIdAndDateFlag(TicketUtil.BUYFUNDTICKET, clientId, DateUtil.getPreDay());
+							if(UserTicketRecordList.size() == 0) {
+								String clientName = p.getClientName();
+				        		
+				        		//计算得票数
+				        		double xishu = Double.parseDouble((productService.getProductByCode(p.getProductCode())).getCoefficient());
+				        		double dealAmount = Double.parseDouble( p.getDealAmount());
+				        		
+				        		BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
+				        		BigDecimal xishuDecimal = BigDecimal.valueOf(xishu);
+				        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
+				        		int ticketNum =(int) Math.round(num);
+			        			System.out.println("票数*************----  "+ ticketNum);
+			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET, serialNum);
+			        			
+							}
+			        		
+			        	}
 			    	}
 				}
-			}else{
-				System.out.println("******************* 没有  产品记录 ");
 			}
-			
-	    	
-	    }
+		}  	
+	   }
 	    
 	    //开门红活动     定时扫描产品交易方法 2020年2月
 	    public void productSellTaskForKMH() {
@@ -342,7 +371,7 @@ public class ScheduledService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			List<OpenAccountEntity> list=  userService.findByOpenDate(preDay);
+			List<OpenAccountEntity> list=  userService.findByOpenDate(preDay);//查询前一天之前所有的记录
 			if(list.size() != 0) {
 				//如果有记录
 				for(OpenAccountEntity p:list) {
@@ -353,7 +382,7 @@ public class ScheduledService {
 		        		String empId = "0";
 		        		//获取经纪人
 		        		UserEmpRelationEntity ue =userEmpRelationService.findByClientId(clientId);
-		        		if(ue != null) {
+		        		/*if(ue != null) {
 		        			String brokerId = ue.getBrokerId();
 		        			String touguId = ue.getTouguId();
 		        			if(brokerId != null && touguId != null ) {
@@ -363,7 +392,7 @@ public class ScheduledService {
 		        			}else if(brokerId == null && touguId != null) {
 		        				empId = touguId;
 		        			}
-		        		}
+		        		}*/
 		        		//获取票数
 		        		int ticketNum = Integer.parseInt(userService.getValueByCode("fund_ticket_num").getValue());
 		        		//判断是否有经纪人
@@ -402,19 +431,19 @@ public class ScheduledService {
 	    public void tgfundOpenAccountTask() {
 	    	System.out.println("=====================>>>>> 签约投顾 job 开始 ");
 
-	    	//查看上一日签约投顾记录表
+	    	//查看上一日之前所有的签约投顾记录表
 	    	String preDay = DateUtil.getPreDayForCrm();
 	    	List<SignInvestViewEntity> SignInvestViewList= userService.findByserviceTypeAndStatusAndEffectiveDate(0, "1", preDay);
-	    	System.out.println("***********************+ " +(SignInvestViewList == null)+ "--"+SignInvestViewList.size());
+	    	//System.out.println("***********************+ " +(SignInvestViewList == null)+ "--"+SignInvestViewList.size());
 	    	if(SignInvestViewList.size() != 0) {
 	    		//如果有记录
 	    		for(SignInvestViewEntity si:SignInvestViewList) {
 	    			String clientId = si.getClientId();	
-	    			System.out.println("OOOOOOOOOOOOOOOOOOOOOOO"+clientId);
+	    			//System.out.println("OOOOOOOOOOOOOOOOOOOOOOO"+clientId);
 	    			String empId = si.getInvestId();
 					//判断得票记录表中是否有该用户记录 若没有则继续插入
 					List<UserTicketRecordEntity> UserTicketRecordList = userService.findByVotesSourceAndUserEntity_clientId(TicketUtil.BROKETICKET, clientId);
-	    			System.out.println("wwwwwwwwwwwwwwwwww "+UserTicketRecordList.size());
+	    			//System.out.println("wwwwwwwwwwwwwwwwww "+UserTicketRecordList.size());
 
 	        		//获取票数
 	        		int ticketNum = Integer.parseInt(userService.getValueByCode("tg_ticket_num").getValue());	        		

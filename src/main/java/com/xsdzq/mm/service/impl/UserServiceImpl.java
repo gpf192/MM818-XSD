@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<OpenAccountEntity> findByOpenDate(int preDay) {
 		// TODO Auto-generated method stub
-		return openAccountRepository.findByOpenDate(preDay);
+		return openAccountRepository.findByOpenDateLessThanEqual(preDay);
 	}
 
 	@Override
@@ -287,7 +287,7 @@ public class UserServiceImpl implements UserService {
 	public List<SignInvestViewEntity> findByserviceTypeAndStatusAndEffectiveDate(int serviceType, String status,
 			String effectiveDate) {
 		// TODO Auto-generated method stub
-		return signInvestViewRepository.findByserviceTypeAndStatusAndEffectiveDate(serviceType, status, effectiveDate);
+		return signInvestViewRepository.findByserviceTypeAndStatusAndEffectiveDateLessThanEqual(serviceType, status, effectiveDate);
 	}
 
 	@Override
