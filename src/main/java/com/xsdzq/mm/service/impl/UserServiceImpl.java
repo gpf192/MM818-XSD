@@ -123,8 +123,6 @@ public class UserServiceImpl implements UserService {
 		int prizeNumber = handlerLoginPrize(realUserEntity);
 		// 处理登陆后的票数
 		int ticketNumber = handlerLoginTicket(realUserEntity);
-		System.out.println("user prize ticket: " + prizeNumber);
-		System.out.println("user login ticket: " + ticketNumber);
 		ActivityNumber activityNumber = new ActivityNumber();
 		activityNumber.setPrizeNumber(prizeNumber);
 		activityNumber.setTicketNumber(ticketNumber);
