@@ -76,7 +76,7 @@ public class TicketController {
 				number = Integer.parseInt(numberString);
 			} catch (Exception e) {
 				// TODO: handle exception
-				return GsonUtil.buildMap(1, "票数只能为整数", null);
+				return GsonUtil.buildMap(1, "投票数只能是整数", null);
 			}
 			int myNumer = userTicketService.getUserTicket(userEntity);
 			logger.info("nubmer: " + number);
