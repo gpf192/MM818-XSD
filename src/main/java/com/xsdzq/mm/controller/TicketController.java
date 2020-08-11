@@ -32,7 +32,7 @@ import com.xsdzq.mm.util.PrizeUtil;
 @RequestMapping("/activity/ticket")
 public class TicketController {
 
-	Logger logger = LoggerFactory.getLogger(TicketController.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
 
 	@Autowired
 	TokenService tokenService;
@@ -71,7 +71,13 @@ public class TicketController {
 			String empId = voteModel.getEmpId();
 			System.out.println(voteModel.toString());
 			String numberString = voteModel.getTicketNumber();
-			int number = Integer.parseInt(numberString);
+			int number;
+			try {
+				number = Integer.parseInt(numberString);
+			} catch (Exception e) {
+				// TODO: handle exception
+				return GsonUtil.buildMap(1, "票数只能为整数", null);
+			}
 			int myNumer = userTicketService.getUserTicket(userEntity);
 			logger.info("nubmer: " + number);
 			logger.info("myNumer: " + myNumer);
@@ -84,6 +90,8 @@ public class TicketController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
+			return GsonUtil.buildMap(1, "投票异常", null);
+
 		}
 		return GsonUtil.buildMap(0, "ok", null);
 	}
