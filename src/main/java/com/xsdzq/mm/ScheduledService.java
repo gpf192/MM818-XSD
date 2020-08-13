@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 35 05 * * ?")
+    @Scheduled(cron = "0 20 13 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -84,7 +84,7 @@ public class ScheduledService {
     	String flag = userService.getValueByCode("jobFlag").getValue();
     	System.out.println("=====>>>>> job 开关为 "+ flag);
     	if("1".equals(flag)) {
-    		/*//定时扫描交易任务
+    		//定时扫描交易任务
         	try {
     			productSellTask();
     		} catch (Exception e) {
@@ -114,9 +114,9 @@ public class ScheduledService {
 				  +"111111111111111111111111111111111111111111111111");
 				  
 				  e.printStackTrace(); 
-			  }*/
+			  }
     		//扫描理财产品购买记录
-    		try {
+    		/*try {
     			productSellTaskForKMH();
     		} catch (Exception e) {
     			// TODO Auto-generated catch block
@@ -153,7 +153,7 @@ public class ScheduledService {
 				  +"111111111111111111111111111111111111111111111111");
 				  
 				  e.printStackTrace(); 
-			  }
+			  }*/
     	}
     	
     	
@@ -188,7 +188,6 @@ public class ScheduledService {
 			    	if(productSellViewList.size() != 0) {
 			        	for(ProductSellViewEntity p:productSellViewList) {
 
-			        	//	System.out.println("奖品：----------------------"+p.getName());
 			        		String clientId = p.getClientId();
 			        		String serialNum = p.getLsh();
 			        		//查看前一天的 job 是否执行，若执行 则跳过
@@ -219,7 +218,10 @@ public class ScheduledService {
 				        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
 				        		int ticketNum =(int) Math.round(num);
 			        			System.out.println("票数*************----  "+ ticketNum);
-			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET, serialNum);
+			        			if(ticketNum>0) {
+				        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET, serialNum);
+
+			        			}
 			        			/*
 				        		//判断是否有经纪人
 				        		if("0".equals(empId)) {
@@ -261,8 +263,10 @@ public class ScheduledService {
 				        		BigDecimal xishuDecimal = BigDecimal.valueOf(xishu);
 				        		double num = dealAmountDecimal.multiply(xishuDecimal).doubleValue();        		
 				        		int ticketNum =(int) Math.round(num);
-			        			System.out.println("票数*************----  "+ ticketNum);
-			        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET, serialNum);
+			        			if(ticketNum>0) {
+				        			userService.addTicketByJob(clientId, clientName, ticketNum, TicketUtil.BUYFUNDTICKET, serialNum);
+
+			        			}
 			        			
 							}
 			        		
