@@ -148,23 +148,25 @@ public class UserTicketServiceImpl implements UserTicketService {
 		//int empInt = Integer.parseInt(empId);
 		System.out.println("开始插入 用户投票员工表   "+ userEntity.getClientId() + "empId:  "+ empId);
 		EmpEntity empEntity = empRepository.findByEmpId(empId);
-		System.out.println("&&&&&&&&&&&&&&  "+ empEntity.getEmpId());
-		if (empEntity == null) {
-			throw new RuntimeException("员工不存在");
+		//System.out.println("&&&&&&&&&&&&&&  "+ empEntity.getEmpId());
+		//员工不存在  不操作 
+		if (empEntity != null) {
+			// 用户减操作
+			//时间标志是前一天  dataflag
+			reduceUserTickeNumberByJob(userEntity, number, TicketUtil.SYSTEMVOTE, date);
+			// 员工加操作
+			empTicketService.addEmpTicketNumberByJOB(empEntity, number, TicketUtil.SYSTEMVOTE, date);
+			// 写入结果记录
+			UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
+			userVoteEmpResultEntity.setUserEntity(userEntity);
+			userVoteEmpResultEntity.setEmpEntity(empEntity);
+			userVoteEmpResultEntity.setNumber(number);
+			userVoteEmpResultEntity.setRecordTime(date);
+			userVoteEmpResultEntity.setType(TicketUtil.SYSTEMVOTE);
+			userVoteEmpResultRepository.save(userVoteEmpResultEntity);
+			
 		}
-		// 用户减操作
-		//时间标志是前一天  dataflag
-		reduceUserTickeNumberByJob(userEntity, number, TicketUtil.SYSTEMVOTE, date);
-		// 员工加操作
-		empTicketService.addEmpTicketNumberByJOB(empEntity, number, TicketUtil.SYSTEMVOTE, date);
-		// 写入结果记录
-		UserVoteEmpResultEntity userVoteEmpResultEntity = new UserVoteEmpResultEntity();
-		userVoteEmpResultEntity.setUserEntity(userEntity);
-		userVoteEmpResultEntity.setEmpEntity(empEntity);
-		userVoteEmpResultEntity.setNumber(number);
-		userVoteEmpResultEntity.setRecordTime(date);
-		userVoteEmpResultEntity.setType(TicketUtil.SYSTEMVOTE);
-		userVoteEmpResultRepository.save(userVoteEmpResultEntity);
+		
 
 	}
 	

@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 20 13 * * ?")
+    @Scheduled(cron = "0 20 11 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -171,6 +171,7 @@ public class ScheduledService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			//preDay = 20200814;//测试用
 			//查询所有的产品 循环每一个产品与销售记录进行匹配
 			Date  d = DateUtil.getPreDayAs();
 			List<ProductEntity> productList = productService.getAll(d, d);//获取前一天仍有效的产品
@@ -437,6 +438,7 @@ public class ScheduledService {
 
 	    	//查看上一日之前所有的签约投顾记录表
 	    	String preDay = DateUtil.getPreDayForCrm();
+	    	//preDay = "20200814";//ceshi
 	    	List<SignInvestViewEntity> SignInvestViewList= userService.findByserviceTypeAndStatusAndEffectiveDate(0, "1", preDay);
 	    	//System.out.println("***********************+ " +(SignInvestViewList == null)+ "--"+SignInvestViewList.size());
 	    	if(SignInvestViewList.size() != 0) {
@@ -480,6 +482,7 @@ public class ScheduledService {
 
 	    	//查看上一日签约投顾记录表
 	    	String preDay = DateUtil.getPreDayForCrm();
+	    	//preDay = "20200814";//ceshi
 	    	List<SignInvestViewEntity> SignInvestViewList= userService.findByserviceTypeAndStatusAndEffectiveDate(0, "1", preDay);
 	    	System.out.println("***********************+ " +(SignInvestViewList == null)+ "--"+SignInvestViewList.size());
 	    	if(SignInvestViewList.size() != 0) {
