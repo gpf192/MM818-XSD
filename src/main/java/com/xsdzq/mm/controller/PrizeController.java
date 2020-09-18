@@ -1,8 +1,11 @@
 package com.xsdzq.mm.controller;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,14 +20,18 @@ import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.Number;
+import com.xsdzq.mm.model.TimeOut;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 
 @RestController
 @RequestMapping("/activity/prize")
 public class PrizeController {
+
+	private static final Logger log = LoggerFactory.getLogger(PrizeController.class);
 
 	@Autowired
 	@Qualifier("prizeServiceImpl")
@@ -46,9 +53,42 @@ public class PrizeController {
 		return GsonUtil.buildMap(0, "ok", prizeResultEntity);
 	}
 
+	@GetMapping(value = "/timeout", produces = "application/json; charset=utf-8")
+	public Map<String, Object> isTimeout() {
+
+		TimeOut timeOut = new TimeOut();
+		timeOut.setValid(true);
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		try {
+			if (!DateUtil.checkDate(endFlag)) {
+				timeOut.setValid(false);
+				return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", timeOut);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			log.info(e.getMessage());
+			timeOut.setValid(false);
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", timeOut);
+		}
+		return GsonUtil.buildMap(0, "ok", timeOut);
+	}
+
 	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) {
+
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		try {
+			if (!DateUtil.checkDate(endFlag)) {
+				return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+		}
+
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		PrizeEntity prize = prizeService.getMyPrize(userEntity);
 		if (prize == null) {
@@ -70,6 +110,17 @@ public class PrizeController {
 	@PostMapping(value = "/share", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> sharePutPrizeNumber(@RequestHeader("Authorization") String token) {
+		
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		try {
+			if (!DateUtil.checkDate(endFlag)) {
+				return GsonUtil.buildMap(1, "活动已结束，分享不在增加票数。", null);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return GsonUtil.buildMap(1, "活动已结束，分享不在增加票数。", null);
+		}
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		boolean isRule = prizeService.sharePutPrizeNumber(userEntity);
 		if (isRule) {
@@ -86,7 +137,7 @@ public class PrizeController {
 		prizeService.selectStockPrize(userEntity);
 		return GsonUtil.buildMap(0, "ok", null);
 	}
-	
+
 	@GetMapping(value = "/hasStockPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> hasStockPrize(@RequestHeader("Authorization") String token) {

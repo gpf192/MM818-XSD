@@ -25,6 +25,7 @@ import com.xsdzq.mm.model.UserTicketRecordAndResult;
 import com.xsdzq.mm.model.VoteModel;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserTicketService;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 
@@ -66,6 +67,17 @@ public class TicketController {
 	@UserLoginToken
 	public Map<String, Object> userVoteEmp(@RequestHeader("Authorization") String token,
 			@RequestBody VoteModel voteModel) {
+
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		try {
+			if (!DateUtil.checkDate(endFlag)) {
+				return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+		}
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		try {
 			String empId = voteModel.getEmpId();
