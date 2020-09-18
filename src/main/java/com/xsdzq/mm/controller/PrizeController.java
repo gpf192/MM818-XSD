@@ -114,12 +114,12 @@ public class PrizeController {
 		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
 		try {
 			if (!DateUtil.checkDate(endFlag)) {
-				return GsonUtil.buildMap(1, "活动已结束，分享不在增加票数。", null);
+				return GsonUtil.buildMap(1, "活动已结束，分享不再增加票数。", null);
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			return GsonUtil.buildMap(1, "活动已结束，分享不在增加票数。", null);
+			return GsonUtil.buildMap(1, "活动已结束，分享不再增加票数。", null);
 		}
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		boolean isRule = prizeService.sharePutPrizeNumber(userEntity);
