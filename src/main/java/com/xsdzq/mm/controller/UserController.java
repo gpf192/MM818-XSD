@@ -64,86 +64,82 @@ public class UserController {
 		return GsonUtil.buildMap(0, "ok", activityNumber);
 	}
 
-	  @PostMapping(value={"/loginHx"}, produces={"application/json; charset=utf-8"})
-	  public Map<String, Object> loginHx(@RequestBody UserData userData)
-	    throws Exception
-	  {
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    String cryptUserString = userData.getEncryptData();
-	    String userString = AESUtil.decryptAES(cryptUserString);
-	    this.logger.info(userString);
-	    User user = (User)JSON.parseObject(userString, User.class);
-	    
-	    String uuid = this.userService.loginHx(user);
-	    
-	    String aesUid = AESUtil.encryptAES(uuid);
-	    AesInfo aesInfo = new AesInfo();
-	    aesInfo.setAesUid(aesUid);
-	    return GsonUtil.buildMap(0, "ok", aesInfo);
-	  }
-	//直播接口
-	  @PostMapping(value={"/loginLive"}, produces={"application/json; charset=utf-8"})
-	  public Map<String, Object> loginLive(@RequestBody UserData userData)
-	    throws Exception
-	  {
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    String cryptUserString = userData.getEncryptData();
-	    String userString = AESUtil.decryptAES(cryptUserString);
-	    this.logger.info(userString);
-	    User user = (User)JSON.parseObject(userString, User.class);
-	    String uuid = "";
-	    if("".equals(user.getClientId())) {
-	    	//游客，不用生成登录记录
-	    	uuid = AESUtil.getUuid().substring(0, 20);
-	    }else {
-	    	//非游客生成唯一标识
-		    uuid = this.userService.loginLive(user);
-	    }
-	    
-	    //获取直播url
-	    String liveUrl = LiveUtil.getUrl(user, uuid);
-	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
+	@PostMapping(value = { "/loginHx" }, produces = { "application/json; charset=utf-8" })
+	public Map<String, Object> loginHx(@RequestBody UserData userData) throws Exception {
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		String cryptUserString = userData.getEncryptData();
+		String userString = AESUtil.decryptAES(cryptUserString);
+		this.logger.info(userString);
+		User user = (User) JSON.parseObject(userString, User.class);
 
-	    LiveInfo liveInfo = new LiveInfo();
-	    liveInfo.setLiveUrl(liveUrl);
-	    return GsonUtil.buildMap(0, "ok", liveInfo);
-	  }
-	  //直播专用接口
-	  @PostMapping(value={"/loginLivePro"}, produces={"application/json; charset=utf-8"})
-	  public Map<String, Object> loginLivePro(@RequestBody UserData userData)
-	    throws Exception
-	  {
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    String cryptUserString = userData.getEncryptData();
-	    String userString = AESUtil.decryptAES(cryptUserString);
-	    this.logger.info(userString);
-	    User user = (User)JSON.parseObject(userString, User.class);
-	    String uuid = "";
-	    if("".equals(user.getClientId())) {
-	    	//游客，不用生成登录记录
-	    	uuid = AESUtil.getUuid().substring(0, 20);
-	    }else {
-	    	//非游客生成唯一标识
-		    uuid = this.userService.loginLive(user);
-	    }
-	        
-	    //获取直播url
-	    String liveUrl = LiveUtil.getUrlPro(user, uuid);
-	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
+		String uuid = this.userService.loginHx(user);
 
-	    LiveInfo liveInfo = new LiveInfo();
-	    liveInfo.setLiveUrl(liveUrl);
-	    return GsonUtil.buildMap(0, "ok", liveInfo);
-	  }
+		String aesUid = AESUtil.encryptAES(uuid);
+		AesInfo aesInfo = new AesInfo();
+		aesInfo.setAesUid(aesUid);
+		return GsonUtil.buildMap(0, "ok", aesInfo);
+	}
+
+	// 直播接口
+	@PostMapping(value = { "/loginLive" }, produces = { "application/json; charset=utf-8" })
+	public Map<String, Object> loginLive(@RequestBody UserData userData) throws Exception {
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		String cryptUserString = userData.getEncryptData();
+		String userString = AESUtil.decryptAES(cryptUserString);
+		this.logger.info(userString);
+		User user = (User) JSON.parseObject(userString, User.class);
+		String uuid = "";
+		if ("".equals(user.getClientId())) {
+			// 游客，不用生成登录记录
+			uuid = AESUtil.getUuid().substring(0, 20);
+		} else {
+			// 非游客生成唯一标识
+			uuid = this.userService.loginLive(user);
+		}
+
+		// 获取直播url
+		String liveUrl = LiveUtil.getUrl(user, uuid);
+		this.logger.info("_____________________ 直播信息" + user.getClientId() + " " + liveUrl);
+
+		LiveInfo liveInfo = new LiveInfo();
+		liveInfo.setLiveUrl(liveUrl);
+		return GsonUtil.buildMap(0, "ok", liveInfo);
+	}
+
+	// 直播专用接口
+	@PostMapping(value = { "/loginLivePro" }, produces = { "application/json; charset=utf-8" })
+	public Map<String, Object> loginLivePro(@RequestBody UserData userData) throws Exception {
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		String cryptUserString = userData.getEncryptData();
+		String userString = AESUtil.decryptAES(cryptUserString);
+		this.logger.info(userString);
+		User user = (User) JSON.parseObject(userString, User.class);
+		String uuid = "";
+		if ("".equals(user.getClientId())) {
+			// 游客，不用生成登录记录
+			uuid = AESUtil.getUuid().substring(0, 20);
+		} else {
+			// 非游客生成唯一标识
+			uuid = this.userService.loginLive(user);
+		}
+
+		// 获取直播url
+		String liveUrl = LiveUtil.getUrlPro(user, uuid);
+		this.logger.info("_____________________ 直播信息" + user.getClientId() + " " + liveUrl);
+
+		LiveInfo liveInfo = new LiveInfo();
+		liveInfo.setLiveUrl(liveUrl);
+		return GsonUtil.buildMap(0, "ok", liveInfo);
+	}
 
 	@UserLoginToken
 	@GetMapping(value = "/getUserInfo", produces = "application/json; charset=utf-8")
