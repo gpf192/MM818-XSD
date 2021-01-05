@@ -42,22 +42,38 @@ public class UserController {
 	@Qualifier("userServiceImpl")
 	UserService userService;
 
-	@GetMapping(value = "/test")
-	public String Test() {
-		Long id = (long) 100;
-		userService.getUserById(id);
-		return "test";
-	}
-
 	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
 	public Map<String, Object> login(@RequestBody UserData userData) throws Exception {
-		logger.info(userData.toString());
-		System.out.println(userData.toString());
-		String cryptUserString = userData.getEncryptData();
-		String userString = AESUtil.decryptAES(cryptUserString);
+		String cryptUserString = userData.getEncryptData().trim();
+		String userString;
+		try {
+			userString = AESUtil.decryptAES(cryptUserString);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.info("非法访问，解密失败");
+			return GsonUtil.buildMap(1, "登录失败", null);
+		}
 		logger.info(userString);
 		User user = JSON.parseObject(userString, User.class);
+		logger.info(user.toString());
+		if (user.getClientId() == null || user.getClientId().length() < 3) {
+			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);
+		}
+
+		if (user.getAccessToken() == null || user.getAccessToken().equals("")) {
+			return GsonUtil.buildMap(1, "token不能为空", null);
+		}
+		// 增加校验
+
+		// if (user.getLoginClientId() == null || user.getLoginClientId().equals("")) {
+		// return GsonUtil.buildMap(1, "登录标示不能为空", null);
+		// }
+
 		ActivityNumber activityNumber = userService.login(user);
+		if (activityNumber == null) {
+			return GsonUtil.buildMap(1, "登录失败，请重新登录", null);
+		}
 		UserEntity userEntity = userService.getUserByClientId(user.getClientId());
 		String token = tokenService.getToken(UserUtil.convertUserByUserEntity(userEntity));
 		activityNumber.setToken(token);

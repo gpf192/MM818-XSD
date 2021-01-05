@@ -23,6 +23,7 @@ public class UserUtil {
 	public static UserEntity convertUserByUserEntity(User user) {
 		UserEntity userEntity = new UserEntity();
 		userEntity.setClientId(user.getClientId());
+		userEntity.setLoginClentId(user.getLoginClientId());
 		userEntity.setClientName(user.getClientName());
 		userEntity.setFundAccount(user.getFundAccount());
 		userEntity.setAccessToken(user.getAccessToken());
@@ -48,6 +49,7 @@ public class UserUtil {
 
 	public static void updateUserEntityByUser(UserEntity userEntity, User user) {
 		userEntity.setClientId(user.getClientId());
+		userEntity.setLoginClentId(user.getLoginClientId());
 		userEntity.setClientName(user.getClientName());
 		userEntity.setFundAccount(user.getFundAccount());
 		userEntity.setAccessToken(user.getAccessToken());

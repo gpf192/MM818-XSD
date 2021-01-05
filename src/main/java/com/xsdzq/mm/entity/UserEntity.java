@@ -9,11 +9,14 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "lcj_user")
@@ -22,7 +25,8 @@ public class UserEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lcj_user_sequence")
+	@SequenceGenerator(name = "lcj_user_sequence", sequenceName = "sequence_lcj_user", allocationSize = 1)
 	@Column(name = "id", unique = true, length = 20)
 	private Long id;
 
@@ -30,6 +34,10 @@ public class UserEntity implements Serializable {
 	// 客户号
 	@Column(name = "client_id", unique = true, nullable = false, length = 100)
 	private String clientId;
+
+	// 登录ClientId
+	@Column(name = "login_client_id", nullable = true, length = 100)
+	private String loginClentId;
 
 	@Column(name = "client_name", nullable = true, length = 300)
 	private String clientName;
@@ -71,12 +79,13 @@ public class UserEntity implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserEntity(Long id, String clientId, String clientName, String fundAccount, String accessToken,
-			String password, String mobile, String appVersion, String lastOpIP, String lastLoginTime, Date createtime,
-			Date modifytime) {
+	public UserEntity(Long id, String clientId, String loginClentId, String clientName, String fundAccount,
+			String accessToken, String password, String mobile, String appVersion, String lastOpIP,
+			String lastLoginTime, Date createtime, Date modifytime) {
 		super();
 		this.id = id;
 		this.clientId = clientId;
+		this.loginClentId = loginClentId;
 		this.clientName = clientName;
 		this.fundAccount = fundAccount;
 		this.accessToken = accessToken;
@@ -97,6 +106,7 @@ public class UserEntity implements Serializable {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public String getClientId() {
 		return clientId;
 	}
@@ -105,6 +115,16 @@ public class UserEntity implements Serializable {
 		this.clientId = clientId;
 	}
 
+	@JsonIgnore
+	public String getLoginClentId() {
+		return loginClentId;
+	}
+
+	public void setLoginClentId(String loginClentId) {
+		this.loginClentId = loginClentId;
+	}
+
+	@JsonIgnore
 	public String getClientName() {
 		return clientName;
 	}
@@ -113,6 +133,7 @@ public class UserEntity implements Serializable {
 		this.clientName = clientName;
 	}
 
+	@JsonIgnore
 	public String getFundAccount() {
 		return fundAccount;
 	}
@@ -121,6 +142,7 @@ public class UserEntity implements Serializable {
 		this.fundAccount = fundAccount;
 	}
 
+	@JsonIgnore
 	public String getAccessToken() {
 		return accessToken;
 	}
@@ -129,6 +151,7 @@ public class UserEntity implements Serializable {
 		this.accessToken = accessToken;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
@@ -137,6 +160,7 @@ public class UserEntity implements Serializable {
 		this.password = password;
 	}
 
+	@JsonIgnore
 	public String getMobile() {
 		return mobile;
 	}
@@ -145,6 +169,7 @@ public class UserEntity implements Serializable {
 		this.mobile = mobile;
 	}
 
+	@JsonIgnore
 	public String getAppVersion() {
 		return appVersion;
 	}
@@ -153,6 +178,7 @@ public class UserEntity implements Serializable {
 		this.appVersion = appVersion;
 	}
 
+	@JsonIgnore
 	public String getLastOpIP() {
 		return lastOpIP;
 	}
@@ -161,6 +187,7 @@ public class UserEntity implements Serializable {
 		this.lastOpIP = lastOpIP;
 	}
 
+	@JsonIgnore
 	public String getLastLoginTime() {
 		return lastLoginTime;
 	}
@@ -187,10 +214,11 @@ public class UserEntity implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserEntity [id=" + id + ", clientId=" + clientId + ", clientName=" + clientName + ", fundAccount="
-				+ fundAccount + ", accessToken=" + accessToken + ", password=" + password + ", mobile=" + mobile
-				+ ", appVersion=" + appVersion + ", lastOpIP=" + lastOpIP + ", lastLoginTime=" + lastLoginTime
-				+ ", createtime=" + createtime + ", modifytime=" + modifytime + "]";
+		return "UserEntity [id=" + id + ", clientId=" + clientId + ", loginClentId=" + loginClentId + ", clientName="
+				+ clientName + ", fundAccount=" + fundAccount + ", accessToken=" + accessToken + ", password="
+				+ password + ", mobile=" + mobile + ", appVersion=" + appVersion + ", lastOpIP=" + lastOpIP
+				+ ", lastLoginTime=" + lastLoginTime + ", createtime=" + createtime + ", modifytime=" + modifytime
+				+ "]";
 	}
 
 }

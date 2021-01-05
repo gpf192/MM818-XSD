@@ -3,6 +3,7 @@ package com.xsdzq.mm.model;
 public class User {
 
 	private String clientId;
+	private String loginClientId;
 	private String clientName;
 	private String fundAccount;
 	private String accessToken;
@@ -11,15 +12,17 @@ public class User {
 	private String lastOpIP;
 	private String lastLoginTime;
 	private String liveUrl;
+
 	public User() {
 		super();
 
 	}
 
-	public User(String clientId, String clientName, String fundAccount, String accessToken, String mobile,
-			String appVersion, String lastOpIP, String lastLoginTime, String liveUrl) {
+	public User(String clientId, String loginClientId, String clientName, String fundAccount, String accessToken,
+			String mobile, String appVersion, String lastOpIP, String lastLoginTime, String liveUrl) {
 		super();
 		this.clientId = clientId;
+		this.loginClientId = loginClientId;
 		this.clientName = clientName;
 		this.fundAccount = fundAccount;
 		this.accessToken = accessToken;
@@ -30,20 +33,28 @@ public class User {
 		this.liveUrl = liveUrl;
 	}
 
-	public String getClientName() {
-		return clientName;
-	}
-
-	public void setClientName(String clientName) {
-		this.clientName = clientName;
-	}
-
 	public String getClientId() {
 		return clientId;
 	}
 
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
+	}
+
+	public String getLoginClientId() {
+		return loginClientId;
+	}
+
+	public void setLoginClientId(String loginClientId) {
+		this.loginClientId = loginClientId;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	public String getFundAccount() {
@@ -104,9 +115,10 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [clientId=" + clientId + ", clientName=" + clientName + ", fundAccount=" + fundAccount
-				+ ", accessToken=" + accessToken + ", mobile=" + mobile + ", appVersion=" + appVersion + ", lastOpIP="
-				+ lastOpIP + ", lastLoginTime=" + lastLoginTime + ", liveUrl=" + liveUrl + "]";
+		return "User [clientId=" + clientId + ", loginClientId=" + loginClientId + ", clientName=" + clientName
+				+ ", fundAccount=" + fundAccount + ", accessToken=" + accessToken + ", mobile=" + mobile
+				+ ", appVersion=" + appVersion + ", lastOpIP=" + lastOpIP + ", lastLoginTime=" + lastLoginTime
+				+ ", liveUrl=" + liveUrl + "]";
 	}
 
 }

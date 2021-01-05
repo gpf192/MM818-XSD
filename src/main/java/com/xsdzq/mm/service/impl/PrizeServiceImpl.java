@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.validator.internal.util.privilegedactions.GetAnnotationAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
+import com.xsdzq.mm.model.PrizeRecordAndResult;
+import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
@@ -82,9 +85,9 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	@Override
-	public PrizeResultEntity getLatestPrize() {
+	public List<PrizeResultEntity> getLatestPrize() {
 		// TODO Auto-generated method stub
-		PrizeResultEntity prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
+		List<PrizeResultEntity> prizeResultEntity = prizeResultRepository.getLatestRealPrizeResult();
 		// return prizeResultEntity.getPrizeEntity();
 		return prizeResultEntity;
 	}
@@ -103,21 +106,25 @@ public class PrizeServiceImpl implements PrizeService {
 		return total;
 	}
 
+	private Date nowDate = null;
+
 	@Override
 	@Transactional
 	public PrizeEntity getMyPrize(UserEntity userEntity) {
 		// TODO Auto-generated method stub
 		// check user available
-		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录
+		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录,4.抽奖次数和奖品的个数一减一增
+		nowDate = new Date();
 		if (checkAvailable(userEntity)) {
-			Date nowDate = new Date();
 			PrizeEntity prizeEntity = getRandomPrize();
 			PrizeResultEntity prizeResultEntity = new PrizeResultEntity();
 			prizeResultEntity.setUserEntity(userEntity);
 			prizeResultEntity.setPrizeEntity(prizeEntity);
 			prizeResultEntity.setRecordTime(nowDate);
-			// 1.处理额外投票券
-			addTicketNumber(userEntity, prizeEntity, nowDate);
+			prizeResultEntity.setNumber(1);
+			prizeResultEntity.setType(true);
+			// 1.处理额外投票券 开门红逻辑不需要
+			// addTicketNumber(userEntity, prizeEntity, nowDate);
 			// 2.添加减少记录
 			addReduceRecordPrize(userEntity);
 			// 3.增加中奖人数
@@ -143,6 +150,26 @@ public class PrizeServiceImpl implements PrizeService {
 			addPrizeNumber(userEntity, true, "3", 1);
 			userTicketService.addUserTicketNumber(userEntity, 500, TicketUtil.TOUPIAOSELECT, nowDate);
 		}
+	}
+
+	@Override
+	public List<PrizeRecordAndResult> getMyPrizeRecord(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<PrizeRecordEntity> prizeRecordEntities = prizeRecordRepository.getByUser(userEntity);
+		List<PrizeResultEntity> prizeResultEntities = prizeResultRepository
+				.findByUserEntityOrderByRecordTimeDesc(userEntity);
+		List<PrizeRecordAndResult> prizeRecordAndResults = new ArrayList<>();
+		for (PrizeRecordEntity prizeRecordEntity : prizeRecordEntities) {
+			PrizeRecordAndResult prizeRecordAndResult = new PrizeRecordAndResult();
+			prizeRecordAndResult.setPrizeRecordEntity(prizeRecordEntity);
+			for (PrizeResultEntity prizeResultEntity : prizeResultEntities) {
+				if (prizeRecordEntity.getRecordTime().equals(prizeResultEntity.getRecordTime())) {
+					prizeRecordAndResult.setPrizeEntity(prizeResultEntity.getPrizeEntity());
+				}
+			}
+			prizeRecordAndResults.add(prizeRecordAndResult);
+		}
+		return prizeRecordAndResults;
 	}
 
 	private void addTicketNumber(UserEntity userEntity, PrizeEntity prizeEntity, Date date) {
@@ -188,9 +215,12 @@ public class PrizeServiceImpl implements PrizeService {
 							int amount = prizeEntity.getAmount();
 							int winningNumber = prizeEntity.getWinningNumber();
 							int availableNumber = amount - winningNumber;
-							if (prizeUtil.testChoice(availableNumber, total)) {
-								return prizeEntity;
+							if (availableNumber > 0) {
+								if (prizeUtil.testChoice(availableNumber, total)) {
+									return prizeEntity;
+								}
 							}
+
 						}
 					}
 				}
@@ -253,6 +283,9 @@ public class PrizeServiceImpl implements PrizeService {
 	}
 
 	private void addPrizeRecord(UserEntity userEntity, boolean type, String reason) {
+		if (nowDate == null) {
+			nowDate = new Date();
+		}
 		String nowString = DateUtil.getStandardDate(new Date());
 		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
 		prizeRecordEntity.setUserEntity(userEntity);
@@ -260,11 +293,14 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeRecordEntity.setReason(reason);
 		prizeRecordEntity.setNumber(1);
 		prizeRecordEntity.setDateFlag(nowString);
-		prizeRecordEntity.setRecordTime(new Date());
+		prizeRecordEntity.setRecordTime(nowDate);
 		prizeRecordRepository.add(prizeRecordEntity);
 	}
 
 	public void addReduceRecordPrize(UserEntity userEntity) {
+		if (nowDate == null) {
+			nowDate = new Date();
+		}
 		String nowString = DateUtil.getStandardDate(new Date());
 		PrizeRecordEntity prizeRecordEntity = new PrizeRecordEntity();
 		prizeRecordEntity.setUserEntity(userEntity);
@@ -272,7 +308,7 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeRecordEntity.setReason(PrizeUtil.PRIZE_REDUCE_TYPE);
 		prizeRecordEntity.setNumber(1);
 		prizeRecordEntity.setDateFlag(nowString);
-		prizeRecordEntity.setRecordTime(new Date());
+		prizeRecordEntity.setRecordTime(nowDate);
 		prizeRecordRepository.add(prizeRecordEntity);
 	}
 
@@ -285,7 +321,7 @@ public class PrizeServiceImpl implements PrizeService {
 				total += 1;
 			}
 		}
-		if (total >= 5) {
+		if (total >= 300) {
 			return false;
 		}
 		return true;
@@ -299,6 +335,44 @@ public class PrizeServiceImpl implements PrizeService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<ZodiacNumber> getMyZodiacNumbers(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		List<PrizeResultEntity> allList = prizeResultRepository.findByUserEntityOrderByRecordTimeDesc(userEntity);
+		List<ZodiacNumber> zodiacList = getEmptyZodiacList();
+		if (allList == null) {
+			return zodiacList;
+		}
+		for (ZodiacNumber zodiacNumber : zodiacList) {
+			PrizeEntity emptyPrizeEntity = zodiacNumber.getPrizeEntity();
+			int myNumber = zodiacNumber.getNum();
+			for (PrizeResultEntity prizeResultEntity : allList) {
+				PrizeEntity myPrizeEntity = prizeResultEntity.getPrizeEntity();
+				if (myPrizeEntity.getId() == emptyPrizeEntity.getId()) {
+					if (prizeResultEntity.isType()) {
+						myNumber += prizeResultEntity.getNumber();
+					} else {
+						myNumber -= prizeResultEntity.getNumber();
+					}
+				}
+			}
+			zodiacNumber.setNum(myNumber);
+		}
+		return zodiacList;
+	}
+
+	public List<ZodiacNumber> getEmptyZodiacList() {
+		List<ZodiacNumber> list = new ArrayList<>();
+		List<PrizeEntity> allPrizeEntities = prizeRepository.findAll();
+		for (PrizeEntity prizeEntity : allPrizeEntities) {
+			ZodiacNumber zodiacNumber = new ZodiacNumber();
+			zodiacNumber.setNum(0);
+			zodiacNumber.setPrizeEntity(prizeEntity);
+			list.add(zodiacNumber);
+		}
+		return list;
 	}
 
 }

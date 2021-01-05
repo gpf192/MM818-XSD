@@ -36,7 +36,6 @@ public class PrizeUtil {
 	public boolean testChoice(int prizeAmount, int scope) {
 		// 得到随机数，在[1,scope+)
 		int random = r.nextInt(scope) + 1;
-		System.out.print(random);
 		if (random <= prizeAmount) {
 			return true;
 		} else {
