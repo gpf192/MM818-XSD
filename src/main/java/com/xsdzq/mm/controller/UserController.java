@@ -42,108 +42,120 @@ public class UserController {
 	@Qualifier("userServiceImpl")
 	UserService userService;
 
-	@GetMapping(value = "/test")
-	public String Test() {
-		Long id = (long) 100;
-		userService.getUserById(id);
-		return "test";
-	}
-
 	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
 	public Map<String, Object> login(@RequestBody UserData userData) throws Exception {
-		logger.info(userData.toString());
-		System.out.println(userData.toString());
-		String cryptUserString = userData.getEncryptData();
-		String userString = AESUtil.decryptAES(cryptUserString);
+		String cryptUserString = userData.getEncryptData().trim();
+		String userString;
+		try {
+			userString = AESUtil.decryptAES(cryptUserString);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.info("非法访问，解密失败");
+			return GsonUtil.buildMap(1, "登录失败", null);
+		}
 		logger.info(userString);
 		User user = JSON.parseObject(userString, User.class);
+		logger.info(user.toString());
+		if (user.getClientId() == null || user.getClientId().length() < 3) {
+			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);
+		}
+
+		if (user.getAccessToken() == null || user.getAccessToken().equals("")) {
+			return GsonUtil.buildMap(1, "token不能为空", null);
+		}
+		// 增加校验
+
+		// if (user.getLoginClientId() == null || user.getLoginClientId().equals("")) {
+		// return GsonUtil.buildMap(1, "登录标示不能为空", null);
+		// }
+
 		ActivityNumber activityNumber = userService.login(user);
+		if (activityNumber == null) {
+			return GsonUtil.buildMap(1, "登录失败，请重新登录", null);
+		}
 		UserEntity userEntity = userService.getUserByClientId(user.getClientId());
 		String token = tokenService.getToken(UserUtil.convertUserByUserEntity(userEntity));
 		activityNumber.setToken(token);
 		return GsonUtil.buildMap(0, "ok", activityNumber);
 	}
 
-	  @PostMapping(value={"/loginHx"}, produces={"application/json; charset=utf-8"})
-	  public Map<String, Object> loginHx(@RequestBody UserData userData)
-	    throws Exception
-	  {
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    String cryptUserString = userData.getEncryptData();
-	    String userString = AESUtil.decryptAES(cryptUserString);
-	    this.logger.info(userString);
-	    User user = (User)JSON.parseObject(userString, User.class);
-	    
-	    String uuid = this.userService.loginHx(user);
-	    
-	    String aesUid = AESUtil.encryptAES(uuid);
-	    AesInfo aesInfo = new AesInfo();
-	    aesInfo.setAesUid(aesUid);
-	    return GsonUtil.buildMap(0, "ok", aesInfo);
-	  }
-	//直播接口
-	  @PostMapping(value={"/loginLive"}, produces={"application/json; charset=utf-8"})
-	  public Map<String, Object> loginLive(@RequestBody UserData userData)
-	    throws Exception
-	  {
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    String cryptUserString = userData.getEncryptData();
-	    String userString = AESUtil.decryptAES(cryptUserString);
-	    this.logger.info(userString);
-	    User user = (User)JSON.parseObject(userString, User.class);
-	    String uuid = "";
-	    if("".equals(user.getClientId())) {
-	    	//游客，不用生成登录记录
-	    	uuid = AESUtil.getUuid().substring(0, 20);
-	    }else {
-	    	//非游客生成唯一标识
-		    uuid = this.userService.loginLive(user);
-	    }
-	    
-	    //获取直播url
-	    String liveUrl = LiveUtil.getUrl(user, uuid);
-	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
+	@PostMapping(value = { "/loginHx" }, produces = { "application/json; charset=utf-8" })
+	public Map<String, Object> loginHx(@RequestBody UserData userData) throws Exception {
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		String cryptUserString = userData.getEncryptData();
+		String userString = AESUtil.decryptAES(cryptUserString);
+		this.logger.info(userString);
+		User user = (User) JSON.parseObject(userString, User.class);
 
-	    LiveInfo liveInfo = new LiveInfo();
-	    liveInfo.setLiveUrl(liveUrl);
-	    return GsonUtil.buildMap(0, "ok", liveInfo);
-	  }
-	  //直播专用接口
-	  @PostMapping(value={"/loginLivePro"}, produces={"application/json; charset=utf-8"})
-	  public Map<String, Object> loginLivePro(@RequestBody UserData userData)
-	    throws Exception
-	  {
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    this.logger.info(userData.toString());
-	    System.out.println(userData.toString());
-	    String cryptUserString = userData.getEncryptData();
-	    String userString = AESUtil.decryptAES(cryptUserString);
-	    this.logger.info(userString);
-	    User user = (User)JSON.parseObject(userString, User.class);
-	    String uuid = "";
-	    if("".equals(user.getClientId())) {
-	    	//游客，不用生成登录记录
-	    	uuid = AESUtil.getUuid().substring(0, 20);
-	    }else {
-	    	//非游客生成唯一标识
-		    uuid = this.userService.loginLive(user);
-	    }
-	        
-	    //获取直播url
-	    String liveUrl = LiveUtil.getUrlPro(user, uuid);
-	    this.logger.info("_____________________ 直播信息"+user.getClientId()+" "+liveUrl);
+		String uuid = this.userService.loginHx(user);
 
-	    LiveInfo liveInfo = new LiveInfo();
-	    liveInfo.setLiveUrl(liveUrl);
-	    return GsonUtil.buildMap(0, "ok", liveInfo);
-	  }
+		String aesUid = AESUtil.encryptAES(uuid);
+		AesInfo aesInfo = new AesInfo();
+		aesInfo.setAesUid(aesUid);
+		return GsonUtil.buildMap(0, "ok", aesInfo);
+	}
+
+	// 直播接口
+	@PostMapping(value = { "/loginLive" }, produces = { "application/json; charset=utf-8" })
+	public Map<String, Object> loginLive(@RequestBody UserData userData) throws Exception {
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		String cryptUserString = userData.getEncryptData();
+		String userString = AESUtil.decryptAES(cryptUserString);
+		this.logger.info(userString);
+		User user = (User) JSON.parseObject(userString, User.class);
+		String uuid = "";
+		if ("".equals(user.getClientId())) {
+			// 游客，不用生成登录记录
+			uuid = AESUtil.getUuid().substring(0, 20);
+		} else {
+			// 非游客生成唯一标识
+			uuid = this.userService.loginLive(user);
+		}
+
+		// 获取直播url
+		String liveUrl = LiveUtil.getUrl(user, uuid);
+		this.logger.info("_____________________ 直播信息" + user.getClientId() + " " + liveUrl);
+
+		LiveInfo liveInfo = new LiveInfo();
+		liveInfo.setLiveUrl(liveUrl);
+		return GsonUtil.buildMap(0, "ok", liveInfo);
+	}
+
+	// 直播专用接口
+	@PostMapping(value = { "/loginLivePro" }, produces = { "application/json; charset=utf-8" })
+	public Map<String, Object> loginLivePro(@RequestBody UserData userData) throws Exception {
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		this.logger.info(userData.toString());
+		System.out.println(userData.toString());
+		String cryptUserString = userData.getEncryptData();
+		String userString = AESUtil.decryptAES(cryptUserString);
+		this.logger.info(userString);
+		User user = (User) JSON.parseObject(userString, User.class);
+		String uuid = "";
+		if ("".equals(user.getClientId())) {
+			// 游客，不用生成登录记录
+			uuid = AESUtil.getUuid().substring(0, 20);
+		} else {
+			// 非游客生成唯一标识
+			uuid = this.userService.loginLive(user);
+		}
+
+		// 获取直播url
+		String liveUrl = LiveUtil.getUrlPro(user, uuid);
+		this.logger.info("_____________________ 直播信息" + user.getClientId() + " " + liveUrl);
+
+		LiveInfo liveInfo = new LiveInfo();
+		liveInfo.setLiveUrl(liveUrl);
+		return GsonUtil.buildMap(0, "ok", liveInfo);
+	}
 
 	@UserLoginToken
 	@GetMapping(value = "/getUserInfo", produces = "application/json; charset=utf-8")

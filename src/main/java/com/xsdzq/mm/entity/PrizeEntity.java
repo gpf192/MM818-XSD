@@ -16,6 +16,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "lcj_prize_info")
 @EntityListeners(AuditingEntityListener.class)
@@ -41,6 +43,9 @@ public class PrizeEntity implements Serializable {
 
 	@Column(name = "amount") // 奖品总量
 	private Integer amount;
+
+	@Column(name = "prize_index") // 奖品序列
+	private Integer index;
 
 	@Column(name = "type") // 奖品类型
 	private boolean type;
@@ -77,6 +82,15 @@ public class PrizeEntity implements Serializable {
 		this.name = name;
 	}
 
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+
+	@JsonIgnore
 	public String getPrice() {
 		return price;
 	}
@@ -85,6 +99,7 @@ public class PrizeEntity implements Serializable {
 		this.price = price;
 	}
 
+	@JsonIgnore
 	public String getRate() {
 		return rate;
 	}
@@ -101,6 +116,7 @@ public class PrizeEntity implements Serializable {
 		this.image = image;
 	}
 
+	@JsonIgnore
 	public boolean isShow() {
 		return isShow;
 	}
@@ -109,6 +125,7 @@ public class PrizeEntity implements Serializable {
 		this.isShow = isShow;
 	}
 
+	@JsonIgnore
 	public int getWinningNumber() {
 		return winningNumber;
 	}
@@ -137,6 +154,7 @@ public class PrizeEntity implements Serializable {
 		this.modifytime = modifytime;
 	}
 
+	@JsonIgnore
 	public int getAmount() {
 		return amount;
 	}
@@ -145,6 +163,7 @@ public class PrizeEntity implements Serializable {
 		this.amount = amount;
 	}
 
+	@JsonIgnore
 	public boolean isType() {
 		return type;
 	}

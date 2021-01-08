@@ -1,5 +1,6 @@
 package com.xsdzq.mm.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.HasNumber;
 import com.xsdzq.mm.model.Number;
+import com.xsdzq.mm.model.PrizeRecordAndResult;
+import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.util.GsonUtil;
@@ -41,20 +44,38 @@ public class PrizeController {
 
 	@GetMapping(value = "/latest", produces = "application/json; charset=utf-8")
 	public Map<String, Object> getLatestPrize() {
-		PrizeResultEntity prizeResultEntity = PrizeUtil.getInstance()
-				.getSecretPrizeResultEntity(prizeService.getLatestPrize());
-		return GsonUtil.buildMap(0, "ok", prizeResultEntity);
+		List<PrizeResultEntity> prizeResultEntities = prizeService.getLatestPrize();
+		List<PrizeResultEntity> responsEntities = new ArrayList<PrizeResultEntity>();
+		for (PrizeResultEntity prizeResultEntity : prizeResultEntities) {
+			PrizeUtil.getInstance().getSecretPrizeResultEntity(prizeResultEntity);
+			responsEntities.add(prizeResultEntity);
+		}
+		return GsonUtil.buildMap(0, "ok", responsEntities);
 	}
 
 	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
+		if (userEntity == null) {
+			return GsonUtil.buildMap(1, "用户不存在", null);
+		}
 		PrizeEntity prize = prizeService.getMyPrize(userEntity);
 		if (prize == null) {
 			return GsonUtil.buildMap(1, "没有抽奖机会了", null);
 		}
 		return GsonUtil.buildMap(0, "ok", prize);
+	}
+
+	@GetMapping(value = "/getMyPrizeRecord", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> getMyPrizeRecord(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		if (userEntity == null) {
+			return GsonUtil.buildMap(1, "用户不存在", null);
+		}
+		List<PrizeRecordAndResult> list = prizeService.getMyPrizeRecord(userEntity);
+		return GsonUtil.buildMap(0, "ok", list);
 	}
 
 	@GetMapping(value = "/number", produces = "application/json; charset=utf-8")
@@ -65,6 +86,14 @@ public class PrizeController {
 		int number = prizeService.getAvailableNumber(userEntity);
 		Number prizeNumber = new Number(number);
 		return GsonUtil.buildMap(0, "ok", prizeNumber);
+	}
+
+	@GetMapping(value = "/myZodiac", produces = "application/json; charset=utf-8")
+	@UserLoginToken
+	public Map<String, Object> getMyZodiac(@RequestHeader("Authorization") String token) {
+		UserEntity userEntity = tokenService.getUserEntity(token);
+		List<ZodiacNumber> list = prizeService.getMyZodiacNumbers(userEntity);
+		return GsonUtil.buildMap(0, "ok", list);
 	}
 
 	@PostMapping(value = "/share", produces = "application/json; charset=utf-8")
@@ -86,7 +115,7 @@ public class PrizeController {
 		prizeService.selectStockPrize(userEntity);
 		return GsonUtil.buildMap(0, "ok", null);
 	}
-	
+
 	@GetMapping(value = "/hasStockPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> hasStockPrize(@RequestHeader("Authorization") String token) {

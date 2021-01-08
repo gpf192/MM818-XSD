@@ -1,5 +1,6 @@
 package com.xsdzq.mm.util;
 
+import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,6 +54,21 @@ public class DateUtil {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateString = formatter.format(dateDate);
 		return dateString;
+	}
+
+	/**
+	 * 判断开门红活动是否结束
+	 * 
+	 * @throws ParseException
+	 */
+	public static boolean checkDate(String endFlag) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date endTime = formatter.parse(endFlag);
+		if (new Date().getTime() <= endTime.getTime()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }
