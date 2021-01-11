@@ -55,7 +55,15 @@ public class UserController {
 			return GsonUtil.buildMap(1, "登录失败", null);
 		}
 		logger.info(userString);
-		User user = JSON.parseObject(userString, User.class);
+		User user = null;
+		try {
+			user = JSON.parseObject(userString, User.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			logger.info("非法访问，解密失败");
+			return GsonUtil.buildMap(1, "登录失败", null);
+		}
 		logger.info(user.toString());
 		if (user.getClientId() == null || user.getClientId().length() < 3) {
 			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);

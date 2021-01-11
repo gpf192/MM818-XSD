@@ -106,7 +106,6 @@ public class UserEntity implements Serializable {
 		this.id = id;
 	}
 
-	@JsonIgnore
 	public String getClientId() {
 		return clientId;
 	}

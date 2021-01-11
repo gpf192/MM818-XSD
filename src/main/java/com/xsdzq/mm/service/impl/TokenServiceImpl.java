@@ -26,14 +26,15 @@ public class TokenServiceImpl implements TokenService {
 
 	@Autowired
 	UserRepository userRepository;
-	
+
 	@Autowired
 	ParamRepository paramRepository;
 
 	@Override
 	public String getToken(User user) {
 		// TODO Auto-generated method stub
-		Algorithm algorithm = Algorithm.HMAC256(key);
+		// Algorithm algorithm = Algorithm.HMAC256(key);
+		Algorithm algorithm = Algorithm.HMAC512(key);
 		long nowMillis = System.currentTimeMillis();
 		long exprieMillis = nowMillis + expiretime;
 		Date now = new Date(nowMillis);
