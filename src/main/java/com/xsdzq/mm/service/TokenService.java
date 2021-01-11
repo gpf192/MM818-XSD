@@ -11,6 +11,8 @@ public interface TokenService {
 	String getToken(User user);
 
 	UserEntity getUserEntity(String token);
+
 	ParamEntity getValueByCode(String code);
+	
 	void modifyParam(ParamEntity entity);
 }
