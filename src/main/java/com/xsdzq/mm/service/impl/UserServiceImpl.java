@@ -173,6 +173,7 @@ public class UserServiceImpl implements UserService {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 			TokenRecordEntity tokenRecordEntity = new TokenRecordEntity();
 			tokenRecordEntity.setClientId(clientId);
 			tokenRecordEntity.setLoginClientId(loginClientId);
@@ -190,12 +191,16 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public ActivityNumber login(User user) {
 		// 0 前置 恒生校验
-		/*
-		 * if (user.getLoginClientId() != null && user.getLoginClientId().length() > 0)
-		 * { boolean isCheck = hsServiceCheck(user.getClientId(),
-		 * user.getLoginClientId(), user.getAccessToken()); if (!isCheck) { return null;
-		 * } } else { log.info(user.getClientId() + " 校验未通过"); }
-		 */
+
+		if (user.getLoginClientId() != null && user.getLoginClientId().length() > 0) {
+			boolean isCheck = hsServiceCheck(user.getClientId(), user.getLoginClientId(), user.getAccessToken());
+			if (!isCheck) {
+				return null;
+			}
+		} else {
+			log.info(user.getClientId() + " 校验未通过");
+		}
+
 		// 1 登录逻辑
 		UserEntity owner = userRepository.findByClientId(user.getClientId());
 		if (owner == null) {
