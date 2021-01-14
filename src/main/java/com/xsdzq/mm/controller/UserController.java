@@ -47,7 +47,7 @@ public class UserController {
 		String cryptUserString = userData.getEncryptData().trim();
 		String userString;
 		try {
-			userString = AESUtil.decryptAES(cryptUserString);
+			userString = AESUtil.decryptCommonAES(cryptUserString);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -140,9 +140,7 @@ public class UserController {
 	@PostMapping(value = { "/loginLivePro" }, produces = { "application/json; charset=utf-8" })
 	public Map<String, Object> loginLivePro(@RequestBody UserData userData) throws Exception {
 		this.logger.info(userData.toString());
-		System.out.println(userData.toString());
 		this.logger.info(userData.toString());
-		System.out.println(userData.toString());
 		String cryptUserString = userData.getEncryptData();
 		String userString = AESUtil.decryptAES(cryptUserString);
 		this.logger.info(userString);
@@ -155,7 +153,6 @@ public class UserController {
 			// 非游客生成唯一标识
 			uuid = this.userService.loginLive(user);
 		}
-
 		// 获取直播url
 		String liveUrl = LiveUtil.getUrlPro(user, uuid);
 		this.logger.info("_____________________ 直播信息" + user.getClientId() + " " + liveUrl);
@@ -163,6 +160,7 @@ public class UserController {
 		LiveInfo liveInfo = new LiveInfo();
 		liveInfo.setLiveUrl(liveUrl);
 		return GsonUtil.buildMap(0, "ok", liveInfo);
+
 	}
 
 	@UserLoginToken

@@ -51,12 +51,30 @@ public class AESUtil {
 		}
 	}
 
-	public static String decryptAES(String data) throws Exception {
+	public static String decryptCommonAES(String data) throws Exception {
 		try {
 			byte[] encrypted = Base64.decodeBase64(data);// new BASE64Decoder().decodeBuffer(data);
 			Cipher cipher = Cipher.getInstance(AES_NO_PADDING);
 			SecretKeySpec keyspec = new SecretKeySpec(AES_KEY.getBytes(), "AES");
 			IvParameterSpec ivspec = new IvParameterSpec(AES_IV.getBytes());
+			cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
+			byte[] original = cipher.doFinal(encrypted);
+			String originalString = new String(original);
+			return originalString;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static String decryptAES(String data) throws Exception {
+		String AES_KEY_LIVE = "xsdzqlicaijie888"; // 16位
+		String AES_IV_LIVE = "iq9nApwQfg9OFXVp"; // 16位
+		try {
+			byte[] encrypted = Base64.decodeBase64(data);// new BASE64Decoder().decodeBuffer(data);
+			Cipher cipher = Cipher.getInstance(AES_NO_PADDING);
+			SecretKeySpec keyspec = new SecretKeySpec(AES_KEY_LIVE.getBytes(), "AES");
+			IvParameterSpec ivspec = new IvParameterSpec(AES_IV_LIVE.getBytes());
 			cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
 			byte[] original = cipher.doFinal(encrypted);
 			String originalString = new String(original);
