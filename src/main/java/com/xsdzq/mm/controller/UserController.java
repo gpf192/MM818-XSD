@@ -47,7 +47,7 @@ public class UserController {
 		String cryptUserString = userData.getEncryptData().trim();
 		String userString;
 		try {
-			userString = AESUtil.decryptCommonAES(cryptUserString);
+			userString = AESUtil.decryptAES256(cryptUserString);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,9 +74,9 @@ public class UserController {
 		}
 		// 增加校验
 
-		if (user.getLoginClientId() == null || user.getLoginClientId().equals("")) {
-			return GsonUtil.buildMap(1, "登录标示不能为空", null);
-		}
+		// if (user.getLoginClientId() == null || user.getLoginClientId().equals("")) {
+		// 	return GsonUtil.buildMap(1, "登录标示不能为空", null);
+		// }
 
 		ActivityNumber activityNumber = userService.login(user);
 		if (activityNumber == null) {

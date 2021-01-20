@@ -53,7 +53,7 @@ public class UserUtil {
 		// userEntity.setClientName(user.getClientName());
 		// userEntity.setFundAccount(user.getFundAccount());
 		userEntity.setAccessToken(user.getAccessToken());
-		// userEntity.setMobile(user.getMobile());
+	    userEntity.setMobile(user.getMobile());
 		userEntity.setAppVersion(user.getAppVersion());
 		userEntity.setLastOpIP(user.getLastOpIP());
 		userEntity.setLastLoginTime(user.getLastLoginTime());
