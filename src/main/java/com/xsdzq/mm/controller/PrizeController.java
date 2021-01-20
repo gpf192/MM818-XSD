@@ -53,7 +53,7 @@ public class PrizeController {
 		return GsonUtil.buildMap(0, "ok", responsEntities);
 	}
 
-	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
+	@PostMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) {
 		UserEntity userEntity = tokenService.getUserEntity(token);
