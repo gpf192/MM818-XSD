@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 35 10 * * ?")
+    @Scheduled(cron = "0 01 17 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -289,6 +289,7 @@ public class ScheduledService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		//	preDay = 20210119;//手动补录
 			//查询所有的产品 循环每一个产品与销售记录进行匹配
 			Date  d = DateUtil.getPreDayAs();
 			List<ProductEntity> productList = productService.getAll(d, d);//查询有效期内的产品

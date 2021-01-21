@@ -245,6 +245,7 @@ public class UserServiceImpl implements UserService {
 			UserEntity newUser = new UserEntity();
 			newUser.setClientId(clientId);
 			newUser.setClientName(clientName);
+			newUser.setCreatetime(new Date());
 			//添加新用户
 			userRepository.save(newUser);
 			//添加用户票数表  先查存在不 若不存在则新建		
@@ -316,6 +317,7 @@ public class UserServiceImpl implements UserService {
 		if (user == null) {
 			UserEntity newUser = new UserEntity();
 			newUser.setClientId(clientId);
+			newUser.setCreatetime(new Date());//添加新建时间戳
 			//添加新用户
 			userRepository.save(newUser);
 			user = newUser;
