@@ -50,10 +50,10 @@ public class UserUtil {
 	public static void updateUserEntityByUser(UserEntity userEntity, User user) {
 		userEntity.setClientId(user.getClientId());
 		userEntity.setLoginClentId(user.getLoginClientId());
-		// userEntity.setClientName(user.getClientName());
-		// userEntity.setFundAccount(user.getFundAccount());
+		userEntity.setClientName(user.getClientName());
+		userEntity.setFundAccount(user.getFundAccount());
 		userEntity.setAccessToken(user.getAccessToken());
-	    userEntity.setMobile(user.getMobile());
+		userEntity.setMobile(user.getMobile());
 		userEntity.setAppVersion(user.getAppVersion());
 		userEntity.setLastOpIP(user.getLastOpIP());
 		userEntity.setLastLoginTime(user.getLastLoginTime());
