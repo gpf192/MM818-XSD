@@ -43,9 +43,20 @@ public class PrizeRecordEntity implements Serializable {
 	@Column(name = "record_time", nullable = false)
 	private Date recordTime;
 
+	@Column(name = "serial_num")
+	private String serialNum; // 扫描的产品交易流水号
+	
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "client_id", referencedColumnName = "client_id")
 	private UserEntity userEntity;
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
+	}
 
 	public Long getId() {
 		return id;
@@ -101,6 +112,13 @@ public class PrizeRecordEntity implements Serializable {
 
 	public void setUserEntity(UserEntity userEntity) {
 		this.userEntity = userEntity;
+	}
+
+	@Override
+	public String toString() {
+		return "PrizeRecordEntity [id=" + id + ", type=" + type + ", reason=" + reason + ", number=" + number
+				+ ", dateFlag=" + dateFlag + ", recordTime=" + recordTime + ", serialNum=" + serialNum + ", userEntity="
+				+ userEntity + "]";
 	}
 
 }
