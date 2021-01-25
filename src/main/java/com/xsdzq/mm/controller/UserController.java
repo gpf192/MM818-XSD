@@ -73,7 +73,7 @@ public class UserController {
 			return GsonUtil.buildMap(1, "token不能为空", null);
 		}
 
-		if (user.getMobile() == null || user.getMobile().length() > 10) {
+		if (user.getMobile() == null || user.getMobile().length() < 10) {
 			return GsonUtil.buildMap(1, "手机号不能为空", null);
 		}
 		// 增加校验
