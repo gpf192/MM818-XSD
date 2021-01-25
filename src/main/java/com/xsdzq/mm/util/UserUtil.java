@@ -48,7 +48,7 @@ public class UserUtil {
 	}
 
 	public static void updateUserEntityByUser(UserEntity userEntity, User user) {
-		userEntity.setClientId(user.getClientId());
+		//userEntity.setClientId(user.getClientId());
 		userEntity.setLoginClentId(user.getLoginClientId());
 		userEntity.setClientName(user.getClientName());
 		userEntity.setFundAccount(user.getFundAccount());

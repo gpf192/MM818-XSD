@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 
-	public boolean hsServiceCheck(String clientId, String loginClientId, String accessToken) {
+	public boolean hsServiceCheck(String clientId, String loginClientId, String accessToken, String mobile) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("access_token", accessToken);
 		HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
@@ -156,7 +156,9 @@ public class UserServiceImpl implements UserService {
 
 				JSONObject hsJsonObject = JSON.parseObject(response);
 				String responseClientId = hsJsonObject.getString("client_id");
-				if (responseClientId != null && loginClientId.equals(responseClientId)) {
+				String nickName = hsJsonObject.getString("nick_name");
+				if (responseClientId != null && loginClientId.equals(responseClientId) && nickName != null
+						&& nickName.equals(mobile)) {
 					// 校验通过
 					log.info(loginClientId + " 校验通过");
 					return true;
@@ -193,7 +195,8 @@ public class UserServiceImpl implements UserService {
 		// 0 前置 恒生校验
 
 		if (user.getLoginClientId() != null && user.getLoginClientId().length() > 0) {
-			boolean isCheck = hsServiceCheck(user.getClientId(), user.getLoginClientId(), user.getAccessToken());
+			boolean isCheck = hsServiceCheck(user.getClientId(), user.getLoginClientId(), user.getAccessToken(),
+					user.getMobile());
 			if (!isCheck) {
 				return null;
 			}

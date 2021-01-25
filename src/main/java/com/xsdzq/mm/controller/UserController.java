@@ -72,10 +72,14 @@ public class UserController {
 		if (user.getAccessToken() == null || user.getAccessToken().equals("")) {
 			return GsonUtil.buildMap(1, "token不能为空", null);
 		}
+
+		if (user.getMobile() == null || user.getMobile().length() > 10) {
+			return GsonUtil.buildMap(1, "手机号不能为空", null);
+		}
 		// 增加校验
 
 		// if (user.getLoginClientId() == null || user.getLoginClientId().equals("")) {
-		// 	return GsonUtil.buildMap(1, "登录标示不能为空", null);
+		// return GsonUtil.buildMap(1, "登录标示不能为空", null);
 		// }
 
 		ActivityNumber activityNumber = userService.login(user);
