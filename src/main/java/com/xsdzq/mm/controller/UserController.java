@@ -78,9 +78,9 @@ public class UserController {
 		}
 		// 增加校验
 
-		// if (user.getLoginClientId() == null || user.getLoginClientId().equals("")) {
-		// return GsonUtil.buildMap(1, "登录标示不能为空", null);
-		// }
+		if (user.getLoginClientId() == null || user.getLoginClientId().length() < 3) {
+			return GsonUtil.buildMap(1, "登录标示不能为空", null);
+		}
 
 		ActivityNumber activityNumber = userService.login(user);
 		if (activityNumber == null) {
