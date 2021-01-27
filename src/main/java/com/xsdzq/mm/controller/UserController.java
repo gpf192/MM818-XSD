@@ -79,7 +79,7 @@ public class UserController {
 		// 增加校验
 
 		if (user.getLoginClientId() == null || user.getLoginClientId().length() < 3) {
-			return GsonUtil.buildMap(1, "登录标示不能为空", null);
+			return GsonUtil.buildMap(1, "当前APP版本过低，请升级到最新版本的APP", null);
 		}
 
 		ActivityNumber activityNumber = userService.login(user);
