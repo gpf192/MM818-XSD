@@ -16,6 +16,7 @@ import com.xsdzq.mm.dao.PrizeNumberRepository;
 import com.xsdzq.mm.dao.PrizeRecordRepository;
 import com.xsdzq.mm.dao.ShareOptionAccountOpenViewRepository;
 import com.xsdzq.mm.dao.SignInvestViewRepository;
+import com.xsdzq.mm.dao.UserEmpRelationRepository;
 import com.xsdzq.mm.dao.UserRepository;
 import com.xsdzq.mm.dao.UserTicketRecordRepository;
 import com.xsdzq.mm.entity.CreditAccountOpenViewEntity;
@@ -26,6 +27,7 @@ import com.xsdzq.mm.entity.PrizeNumberEntity;
 import com.xsdzq.mm.entity.PrizeRecordEntity;
 import com.xsdzq.mm.entity.ShareOptionAccountOpenViewEntity;
 import com.xsdzq.mm.entity.SignInvestViewEntity;
+import com.xsdzq.mm.entity.UserEmpRelationEntity;
 import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.entity.UserTicketRecordEntity;
 import com.xsdzq.mm.model.ActivityNumber;
@@ -80,6 +82,11 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private ShareOptionAccountOpenViewRepository shareOptionAccountOpenViewRepository;
+	
+	
+	@Autowired
+	private UserEmpRelationRepository userEmpRelationRepository;
+	
 	
 	@Override
 	public User getUserById(Long id) {
@@ -313,14 +320,24 @@ public class UserServiceImpl implements UserService {
 	public void addPrizeNumAndRecordForKMH(String clientId, String reason, int number, String serialNum) {
 		// TODO Auto-generated method stub
 		UserEntity user = userRepository.findByClientId(clientId);
-		Date date = new Date();
+		UserEmpRelationEntity ue = userEmpRelationRepository.findByClientId(clientId);			
 		if (user == null) {
 			UserEntity newUser = new UserEntity();
 			newUser.setClientId(clientId);
+			if(ue != null && ue.getClientName()!= null && ue.getClientName().length()>1) {
+				newUser.setClientName(ue.getClientName());
+				
+			}
 			newUser.setCreatetime(new Date());//添加新建时间戳
 			//添加新用户
 			userRepository.save(newUser);
 			user = newUser;
+		}else {
+			if(ue != null && ue.getClientName()!= null && ue.getClientName().length()>1) {
+				user.setClientName(ue.getClientName());
+				userRepository.save(user);
+			}
+			
 		}
 		prizeService.addPrizeNumberForKMH(user, reason, number, serialNum);
 	}
