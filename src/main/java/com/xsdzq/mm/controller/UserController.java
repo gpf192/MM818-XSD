@@ -76,6 +76,12 @@ public class UserController {
 		if (user.getMobile() == null || user.getMobile().length() < 10) {
 			return GsonUtil.buildMap(1, "手机号不能为空", null);
 		}
+		// 增加校验 校验姓名
+
+		if (user.getClientName() == null || user.getClientName().length() < 1) {
+			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);
+		}
+		
 		// 增加校验
 
 		if (user.getLoginClientId() == null || user.getLoginClientId().length() < 3) {

@@ -210,6 +210,14 @@ public class UserServiceImpl implements UserService {
 			UserEntity requestUser = UserUtil.convertUserByUserEntity(user);
 			userRepository.save(requestUser);
 		} else {
+			// 校验clientName
+			log.info("server clientName: " + owner.getClientName());
+			log.info("client clientName: " + user.getClientName());
+			if (owner.getClientName() != null && owner.getClientName().length() > 1) {
+				if (!owner.getClientName().trim().equals(user.getClientName().trim())) {
+					return null;
+				}
+			}
 			UserUtil.updateUserEntityByUser(owner, user);
 			userRepository.saveAndFlush(owner);
 		}
