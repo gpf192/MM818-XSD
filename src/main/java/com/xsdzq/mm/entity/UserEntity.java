@@ -9,6 +9,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -22,7 +23,8 @@ public class UserEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lcj_user_sequence")
+	@SequenceGenerator(name = "lcj_user_sequence", sequenceName = "sequence_lcj_user", allocationSize = 1)
 	@Column(name = "id", unique = true, length = 20)
 	private Long id;
 
