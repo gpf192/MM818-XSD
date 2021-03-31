@@ -314,15 +314,15 @@ public class ScheduledService {
 									e.printStackTrace();
 								}
 				        		//查看前一天的 job 是否执行，若执行 则跳过
-				        		//查看 记录表中是否有该条流水号的记录，若没有就加入
-								List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
-								if(prizeRecordList.size() == 0) {												        					 			        		
+				        		//查看 记录表中是否有该条流水号的记录，若没有就加入(流水号有重复，去掉此条件)
+								//List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
+								//if(prizeRecordList.size() == 0) {												        					 			        		
 				        			//计算抽奖次数
 									double dealAmount = Double.parseDouble( p.getDealAmount());
 				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
 				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("10000"),0,BigDecimal.ROUND_HALF_UP);
 				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
-								}
+								//}
 				        		
 				        	}
 				    	}else {
@@ -345,14 +345,14 @@ public class ScheduledService {
 								}
 				        		//查看前一天的 job 是否执行，若执行 则跳过
 				        		//查看 记录表中是否有该条流水号的记录，若没有就加入
-								List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
-								if(prizeRecordList.size() == 0) {												        					 			        		
+								//List<PrizeRecordEntity> prizeRecordList = userService.findPrizeRecordBySerialNum(serialNum);
+								//if(prizeRecordList.size() == 0) {												        					 			        		
 				        			//计算抽奖次数
 									double dealAmount = Double.parseDouble( p.getDealAmount());
 				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
 				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("10000"),0,BigDecimal.ROUND_HALF_UP);
 				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
-								}
+								//}
 				        		
 				        	}
 				    	}else {
