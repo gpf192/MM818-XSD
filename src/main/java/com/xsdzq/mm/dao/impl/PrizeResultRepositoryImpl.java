@@ -26,7 +26,7 @@ public class PrizeResultRepositoryImpl implements PrizeResultWrapper {
 		// String sql = "select r.* from `lcj_prize_result` r , `lcj_prize_info` i where
 		// r.`prize_id` = i.id and i.`type`=1 order by r.`record_time` desc LIMIT 2";
 		// oracle
-		String sql = "select * from (select r.* from lcj_prize_result r, lcj_prize_info i where r.prize_id = i.id and i.type = 1 order by r.record_time desc) where rownum <= 2";
+		String sql = "select * from (select r.* from lcj_prize_result r, lcj_prize_info i where r.prize_id = i.id and r.type = 1 order by r.record_time desc) where rownum <= 5";
 		List<PrizeResultEntity> prizeResultEntity = null;
 		try {
 			Query query = em.createNativeQuery(sql, PrizeResultEntity.class);
