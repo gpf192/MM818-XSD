@@ -19,12 +19,14 @@ import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.ActivityNumber;
 import com.xsdzq.mm.model.AesInfo;
 import com.xsdzq.mm.model.HasNumber;
+import com.xsdzq.mm.model.KmhFlag;
 import com.xsdzq.mm.model.LiveInfo;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.model.UserData;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.util.AESUtil;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.LiveUtil;
 import com.xsdzq.mm.util.UserUtil;
@@ -41,6 +43,17 @@ public class UserController {
 	@Autowired
 	@Qualifier("userServiceImpl")
 	UserService userService;
+
+	// 获取活动是否结束标识
+	@PostMapping(value = "/getEndFlag", produces = "application/json; charset=utf-8")
+	public Map<String, Object> getEndFlag() throws Exception {
+
+		KmhFlag k = new KmhFlag();
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		k.setEndFlag(DateUtil.checkDate(endFlag));
+
+		return GsonUtil.buildMap(0, "ok", k);
+	}
 
 	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
 	public Map<String, Object> login(@RequestBody UserData userData) throws Exception {
@@ -81,7 +94,7 @@ public class UserController {
 		if (user.getClientName() == null || user.getClientName().length() < 1) {
 			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);
 		}
-		
+
 		// 增加校验
 
 		if (user.getLoginClientId() == null || user.getLoginClientId().length() < 3) {
