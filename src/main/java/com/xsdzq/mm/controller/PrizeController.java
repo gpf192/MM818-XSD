@@ -22,6 +22,7 @@ import com.xsdzq.mm.model.PrizeRecordAndResult;
 import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 
@@ -56,6 +57,16 @@ public class PrizeController {
 	@PostMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) {
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		try {
+			if (!DateUtil.checkDate(endFlag)) {
+				return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+		}
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		if (userEntity == null) {
 			return GsonUtil.buildMap(1, "用户不存在", null);

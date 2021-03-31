@@ -62,11 +62,16 @@ public class AwardController {
 	public Map<String, Object> convertAward(@RequestHeader("Authorization") String token,
 			@RequestBody ConvertData convertData) throws ParseException {
 		// 判断活动是否结束
-		// KmhFlag k = new KmhFlag();
-		// String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
-		// if (!DateUtil.checkDate(endFlag)) {
-		// return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
-		// }
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		try {
+			if (!DateUtil.checkDate(endFlag)) {
+				return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+		}
 		String cryptUserString = convertData.getEncryptData().trim();
 		String awardNumberString;
 		try {
