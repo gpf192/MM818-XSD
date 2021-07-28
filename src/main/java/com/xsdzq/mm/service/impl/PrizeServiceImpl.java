@@ -188,7 +188,7 @@ public class PrizeServiceImpl implements PrizeService {
 							int amount = prizeEntity.getAmount();
 							int winningNumber = prizeEntity.getWinningNumber();
 							int availableNumber = amount - winningNumber;
-							if (prizeUtil.testChoice(availableNumber, total)) {
+							if (availableNumber > 0 && prizeUtil.testChoice(availableNumber, total)) {
 								return prizeEntity;
 							}
 						}

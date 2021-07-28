@@ -123,8 +123,6 @@ public class UserServiceImpl implements UserService {
 		int prizeNumber = handlerLoginPrize(realUserEntity);
 		// 处理登陆后的票数
 		int ticketNumber = handlerLoginTicket(realUserEntity);
-		System.out.println("user prize ticket: " + prizeNumber);
-		System.out.println("user login ticket: " + ticketNumber);
 		ActivityNumber activityNumber = new ActivityNumber();
 		activityNumber.setPrizeNumber(prizeNumber);
 		activityNumber.setTicketNumber(ticketNumber);
@@ -138,7 +136,8 @@ public class UserServiceImpl implements UserService {
 		if (hasLoginPrize) {
 			// 当日已经给过抽奖次数
 		} else {
-			prizeService.addPrizeNumber(userEntity, true, PrizeUtil.PRIZE_LOGIN_TYPE, 1);
+			//奖品关闭，去掉票数
+			// prizeService.addPrizeNumber(userEntity, true, PrizeUtil.PRIZE_LOGIN_TYPE, 1);
 		}
 		int number = prizeService.getAvailableNumber(userEntity);
 		return number;
@@ -150,8 +149,9 @@ public class UserServiceImpl implements UserService {
 			// 已经添加过登陆票数了，不需要添加
 		} else {
 			// 添加每天的登陆票数 100票
-			Date nowDate = new Date();
-			userTicketService.addUserTicketNumber(userEntity, 100, TicketUtil.ACTIVITYLOGINTICKET, nowDate);
+			// 下线不需要投票
+			//Date nowDate = new Date();
+			//userTicketService.addUserTicketNumber(userEntity, 100, TicketUtil.ACTIVITYLOGINTICKET, nowDate);
 		}
 		int number = userTicketService.getUserTicket(userEntity);
 		return number;
