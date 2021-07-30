@@ -117,7 +117,7 @@ public class PrizeServiceImpl implements PrizeService {
 			prizeResultEntity.setPrizeEntity(prizeEntity);
 			prizeResultEntity.setRecordTime(nowDate);
 			// 1.处理额外投票券
-			addTicketNumber(userEntity, prizeEntity, nowDate);
+			// addTicketNumber(userEntity, prizeEntity, nowDate); // 20210818 没有额外投票权
 			// 2.添加减少记录
 			addReduceRecordPrize(userEntity);
 			// 3.增加中奖人数
@@ -248,7 +248,7 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeNumberRepository.addNumber(prizeNumberEntity);
 		addPrizeRecord(userEntity, true, PrizeUtil.PRIZE_SHARE_TYPE);
 		// 分享获得投票数量
-		userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET, nowDate);
+		// userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET, nowDate); // 20210818 分享没有投票权
 		return true;
 	}
 
