@@ -285,7 +285,7 @@ public class PrizeServiceImpl implements PrizeService {
 				total += 1;
 			}
 		}
-		if (total >= 5) {
+		if (total >= 300) {
 			return false;
 		}
 		return true;
