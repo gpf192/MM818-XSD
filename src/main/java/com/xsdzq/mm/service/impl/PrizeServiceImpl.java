@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,8 @@ import com.xsdzq.mm.util.TicketUtil;
 @Service(value = "prizeServiceImpl")
 @Transactional(readOnly = true)
 public class PrizeServiceImpl implements PrizeService {
+
+	private static final Logger log = LoggerFactory.getLogger(PrizeServiceImpl.class);
 
 	@Autowired
 	private PrizeRepository prizeRepository;
@@ -111,7 +115,7 @@ public class PrizeServiceImpl implements PrizeService {
 		// 1.检查有效的投票数，2.投票数量-1 3.插入抽奖记录
 		if (checkAvailable(userEntity)) {
 			Date nowDate = new Date();
-			PrizeEntity prizeEntity = getRandomPrize();
+			PrizeEntity prizeEntity = getRandomPrize(userEntity);
 			PrizeResultEntity prizeResultEntity = new PrizeResultEntity();
 			prizeResultEntity.setUserEntity(userEntity);
 			prizeResultEntity.setPrizeEntity(prizeEntity);
@@ -171,13 +175,13 @@ public class PrizeServiceImpl implements PrizeService {
 		return myRealPrizeResultEntity;
 	}
 
-	public PrizeEntity getRandomPrize() {
+	public PrizeEntity getRandomPrize(UserEntity userEntity) {
 		// 计算中奖项，返回中奖项
 		ParamEntity paramEntity = paramRepository.getValueByCode(ParamRepositoryImpl.LCJCOMPUSER);
 		PrizeUtil prizeUtil = PrizeUtil.getInstance();
 		String totalString = paramEntity.getValue();
 		List<PrizeEntity> prizeList = getPrizeAll();
-		if (totalString != null) {
+		if (totalString != null && checkCanGetPrize(userEntity)) {
 			try {
 				int total = Integer.parseInt(totalString);
 				if (total > 0) {
@@ -200,6 +204,20 @@ public class PrizeServiceImpl implements PrizeService {
 		}
 		// 判断返回 谢谢参与逻辑
 		return prizeUtil.getXieXieEntity(prizeList);
+	}
+
+	public boolean checkCanGetPrize(UserEntity userEntity) {
+		List<PrizeResultEntity> prizeResult = getMyPrizeEntities(userEntity);
+		int totalValue = 0;
+		for (PrizeResultEntity prizeResultEntity : prizeResult) {
+			int prize = Integer.parseInt(prizeResultEntity.getPrizeEntity().getPrice(), 10);
+			totalValue += prize;
+		}
+		log.info(userEntity.getClientId() + " totalValue:" + totalValue);
+		if (totalValue >= 5000) {
+			return false;
+		}
+		return true;
 	}
 
 	public boolean checkAvailable(UserEntity userEntity) {
@@ -248,7 +266,8 @@ public class PrizeServiceImpl implements PrizeService {
 		prizeNumberRepository.addNumber(prizeNumberEntity);
 		addPrizeRecord(userEntity, true, PrizeUtil.PRIZE_SHARE_TYPE);
 		// 分享获得投票数量
-		// userTicketService.addUserTicketNumber(userEntity, 200, TicketUtil.ACTIVITYSHARETICKET, nowDate); // 20210818 分享没有投票权
+		// userTicketService.addUserTicketNumber(userEntity, 200,
+		// TicketUtil.ACTIVITYSHARETICKET, nowDate); // 20210818 分享没有投票权
 		return true;
 	}
 
