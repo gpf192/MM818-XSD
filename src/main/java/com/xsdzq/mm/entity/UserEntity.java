@@ -31,6 +31,10 @@ public class UserEntity implements Serializable {
 	@Column(name = "client_id", unique = true, nullable = false, length = 100)
 	private String clientId;
 
+	// 登录ClientId
+	@Column(name = "login_client_id", nullable = true, length = 100)
+	private String loginClentId;
+
 	@Column(name = "client_name", nullable = true, length = 300)
 	private String clientName;
 
@@ -71,12 +75,13 @@ public class UserEntity implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserEntity(Long id, String clientId, String clientName, String fundAccount, String accessToken,
-			String password, String mobile, String appVersion, String lastOpIP, String lastLoginTime, Date createtime,
-			Date modifytime) {
+	public UserEntity(Long id, String clientId, String loginClentId, String clientName, String fundAccount,
+			String accessToken, String password, String mobile, String appVersion, String lastOpIP,
+			String lastLoginTime, Date createtime, Date modifytime) {
 		super();
 		this.id = id;
 		this.clientId = clientId;
+		this.loginClentId = loginClentId;
 		this.clientName = clientName;
 		this.fundAccount = fundAccount;
 		this.accessToken = accessToken;
@@ -103,6 +108,14 @@ public class UserEntity implements Serializable {
 
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
+	}
+
+	public String getLoginClentId() {
+		return loginClentId;
+	}
+
+	public void setLoginClentId(String loginClentId) {
+		this.loginClentId = loginClentId;
 	}
 
 	public String getClientName() {
