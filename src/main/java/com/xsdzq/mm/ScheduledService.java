@@ -76,7 +76,7 @@ public class ScheduledService {
 	}
 	//(cron = "0/5 * * * * *") 每5分钟     ， cron = "0 35 05 * * ?" 凌晨5点35
     //@Scheduled(cron = "0/5 * * * * *")
-    @Scheduled(cron = "0 35 05 * * ?")
+    @Scheduled(cron = "0 59 13 * * ?")
     public void scheduled(){
       //  log.info("=====>>>>>使用cron  {}",System.currentTimeMillis());
     	System.out.println("进入 job 111111111111111111111111111111111111111111111111");
@@ -85,18 +85,18 @@ public class ScheduledService {
     	System.out.println("=====>>>>> job 开关为 "+ flag);
     	if("1".equals(flag)) {
     		//定时扫描交易任务
-        /*	try {
+        	/*try {
     			productSellTask();
     		} catch (Exception e) {
     			// TODO Auto-generated catch block
     			System.out.println("productSellTask 发生异常"+"111111111111111111111111111111111111111111111111");
 
     			e.printStackTrace();
-    		}*/
+    		}
         	 	
         	//定时扫描用户活动期间签约投顾 自动归票至经纪人
 			
-			 /* try { 
+			  try { 
 				  tgfundOpenAccountTask(); 
 				  } catch (Exception e) { // TODO Auto-generated
 					  System.out.println("tgfundOpenAccountTask 发生异常"+"111111111111111111111111111111111111111111111111");
@@ -118,6 +118,7 @@ public class ScheduledService {
     		//扫描理财产品购买记录
     		try {
     			productSellTaskForKMH();
+    			System.out.println("扫描产品交易完成");
     		} catch (Exception e) {
     			// TODO Auto-generated catch block
     			System.out.println("productSellTaskForKMH 发生异常"+"111111111111111111111111111111111111111111111111");
@@ -128,6 +129,7 @@ public class ScheduledService {
         	//扫描签约投顾			
 			  try { 
 				  tgfundOpenAccountTaskForKMH(); 
+				  System.out.println("扫描签约投顾完成");
 				  } catch (Exception e) { // TODO Auto-generated
 					  System.out.println("tgfundOpenAccountTaskForKMH 发生异常"+"111111111111111111111111111111111111111111111111");
 			  

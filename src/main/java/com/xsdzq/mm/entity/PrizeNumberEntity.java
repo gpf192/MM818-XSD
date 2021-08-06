@@ -18,9 +18,14 @@ import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+/**
+ * 开门红项目 更改表名为  lcj_prize_number
+ * 818理财节项目 更改表名为  lcj818_prize_number
+ * @author Administrator
+ *
+ */
 @Entity
-@Table(name = "lcj_prize_number")
+@Table(name = "lcj818_prize_number")
 @EntityListeners(AuditingEntityListener.class)
 public class PrizeNumberEntity implements Serializable {
 
