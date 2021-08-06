@@ -55,7 +55,32 @@ public class UserController {
 		String userString = AESUtil.decryptAES(cryptUserString);
 		logger.info(userString);
 		User user = JSON.parseObject(userString, User.class);
+
+		if (user.getClientId() == null || user.getClientId().equals("")) {
+			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);
+		}
+
+		if (user.getAccessToken() == null || user.getAccessToken().equals("")) {
+			return GsonUtil.buildMap(1, "token不能为空", null);
+		}
+		// 二期兑换功能 --增加校验
+
+		if (user.getClientName() == null || user.getClientName().length() < 1) {
+			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);
+		}
+
+		if (user.getLoginClientId() == null || user.getLoginClientId().length() < 3) {
+			return GsonUtil.buildMap(1, "您的APP版本过低，请升级参加活动！", null);
+		}
+
+		if (user.getMobile() == null || user.getMobile().length() < 10) {
+			return GsonUtil.buildMap(1, "手机号不能为空", null);
+		}
+		
 		ActivityNumber activityNumber = userService.login(user);
+		if (activityNumber == null) {
+			return GsonUtil.buildMap(1, "登录失败，请重新登录", null);
+		}
 		UserEntity userEntity = userService.getUserByClientId(user.getClientId());
 		String token = tokenService.getToken(UserUtil.convertUserByUserEntity(userEntity));
 		activityNumber.setToken(token);
