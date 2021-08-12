@@ -93,7 +93,8 @@ public class PrizeServiceImpl implements PrizeService {
 		return prizeResultEntity;
 	}
 
-	@Override
+	/*@Override
+	 // 一天五次抽奖机会 
 	public int getShareEveryDayNumber(UserEntity userEntity) {
 		// TODO Auto-generated method stub
 		String nowString = DateUtil.getStandardDate(new Date());
@@ -104,6 +105,15 @@ public class PrizeServiceImpl implements PrizeService {
 				total += 1;
 			}
 		}
+		return total;
+	}*/
+	
+	@Override
+	public int getShareEveryDayNumber(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		// 活动期间五次抽奖机会
+		List<PrizeRecordEntity> list = prizeRecordRepository.getListByUserAndShare(userEntity, PrizeUtil.PRIZE_SHARE_TYPE);
+		int total = list.size();
 		return total;
 	}
 
@@ -260,6 +270,9 @@ public class PrizeServiceImpl implements PrizeService {
 		if (!checkUserShareStatus(userEntity)) {
 			return false;
 		}
+		if(!checkUserShareStatusByActivity(userEntity)) {
+			return false;
+		}
 		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
 		Date nowDate = new Date();
 		// 分享获得抽奖次数
@@ -304,7 +317,15 @@ public class PrizeServiceImpl implements PrizeService {
 				total += 1;
 			}
 		}
-		if (total >= 300) {
+		if (total >= 1) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean checkUserShareStatusByActivity(UserEntity userEntity) {
+		List<PrizeRecordEntity> list = prizeRecordRepository.getListByUserAndShare(userEntity, PrizeUtil.PRIZE_SHARE_TYPE);
+		if (list.size() >= 5) {
 			return false;
 		}
 		return true;

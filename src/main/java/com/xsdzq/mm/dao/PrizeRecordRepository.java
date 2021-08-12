@@ -12,6 +12,9 @@ public interface PrizeRecordRepository {
 	public PrizeRecordEntity getLatestRealPrizeResult();
 
 	public List<PrizeRecordEntity> getListByUserAndFlag(UserEntity userEntity, String flag);
+	
+	public List<PrizeRecordEntity> getListByUserAndShare(UserEntity userEntity, String reason);
+
 
 	public void reduce();
 
