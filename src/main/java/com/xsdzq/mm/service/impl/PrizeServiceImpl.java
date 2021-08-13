@@ -265,13 +265,13 @@ public class PrizeServiceImpl implements PrizeService {
 
 	@Override
 	@Transactional
-	public boolean sharePutPrizeNumber(UserEntity userEntity) {
+	public int sharePutPrizeNumber(UserEntity userEntity) {
 		// TODO Auto-generated method stub
 		if (!checkUserShareStatus(userEntity)) {
-			return false;
+			return 1;
 		}
 		if(!checkUserShareStatusByActivity(userEntity)) {
-			return false;
+			return 5;
 		}
 		PrizeNumberEntity prizeNumberEntity = getPrizeNumberEntity(userEntity);
 		Date nowDate = new Date();
@@ -281,7 +281,7 @@ public class PrizeServiceImpl implements PrizeService {
 		// 分享获得投票数量
 		// userTicketService.addUserTicketNumber(userEntity, 200,
 		// TicketUtil.ACTIVITYSHARETICKET, nowDate); // 20210818 分享没有投票权
-		return true;
+		return 0;
 	}
 
 	private void addPrizeRecord(UserEntity userEntity, boolean type, String reason) {
