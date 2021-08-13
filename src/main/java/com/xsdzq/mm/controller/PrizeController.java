@@ -110,7 +110,7 @@ public class PrizeController {
 	@PostMapping(value = "/share", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> sharePutPrizeNumber(@RequestHeader("Authorization") String token) {
-		
+
 		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
 		try {
 			if (!DateUtil.checkDate(endFlag)) {
@@ -122,11 +122,14 @@ public class PrizeController {
 			return GsonUtil.buildMap(1, "活动已结束，分享不再增加票数。", null);
 		}
 		UserEntity userEntity = tokenService.getUserEntity(token);
-		boolean isRule = prizeService.sharePutPrizeNumber(userEntity);
-		if (isRule) {
+		int isRule = prizeService.sharePutPrizeNumber(userEntity);
+		if (isRule == 0) {
 			return GsonUtil.buildMap(0, "ok", null);
+		} else if (isRule == 1) {
+			return GsonUtil.buildMap(1, "当日分享活动获得的抽奖机会已经达到上限！", null);
 		} else {
-			return GsonUtil.buildMap(1, "分享活动获得的票数，已经达到上限!", null);
+			return GsonUtil.buildMap(1, "分享活动获得的抽奖机会，已经达到上限！", null);
+
 		}
 	}
 

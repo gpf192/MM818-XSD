@@ -23,7 +23,7 @@ public interface PrizeService {
 
 	int getShareEveryDayNumber(UserEntity userEntity);
 
-	boolean sharePutPrizeNumber(UserEntity userEntity);
+	int sharePutPrizeNumber(UserEntity userEntity);
 	
 	boolean hasStockPrize(UserEntity userEntity);
 
