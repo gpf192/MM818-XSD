@@ -20,6 +20,7 @@ import com.xsdzq.mm.entity.AwardResultEntity;
 import com.xsdzq.mm.entity.PrizeEntity;
 import com.xsdzq.mm.entity.PrizeResultEntity;
 import com.xsdzq.mm.entity.UserEntity;
+import com.xsdzq.mm.exception.BusinessException;
 import com.xsdzq.mm.model.AwardNumber;
 import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.AwardService;
@@ -87,7 +88,12 @@ public class AwardServiceImpl implements AwardService {
 	@Transactional
 	public boolean convertAward(UserEntity userEntity, AwardNumber awardNumber) {
 		// TODO Auto-generated method stub
-		AwardEntity awardEntity = awardNumber.getAward();
+		//AwardEntity awardEntity = awardNumber.getAward();
+		AwardEntity awardEntity = awardRepository.findById(awardNumber.getAward().getId()).get();
+		if(awardEntity == null) {
+			return false;
+		}
+		awardNumber.setAward(awardEntity);
 		int num = awardNumber.getNum();
 		boolean canChange = checkAwardNumber(awardNumber);
 		if (!canChange) {

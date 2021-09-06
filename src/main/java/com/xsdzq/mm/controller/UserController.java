@@ -19,12 +19,14 @@ import com.xsdzq.mm.entity.UserEntity;
 import com.xsdzq.mm.model.ActivityNumber;
 import com.xsdzq.mm.model.AesInfo;
 import com.xsdzq.mm.model.HasNumber;
+import com.xsdzq.mm.model.KmhFlag;
 import com.xsdzq.mm.model.LiveInfo;
 import com.xsdzq.mm.model.User;
 import com.xsdzq.mm.model.UserData;
 import com.xsdzq.mm.service.TokenService;
 import com.xsdzq.mm.service.UserService;
 import com.xsdzq.mm.util.AESUtil;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.LiveUtil;
 import com.xsdzq.mm.util.UserUtil;
@@ -42,12 +44,23 @@ public class UserController {
 	@Qualifier("userServiceImpl")
 	UserService userService;
 
+	// 获取活动是否结束标识
+	@PostMapping(value = "/getEndFlag", produces = "application/json; charset=utf-8")
+	public Map<String, Object> getEndFlag() throws Exception {
+
+		KmhFlag k = new KmhFlag();
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		k.setEndFlag(DateUtil.checkDate(endFlag));
+
+		return GsonUtil.buildMap(0, "ok", k);
+	}
+
 	@PostMapping(value = "/login", produces = "application/json; charset=utf-8")
 	public Map<String, Object> login(@RequestBody UserData userData) throws Exception {
 		String cryptUserString = userData.getEncryptData().trim();
 		String userString;
 		try {
-			userString = AESUtil.decryptAES(cryptUserString);
+			userString = AESUtil.decryptAES256(cryptUserString);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -72,11 +85,21 @@ public class UserController {
 		if (user.getAccessToken() == null || user.getAccessToken().equals("")) {
 			return GsonUtil.buildMap(1, "token不能为空", null);
 		}
+
+		if (user.getMobile() == null || user.getMobile().length() < 10) {
+			return GsonUtil.buildMap(1, "手机号不能为空", null);
+		}
+		// 增加校验 校验姓名
+
+		if (user.getClientName() == null || user.getClientName().length() < 1) {
+			return GsonUtil.buildMap(1, "登录信息为空，请重新登录", null);
+		}
+
 		// 增加校验
 
-		// if (user.getLoginClientId() == null || user.getLoginClientId().equals("")) {
-		// return GsonUtil.buildMap(1, "登录标示不能为空", null);
-		// }
+		if (user.getLoginClientId() == null || user.getLoginClientId().length() < 3) {
+			return GsonUtil.buildMap(1, "当前APP版本过低，请升级到最新版本的APP", null);
+		}
 
 		ActivityNumber activityNumber = userService.login(user);
 		if (activityNumber == null) {
@@ -140,9 +163,7 @@ public class UserController {
 	@PostMapping(value = { "/loginLivePro" }, produces = { "application/json; charset=utf-8" })
 	public Map<String, Object> loginLivePro(@RequestBody UserData userData) throws Exception {
 		this.logger.info(userData.toString());
-		System.out.println(userData.toString());
 		this.logger.info(userData.toString());
-		System.out.println(userData.toString());
 		String cryptUserString = userData.getEncryptData();
 		String userString = AESUtil.decryptAES(cryptUserString);
 		this.logger.info(userString);
@@ -155,7 +176,6 @@ public class UserController {
 			// 非游客生成唯一标识
 			uuid = this.userService.loginLive(user);
 		}
-
 		// 获取直播url
 		String liveUrl = LiveUtil.getUrlPro(user, uuid);
 		this.logger.info("_____________________ 直播信息" + user.getClientId() + " " + liveUrl);
@@ -163,6 +183,7 @@ public class UserController {
 		LiveInfo liveInfo = new LiveInfo();
 		liveInfo.setLiveUrl(liveUrl);
 		return GsonUtil.buildMap(0, "ok", liveInfo);
+
 	}
 
 	@UserLoginToken

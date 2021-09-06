@@ -22,6 +22,7 @@ import com.xsdzq.mm.model.PrizeRecordAndResult;
 import com.xsdzq.mm.model.ZodiacNumber;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.TokenService;
+import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.GsonUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 
@@ -53,9 +54,19 @@ public class PrizeController {
 		return GsonUtil.buildMap(0, "ok", responsEntities);
 	}
 
-	@GetMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
+	@PostMapping(value = "/getPrize", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getPrize(@RequestHeader("Authorization") String token) {
+		String endFlag = tokenService.getValueByCode("kmhEndFlag").getValue();
+		try {
+			if (!DateUtil.checkDate(endFlag)) {
+				return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			return GsonUtil.buildMap(1, "活动已结束，无法进行此项操作。", null);
+		}
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		if (userEntity == null) {
 			return GsonUtil.buildMap(1, "用户不存在", null);
@@ -81,7 +92,6 @@ public class PrizeController {
 	@GetMapping(value = "/number", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getAvailableNumber(@RequestHeader("Authorization") String token) {
-		System.out.println(token);
 		UserEntity userEntity = tokenService.getUserEntity(token);
 		int number = prizeService.getAvailableNumber(userEntity);
 		Number prizeNumber = new Number(number);
@@ -99,13 +109,13 @@ public class PrizeController {
 	@PostMapping(value = "/share", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> sharePutPrizeNumber(@RequestHeader("Authorization") String token) {
-		UserEntity userEntity = tokenService.getUserEntity(token);
-		boolean isRule = prizeService.sharePutPrizeNumber(userEntity);
-		if (isRule) {
-			return GsonUtil.buildMap(0, "ok", null);
-		} else {
-			return GsonUtil.buildMap(1, "分享活动获得的票数，已经达到上限!", null);
-		}
+		/*
+		 * UserEntity userEntity = tokenService.getUserEntity(token); boolean isRule =
+		 * prizeService.sharePutPrizeNumber(userEntity); if (isRule) { return
+		 * GsonUtil.buildMap(0, "ok", null); } else { return GsonUtil.buildMap(1,
+		 * "分享活动获得的票数，已经达到上限!", null); }
+		 */
+		return GsonUtil.buildMap(0, "ok", null);
 	}
 
 	@PostMapping(value = "/selectStockPrize", produces = "application/json; charset=utf-8")
@@ -129,11 +139,13 @@ public class PrizeController {
 	@GetMapping(value = "/shareNumber", produces = "application/json; charset=utf-8")
 	@UserLoginToken
 	public Map<String, Object> getShareEveryDayNumber(@RequestHeader("Authorization") String token) {
-		UserEntity userEntity = tokenService.getUserEntity(token);
-		int shareNumber = prizeService.getShareEveryDayNumber(userEntity);
-		Number mNumber = new Number();
-		mNumber.setNumber(shareNumber);
-		return GsonUtil.buildMap(0, "ok", mNumber);
+		/*
+		 * UserEntity userEntity = tokenService.getUserEntity(token); int shareNumber =
+		 * prizeService.getShareEveryDayNumber(userEntity); Number mNumber = new
+		 * Number(); mNumber.setNumber(shareNumber); return GsonUtil.buildMap(0, "ok",
+		 * mNumber);
+		 */
+		return GsonUtil.buildMap(0, "ok", null);
 
 	}
 
