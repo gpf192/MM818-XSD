@@ -45,7 +45,7 @@ public class PrizeEntity implements Serializable {
 	@Column(name = "type") // 奖品类型
 	private boolean type;
 
-	@Column(name = "isShow") // 默认不显示
+	@Column(name = "is_show") // 默认不显示
 	private boolean isShow = false;
 
 	@Column(name = "winning_number", columnDefinition = "int default 0") // 中奖人数
@@ -156,7 +156,7 @@ public class PrizeEntity implements Serializable {
 	@Override
 	public String toString() {
 		return "PrizeEntity [id=" + id + ", name=" + name + ", price=" + price + ", rate=" + rate + ", image=" + image
-				+ ", amount=" + amount + ", type=" + type + ", isShow=" + isShow + ", createtime=" + createtime
+				+ ", amount=" + amount + ", type=" + type + ", is_show=" + isShow + ", createtime=" + createtime
 				+ ", modifytime=" + modifytime + ", winning_number=" + winningNumber + "]";
 	}
 
