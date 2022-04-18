@@ -23,7 +23,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  *
  */
 @Entity
-@Table(name = "lcj818_prize_result")
+@Table(name = "lcj_518_2022_prize_result")
 @EntityListeners(AuditingEntityListener.class)
 public class PrizeResultEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
