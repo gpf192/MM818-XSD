@@ -26,6 +26,8 @@ public class PrizeServiceImpl implements PrizeService {
 	private static final Logger log = LoggerFactory.getLogger(PrizeServiceImpl.class);
 	@Value("${sharing.times.limit:5}")
 	private int sharingTimesLimit;
+	@Value("${sharing.times.per.day:1}")
+	private int sharingTimesPerDay;
 
 	@Autowired
 	private PrizeRepository prizeRepository;
@@ -308,10 +310,8 @@ public class PrizeServiceImpl implements PrizeService {
 				total += 1;
 			}
 		}
-		if (total >= 1) {
-			return false;
-		}
-		return true;
+
+		return total < sharingTimesPerDay;
 	}
 	
 	public boolean checkUserShareStatusByActivity(UserEntity userEntity) {
