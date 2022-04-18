@@ -1,40 +1,31 @@
 package com.xsdzq.mm.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.xsdzq.mm.dao.ParamRepository;
-import com.xsdzq.mm.dao.PrizeNumberRepository;
-import com.xsdzq.mm.dao.PrizeRecordRepository;
-import com.xsdzq.mm.dao.PrizeRepository;
-import com.xsdzq.mm.dao.PrizeResultRepository;
-import com.xsdzq.mm.dao.UserTicketRecordRepository;
+import com.xsdzq.mm.dao.*;
 import com.xsdzq.mm.dao.impl.ParamRepositoryImpl;
-import com.xsdzq.mm.entity.ParamEntity;
-import com.xsdzq.mm.entity.PrizeEntity;
-import com.xsdzq.mm.entity.PrizeNumberEntity;
-import com.xsdzq.mm.entity.PrizeRecordEntity;
-import com.xsdzq.mm.entity.PrizeResultEntity;
-import com.xsdzq.mm.entity.UserEntity;
-import com.xsdzq.mm.entity.UserTicketRecordEntity;
+import com.xsdzq.mm.entity.*;
 import com.xsdzq.mm.service.PrizeService;
 import com.xsdzq.mm.service.UserTicketService;
 import com.xsdzq.mm.util.DateUtil;
 import com.xsdzq.mm.util.PrizeUtil;
 import com.xsdzq.mm.util.TicketUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service(value = "prizeServiceImpl")
 @Transactional(readOnly = true)
 public class PrizeServiceImpl implements PrizeService {
 
 	private static final Logger log = LoggerFactory.getLogger(PrizeServiceImpl.class);
+	@Value("${sharing.times.limit:5}")
+	private int sharingTimesLimit;
 
 	@Autowired
 	private PrizeRepository prizeRepository;
@@ -325,7 +316,7 @@ public class PrizeServiceImpl implements PrizeService {
 	
 	public boolean checkUserShareStatusByActivity(UserEntity userEntity) {
 		List<PrizeRecordEntity> list = prizeRecordRepository.getListByUserAndShare(userEntity, PrizeUtil.PRIZE_SHARE_TYPE);
-		if (list.size() >= 5) {
+		if (list.size() >= sharingTimesLimit) {
 			return false;
 		}
 		return true;
