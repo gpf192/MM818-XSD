@@ -68,11 +68,16 @@ public class PrizeUtil {
 	}
 
 	public PrizeResultEntity getSecretPrizeResultEntity(PrizeResultEntity prizeResultEntity) {
-		UserEntity userEntity = prizeResultEntity.getUserEntity();
-		userEntity.setClientId(getSecretString(userEntity.getClientId()));
-		userEntity.setFundAccount(getSecretString(userEntity.getFundAccount()));
-		prizeResultEntity.setUserEntity(userEntity);
-		return prizeResultEntity;
+		PrizeResultEntity result = new PrizeResultEntity();
+
+		UserEntity userEntity = new UserEntity();
+		userEntity.setClientId(getSecretString(prizeResultEntity.getUserEntity().getClientId()));
+		result.setUserEntity(userEntity);
+
+		PrizeEntity prizeEntity = new PrizeEntity();
+		prizeEntity.setName(prizeResultEntity.getPrizeEntity().getName());
+		result.setPrizeEntity(prizeEntity);
+		return result;
 	}
 
 	public String getSecretString(String no) {

@@ -137,8 +137,8 @@ public class PrizeEntity implements Serializable {
 		this.modifytime = modifytime;
 	}
 
-	public int getAmount() {
-		return amount;
+	public Integer getAmount() {
+		return amount == null ? 0 : amount;
 	}
 
 	public void setAmount(int amount) {
