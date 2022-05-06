@@ -36,19 +36,22 @@ public class EmpController {
 	public Map<String, Object> getEmpTicketList(@RequestParam int pageNumber, @RequestParam int pageSize,
 			@RequestParam String divison) {
 
-		List<EmpTicketEntity> empTicketList = empTicketService.getEmpTicketEntities(pageNumber, pageSize, divison);
+/*		List<EmpTicketEntity> empTicketList = empTicketService.getEmpTicketEntities(pageNumber, pageSize, divison);
 		Pagination pagination = new Pagination(pageNumber, pageSize);
 		int total = empTicketService.countEmpNumberByDivison(divison);
 		pagination.setTotalItems(total);
+		return GsonUtil.buildMap(0, "ok", empTicketList, pagination);*/
 
-		return GsonUtil.buildMap(0, "ok", empTicketList, pagination);
+		return GsonUtil.buildMap(0,"ok",null,null);
 	}
 
 	@GetMapping(value = "/query", produces = "application/json; charset=utf-8")
 	public Map<String, Object> queryEmp(@RequestParam String name) {
-		List<EmpTicketEntity> eList = empService.findByEmpNameLike(name);
+/*		List<EmpTicketEntity> eList = empService.findByEmpNameLike(name);
 
-		return GsonUtil.buildMap(0, "ok", eList);
+		return GsonUtil.buildMap(0, "ok", eList);*/
+
+		return GsonUtil.buildMap(0, "ok", null);
 	}
 
 }
