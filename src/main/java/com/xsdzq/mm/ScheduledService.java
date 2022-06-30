@@ -1,34 +1,19 @@
 package com.xsdzq.mm;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
+import com.xsdzq.mm.entity.*;
+import com.xsdzq.mm.service.*;
+import com.xsdzq.mm.util.DateUtil;
+import com.xsdzq.mm.util.PrizeUtil;
+import com.xsdzq.mm.util.TicketUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.xsdzq.mm.entity.ChangWaiSellViewEntity;
-import com.xsdzq.mm.entity.CreditAccountOpenViewEntity;
-import com.xsdzq.mm.entity.OpenAccountEntity;
-import com.xsdzq.mm.entity.PrizeRecordEntity;
-import com.xsdzq.mm.entity.ProductEntity;
-import com.xsdzq.mm.entity.ProductSellViewEntity;
-import com.xsdzq.mm.entity.ShareOptionAccountOpenViewEntity;
-import com.xsdzq.mm.entity.SignInvestViewEntity;
-import com.xsdzq.mm.entity.UserEmpRelationEntity;
-import com.xsdzq.mm.entity.UserTicketRecordEntity;
-import com.xsdzq.mm.service.PrizeService;
-import com.xsdzq.mm.service.ProductSellViewService;
-import com.xsdzq.mm.service.ProductService;
-import com.xsdzq.mm.service.UserEmpRelationService;
-import com.xsdzq.mm.service.UserService;
-import com.xsdzq.mm.service.UserTicketService;
-import com.xsdzq.mm.util.DateUtil;
-import com.xsdzq.mm.util.PrizeUtil;
-import com.xsdzq.mm.util.TicketUtil;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 
 @Component
@@ -299,7 +284,8 @@ public class ScheduledService {
 			if(productList.size() != 0) {
 				for(ProductEntity product:productList) {
 					String productCode = product.getCode();
-					System.out.println("******************* 本次扫描产品code：  "+productCode);
+					String coefficient = product.getCoefficient();
+					System.out.println("******************* 本次扫描产品code：  " + productCode + ",转化系数：" + coefficient);
 					if(product.getScanFlag() == 1) {
 						//1 标识 需要扫场内， 此时场内场外一起扫 ，否则只扫场外
 						List<ProductSellViewEntity> productSellViewList = productSellViewService.getByDealTimeAndProductCode(preDay, productCode);
@@ -323,6 +309,9 @@ public class ScheduledService {
 									double dealAmount = Double.parseDouble( p.getDealAmount());
 				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
 				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("10000"),0,BigDecimal.ROUND_HALF_UP);
+									if (coefficient != null && !"".equals(coefficient.trim())) {
+										number = number.multiply(new BigDecimal(coefficient));
+									}
 				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
 								//}
 				        		
@@ -353,6 +342,9 @@ public class ScheduledService {
 									double dealAmount = Double.parseDouble( p.getDealAmount());
 				        			BigDecimal dealAmountDecimal = new BigDecimal(dealAmount);
 				        			BigDecimal number = dealAmountDecimal.divide(new BigDecimal("10000"),0,BigDecimal.ROUND_HALF_UP);
+									if (coefficient != null && !"".equals(coefficient.trim())) {
+										number = number.multiply(new BigDecimal(coefficient));
+									}
 				        			userService.addPrizeNumAndRecordForKMH(clientId, PrizeUtil.PRIZE_BUY_TYPE, number.intValue(), serialNum);
 								//}
 				        		
